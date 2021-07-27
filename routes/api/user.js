@@ -19,9 +19,9 @@ router.post('/:username', async (req, res) => {
   const { basedOn } = req.body;
 
   const likes = user.seen.filter(s => s.like === true);
-  if (likes.length < 3) return res.status(400).send({ id: 'MOVIES_ERROR', msg: 'No liked movies.' })
+  if (likes.length < 3) return res.status(400).send({ id: 'MOVIES_ERROR', msg: 'Not enough liked movies.' })
 
-  const randomLikes = _.sampleSize(_.difference(likes.map(m => m.filmId), basedOn), likes.length >= 6 ? 6 : 3);
+  const randomLikes = _.sampleSize(_.difference(likes.map(m => m.filmId), basedOn), 2); //likes.length >= 6 ? 6 : 3
 
   const remove = [...user.seen, ...user.watchlist, ...user.notInterested].map(m => ({ id: m.filmId }));
 
@@ -31,7 +31,9 @@ router.post('/:username', async (req, res) => {
   movies = movies.slice(0, limit);
   movies = getMovieArrDetails(movies);
 
-  res.send({ basedOn: randomLikes, results: movies });
+  const hasMore = basedOn ? basedOn.length < likes.length : true;
+
+  res.send({ basedOn: randomLikes, hasMore, results: movies });
 });
 
 // @route   GET api/username/watchlist

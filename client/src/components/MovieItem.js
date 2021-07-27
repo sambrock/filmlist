@@ -1,18 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
+import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useSpring, animated } from '@react-spring/web';
 import slugify from 'slugify';
-import { isMobile, isTablet } from 'react-device-detect';
 
-import { userActions, springConfig, tmdbImageUrl } from '../config';
+import { userActions, springConfig, tmdbImageUrl, springConfigFast } from '../config';
 import MovieItemButtons from './MovieItemButtons';
 import StarRating from './StarRating';
 
-export default function MovieItem({ movie, page, showButtons }) {
+const StyledLoadDiv = styled.div`
+  opacity: .4;
+`;
+
+export default function MovieItem({ movie, page, showButtons, cacheImg, isImgCached }) {
   const [action, setAction] = useState(false);
   const [show, setShow] = useState();
   const [imgLoaded, setImgLoaded] = useState(false);
   const [buttonsActive] = useState(showButtons);
+
+  console.log(Date.now(), movie.title);
 
   const divRef = useRef();
 
@@ -30,10 +36,16 @@ export default function MovieItem({ movie, page, showButtons }) {
     { spring: infoAnimate, in: { opacity: 1 }, out: { opacity: 0 } },
   ];
 
+  const [imgAnimationStyles, imgAnimate] = useSpring(() => ({ opacity: 1, config: springConfigFast }));
+
   useEffect(() => {
     if (action) return;
     animations.map(a => a.spring.start(show ? a.in : a.out));
   }, [show, action]);
+
+  // useEffect(() => {
+  //   if (imgLoaded) setTimeout(() => imgAnimate.start({ opacity: 1 }), 200);
+  // }, [imgLoaded, isImgCached, imgAnimate]);
 
   useEffect(() => {
     if (!movie.userAction) return;
@@ -42,10 +54,13 @@ export default function MovieItem({ movie, page, showButtons }) {
   }, [movie]);
 
   return (
-    <Link className="block overflow-hidden relative" to={`/movie/${movie.id}-${slugify(movie.title, { lower: true, remove: /[*+~.()'"!:@]/g })}`}>
-      <div className="pointer-events-none sm:pointer-events-auto relative cursor-pointer" onClick={() => setShow(true)} onMouseOver={() => setShow(true)} onMouseLeave={() => setShow(false)} ref={divRef}>
-        <animated.div style={posterAnimateStyles} className="max-w-full my-0 mx-auto h-full w-full top-0 left-0 overflow-hidden">
-          <animated.img style={posterImgAnimateStyles} className={`w-full h-full object-cover ${action ? 'hidden' : 'block'}`} src={tmdbImageUrl.poster + movie.poster_path} alt="movie poster" />
+    <div className="block px-2 py-2 overflow-hidden relative h-full" >
+      <div className="h-full pointer-events-none sm:pointer-events-auto relative cursor-pointer flex" onMouseOver={() => setShow(true)} onMouseLeave={() => setShow(false)} ref={divRef}>
+        <animated.div style={posterAnimateStyles} className=" max-w-full my-0 mx-auto h-full w-full top-0 left-0 overflow-hidden">
+          <div className="relative">
+            {/* <StyledLoadDiv className="absolute top-0 left-0 bg-grey h-full w-full" /> */}
+            <animated.img style={{ ...posterImgAnimateStyles }} className={`w-full object-cover z-10 ${action ? 'hidden' : 'block'}`} src={tmdbImageUrl.poster + movie.poster_path} alt="movie poster" />
+          </div>
           <animated.div style={{ height: action ? (divRef.current.offsetWidth / 100) * 150 : 0 }} className={`flex flex-col justify-center items-center w-full h-full object-cover border-default ${!action ? 'hidden' : 'block'}`} >
             <span className="material-icons font-bold text-heading mb-2 text-opacity-1">{action.icon}</span>
             <div className="uppercase font-medium text-opacity-1 flex items-center">{action.text}</div>
@@ -72,16 +87,6 @@ export default function MovieItem({ movie, page, showButtons }) {
           </animated.div>
         </animated.div>
       </div>
-      <div style={infoAnimateStyles} className="block sm:hidden mt-2 mb-4">
-        <div className="font-bold text-md">{movie.title}</div>
-        <div className="flex items-center mt-1">
-          <div className="text-sm font-medium text-opacity-2 mr-3 py-0.5">{movie.year}</div>
-          <div className="font-semibold text-primary border-primary-opacity text-xs py-0.5 px-1" >{movie.vote_average}</div>
-          {page === 'seen' && (<div className="flex sm:hidden items-center ml-auto py-0.5"> <StarRating className="text-sm" rating={movie.rating} readOnly={true} /> { movie.like && (<span className="material-icons ml-2 text-sm text-opacity-primary">favorite</span>)} </div>)}
-        </div>
-      </div>
-      {(isMobile || isTablet) && (<div style={infoAnimateStyles} className="hidden sm:block mt-2 mb-4"> <div className="font-bold text-md">{movie.title}</div> <div className="flex items-center mt-1"> <div className="text-sm font-medium text-opacity-2 mr-3 py-0.5">{movie.year}</div> <div className="font-semibold text-primary border-primary-opacity text-xs py-0.5 px-1" >{movie.vote_average}</div> {page === 'seen' && (<div className="flex sm:hidden items-center ml-auto py-0.5"> <StarRating className="text-sm" rating={movie.rating} readOnly={true} /> { movie.like && (<span className="material-icons ml-2 text-sm text-opacity-primary">favorite</span>)} </div>)} </div> </div>)}
-      { (page === 'seen' && imgLoaded) && (<div className={`hidden sm:flex justify-between items-center mt-2`}> <StarRating rating={movie.rating} readOnly={true} /> { movie.like && (<span className="material-icons text-lg ml-3 text-opacity-primary">favorite</span>)} </div>)}
-    </Link >
+    </div >
   )
 }

@@ -2,6 +2,7 @@ import { createGlobalStyle } from 'styled-components';
 import Color from 'color';
 
 import './tailwind.css';
+import { breakpoints } from './mixins';
 
 const primary = '#F2A20C';
 
@@ -156,6 +157,15 @@ const GlobalStyle = createGlobalStyle`
   
   .border-bottom-default {
     border-bottom: 1px var(--grey) solid;
+  }
+
+  .margin-movie-item-default {
+    margin-left: 6vw;
+    @media (max-width: ${breakpoints.lg}) { margin-left: 5px; }
+  }
+
+  .padding-movie-item-default {
+    top: 6rem !important;
   }
 
   .scale-default {

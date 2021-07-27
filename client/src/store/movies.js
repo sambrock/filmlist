@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash';
+
 import { apiRequest } from './api';
 import { errorsRecieved } from './error';
 
@@ -11,7 +12,8 @@ const slice = createSlice({
     moreLoading: false,
     default: false,
     pageNum: 1,
-    basedOn: []
+    basedOn: [],
+    hasMore: false
   },
   reducers: {
     defaultMoviesRequested: (movies, action) => {
@@ -37,6 +39,7 @@ const slice = createSlice({
       movies.loading = false;
       movies.data = _.uniqBy([...movies.data, ...action.payload.results], 'id');
       movies.basedOn = [...movies.basedOn, ...action.payload.basedOn];
+      movies.hasMore = action.payload.hasMore;
     },
     moviesRequestFailed: (movies, action) => {
       movies.loading = false;
@@ -108,3 +111,4 @@ export const clearMovies = () => dispatch => {
 export const getMovies = state => state.entities.movies.data;
 export const defaultLoaded = state => state.entities.movies.default;
 export const loading = state => state.entities.movies.loading;
+export const hasMore = state => state.entities.movies.hasMore;

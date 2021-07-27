@@ -36,9 +36,9 @@ export default function StarRating({ filmId, readOnly, rating, setRating, remove
 
   const handleRating = (newRating) => {
     if (readOnly) return;
-    setRating(newRating);
+    if(setRating) setRating(newRating);
     dispatch(addMovieRating(filmId, newRating));
-    removeWatchlist();
+    if(removeWatchlist) removeWatchlist();
   }
 
   return (

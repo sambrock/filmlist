@@ -2,45 +2,36 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-import InfiniteScroll from './InfiniteScroll';
+import useColumns from '../hooks/useColumns';
+import Grid from './Grid';
 import MovieItemLoading from './MovieItemLoading';
+import Cell from './Cell';
 
-const StyledMovieListDiv = styled(motion.div).attrs({ className: 'grid gap-2 sm:gap-4 mx-3 sm:mx-6 md:mx-auto' })`
-  margin-top: 90px;
-
-  ${props => props.theme.mixins.movieGrid(props.cols)}
-  ${props => props.theme.mixins.width}
+const StyledMovieListDiv = styled.div.attrs({ className: 'mx-auto' })`
+  height: calc(100vh - 1px);
+  direction: rtl;
 `;
 
-export default function MovieList({ length, loadNext, cols, loading, children, showUserRating }) {
-  if (length === 0) return (
-    <StyledMovieListDiv exit={{ opacity: 0 }} cols={cols || 5}>
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-      <MovieItemLoading showUserRating={showUserRating} />
-    </StyledMovieListDiv>
+const StyledMovieListLoadingDiv = styled.div`
+  padding-top: 90px;
+  ${props => props.theme.mixins.width}
+  ${props => props.theme.mixins.movieGrid(props.cols)}
+`
+
+export default function MovieList({ movies, loadNext, cols, showUserRating, showButtons, loading, hasMore, page }) {
+  const columns = useColumns(cols);
+
+  if (movies.length === 0) return (
+    <StyledMovieListLoadingDiv className="grid mx-3 sm:mx-6 md:mx-auto" exit={{ opacity: 0 }} cols={cols}>
+      {[...Array(10)].map((x, i) => <div className="px-2 mb-4"><MovieItemLoading key={i} showUserRating={showUserRating} /></div>)}
+    </StyledMovieListLoadingDiv>
   )
 
   return (
-    <InfiniteScroll loadMore={() => loadNext()} loading={loading}>
-      <StyledMovieListDiv exit={{ opacity: 0 }} cols={cols || 5}>
-        {children}
+    <motion.div exit={{ opacity: 0 }}>
+      <StyledMovieListDiv>
+        <Grid columns={columns} items={movies} rowCount={Math.ceil(movies.length / columns)} loading={loading} loadNext={loadNext} hasMore={hasMore} page={page} />
       </StyledMovieListDiv>
-    </InfiniteScroll>
+    </motion.div>
   )
 }

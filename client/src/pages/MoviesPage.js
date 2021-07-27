@@ -4,26 +4,25 @@ import { motion } from 'framer-motion';
 import { Redirect, useHistory } from 'react-router-dom';
 
 import { transitions } from '../config';
-import { loadMovies, getMovies, loadDefaultMovies, loading, defaultLoaded, clearMovies } from '../store/movies';
+import { loadMovies, getMovies, loadDefaultMovies, loading, defaultLoaded, clearMovies, hasMore } from '../store/movies';
 import { getIsAuthenticated } from '../store/auth';
 import { start, complete } from '../store/loadingBar';
 import { getMoviesError } from '../store/error';
 import MovieList from '../components/MovieList';
-import MovieItem from '../components/MovieItem';
 import Head from '../components/Head';
 
 export default function Movies() {
   const { action } = useHistory();
   const [movies, setMovies] = useState([]);
 
-  const defaultMoviesLoaded = useSelector(defaultLoaded)
-  const loadedMovies = useSelector(getMovies);
-
   const dispatch = useDispatch();
 
+  const defaultMoviesLoaded = useSelector(defaultLoaded)
+  const loadedMovies = useSelector(getMovies);
   const moviesLoading = useSelector(loading);
   const isAuthenticated = useSelector(getIsAuthenticated);
   const moviesError = useSelector(getMoviesError);
+  const moviesHasMore = useSelector(hasMore);
 
   useEffect(() => {
     if (isAuthenticated === null) return;
@@ -51,9 +50,7 @@ export default function Movies() {
   return (
     <>
       <Head bodyAttributes={movies.length === 0 ? 'overflow-y-hidden' : ''} />
-      <MovieList length={movies.length} loadNext={() => isAuthenticated ? dispatch(loadMovies()) : dispatch(loadDefaultMovies())} loading={moviesLoading}>
-        {movies.map((movie, i) => <MovieItem key={movie.id} movie={movie} page="movies" index={i} showButtons={isAuthenticated} />)}
-      </MovieList>
+      <MovieList movies={movies} cols={5} length={movies.length} loadNext={() => isAuthenticated ? dispatch(loadMovies()) : dispatch(loadDefaultMovies())} loading={moviesLoading} showButtons={isAuthenticated} hasMore={moviesHasMore} page='movies' />
     </>
   )
 }
