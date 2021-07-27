@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const mongoose = require('mongoose');
 const cors = require('cors');
 const express = require('express');
@@ -15,10 +15,12 @@ if (!process.env.JWT_PRIVATE_KEY) {
 }
 
 // Connect to MongoDB
-mongoose.connect(process.env.DB_CONFIG, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose
+  .connect(process.env.DB_CONFIG, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.log('Error', err));
+  .catch((err) => console.log('Error', err));
 
+//test
 // Use routes
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/movies', require('./routes/api/movies'));
@@ -31,8 +33,8 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-  })
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
 }
 
 app.listen(process.env.PORT, () => console.log(`Listening on port ${process.env.PORT}...`));
