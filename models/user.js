@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const config = require('config');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const jwtPrivateKey = process.env.JWT_PRIVATE_KEY || config.get('jwtPrivateKey');
+const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
 const watchlistSchema = new Schema({
   filmId: {

@@ -1,38 +1,31 @@
-require('dotenv').config()
+require('dotenv').config();
 const mongoose = require('mongoose');
 const cors = require('cors');
-const express = require('express');
 const path = require('path');
 
-const app = express();
+const build = require('./app');
 
-app.use(express.json());
-app.use(cors());
+const start = async () => {
+  if (!process.env.JWT_PRIVATE_KEY) {
+    console.error('FATAL ERROR: jwtPrivateKey is not defined.');
+    process.exit(1);
+  }
 
-if (!process.env.JWT_PRIVATE_KEY) {
-  console.error('FATAL ERROR: jwtPrivateKey is not defined.');
-  process.exit(1);
-}
+  // Connect to MongoDB
+  mongoose
+    .connect(process.env.DB_CONFIG, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => console.log('Error', err));
 
-// Connect to MongoDB
-mongoose.connect(process.env.DB_CONFIG, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.log('Error', err));
+  const server = await build({ logger: true });
 
-// Use routes
-app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/movies', require('./routes/api/movies'));
-app.use('/api/search', require('./routes/api/search'));
-app.use('/api', require('./routes/api/user'));
+  server.listen(process.env.PORT, (err, address) => {
+    if (err) {
+      console.err;
+    }
 
-// Serve static assets if in production
-if (process.env.NODE_ENV === 'production') {
-  // Set static folder
-  app.use(express.static('client/build'));
+    console.log(`Listening on port ${process.env.PORT}`);
+  });
+};
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-  })
-}
-
-app.listen(process.env.PORT, () => console.log(`Listening on port ${process.env.PORT}...`));
+start();
