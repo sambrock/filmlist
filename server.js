@@ -1,13 +1,11 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const cors = require('cors');
-const path = require('path');
 
 const build = require('./app');
 
 const start = async () => {
   if (!process.env.JWT_PRIVATE_KEY) {
-    console.error('FATAL ERROR: jwtPrivateKey is not defined.');
+    console.error('FATAL ERROR: JWT_PRIVATE_KEY is not defined.');
     process.exit(1);
   }
 
