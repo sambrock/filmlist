@@ -21,7 +21,7 @@ const movieRoutes = async (fastify) => {
     }
   });
 
-  fastify.get('/:id', { beforeHandler: [user] }, async (req, reply) => {
+  fastify.get('/:id', { preValidation: user }, async (req, reply) => {
     try {
       const url = `/movie/${req.params.id}?api_key=${api_key}&append_to_response=credits,releases`;
       const { data } = await axios.get(baseURL + url);
