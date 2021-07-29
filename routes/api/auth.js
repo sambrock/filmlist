@@ -40,10 +40,10 @@ const authRoutes = async (fastify) => {
     reply.send({ token, user: { id: user._id, username: user.username, email: user.email } });
   });
 
-  fastify.get('/user', { beforeHandler: [auth] }, async (req, reply) => {
+  fastify.get('/user', { preValidation: auth }, async (req, reply) => {
     try {
-      const user = await User.findById(req.user.id).select('-password').select('-watchlist');
-      if (!user) throw Error('User Does not exist');
+      const user = await User.findById(req.user.id).select('-password');
+      if (!user) throw Error('User does not exist');
       reply.send(user);
     } catch (err) {
       reply.status(400).send({ id: 'USER_ERROR', msg: err.message });

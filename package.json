@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "server": "nodemon server.js",
-    "dev": "concurrently \"npm run server\" \"cd client && npm start \" \"cd client && wait-on http://localhost:3000\""
+    "dev": "concurrently \"npm run server | npx pino-pretty\" \"cd client && npm start \" \"cd client && wait-on http://localhost:3000\""
   },
   "repository": {
     "type": "git",

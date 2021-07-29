@@ -67,7 +67,7 @@ const userRoutes = async (fastify) => {
     reply.send(seen.map((m, i) => ({ ...m, rating: userSeen[i].rating, like: userSeen[i].like })));
   });
 
-  fastify.post('/:username/watchlist', { beforeHandler: [auth] }, async (req, reply) => {
+  fastify.post('/:username/watchlist', { preValidation: auth }, async (req, reply) => {
     const verifyUser = verifyUserRequest(req);
     if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
@@ -82,7 +82,7 @@ const userRoutes = async (fastify) => {
     reply.status(200).send({ id: 'ADD', msg: `'${req.body.title}' was added to your watchlist.` });
   });
 
-  fastify.delete('/:username/watchlist', { beforeHandler: [auth] }, async (req, reply) => {
+  fastify.delete('/:username/watchlist', { preValidation: auth }, async (req, reply) => {
     const verifyUser = verifyUserRequest(req);
     if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
@@ -96,7 +96,7 @@ const userRoutes = async (fastify) => {
     reply.status(200).send({ id: 'DELETE', msg: `'${req.body.title}' was removed from your watchlist.` });
   });
 
-  fastify.post('/:username/ratings', { beforeHandler: [auth] }, async (req, reply) => {
+  fastify.post('/:username/ratings', { preValidation: auth }, async (req, reply) => {
     const verifyUser = verifyUserRequest(req);
     if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
@@ -114,7 +114,7 @@ const userRoutes = async (fastify) => {
     reply.sendStatus(200);
   });
 
-  fastify.post('/:username/likes', { beforeHandler: [auth] }, async (req, reply) => {
+  fastify.post('/:username/likes', { preValidation: auth }, async (req, reply) => {
     const verifyUser = verifyUserRequest(req);
     if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
@@ -128,7 +128,7 @@ const userRoutes = async (fastify) => {
     reply.sendStatus(200);
   });
 
-  fastify.delete('/:username/likes', { beforeHandler: [auth] }, async (req, reply) => {
+  fastify.delete('/:username/likes', { preValidation: auth }, async (req, reply) => {
     const verifyUser = verifyUserRequest(req);
     if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
@@ -147,7 +147,7 @@ const userRoutes = async (fastify) => {
     reply.sendStatus(200);
   });
 
-  fastify.post('/:username/seen', { beforeHandler: [auth] }, async (req, reply) => {
+  fastify.post('/:username/seen', { preValidation: auth }, async (req, reply) => {
     const verifyUser = verifyUserRequest(req);
     if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
@@ -163,7 +163,7 @@ const userRoutes = async (fastify) => {
     reply.status(200).send({ id: 'ADD', msg: `'${req.body.title}' was added to your seen.` });
   });
 
-  fastify.delete('/:username/seen', { beforeHandler: [auth] }, async (req, reply) => {
+  fastify.delete('/:username/seen', { preValidation: auth }, async (req, reply) => {
     const verifyUser = verifyUserRequest(req);
     if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
@@ -190,7 +190,7 @@ const userRoutes = async (fastify) => {
     reply.send(notInterested);
   });
 
-  fastify.post('/:username/not-interested', { beforeHandler: [auth] }, async (req, reply) => {
+  fastify.post('/:username/not-interested', { preValidation: auth }, async (req, reply) => {
     const verifyUser = verifyUserRequest(req);
     if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
@@ -206,7 +206,7 @@ const userRoutes = async (fastify) => {
     reply.status(200).send({ id: 'ADD', msg: `'${req.body.title}' was added to your not interested.` });
   });
 
-  fastify.delete('/:username/not-interested', { beforeHandler: [auth] }, async (req, reply) => {
+  fastify.delete('/:username/not-interested', { preValidation: auth }, async (req, reply) => {
     const verifyUser = verifyUserRequest(req);
     if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 

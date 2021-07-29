@@ -1,16 +1,17 @@
 const jwt = require('jsonwebtoken');
 
-const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
+const JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY;
 
-module.exports = function (req, res, next) {
-  const token = req.header('x-auth-token');
-  if (!token) return res.status(401).send('Access denied. Not authorised.')
+module.exports = function (req, reply, done) {
+  const token = req.headers['x-auth-token'];
+  if (!token) return reply.status(401).send('Access denied. Not authorised.');
 
   try {
-    const decoded = jwt.verify(token, jwtPrivateKey);
+    const decoded = jwt.verify(token, JWT_PRIVATE_KEY);
     req.user = decoded;
-    next();
-  } catch (ex) {
-    res.status(400).send('Invalid token.');
+    done();
+  } catch (err) {
+    reply.status(400).send('Invalid token.');
+    done();
   }
-}
+};
