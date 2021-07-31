@@ -7,6 +7,8 @@ import { start, complete } from '../store/loadingBar';
 import useIsUserAuth from '../hooks/useIsUserAuth';
 import Head from '../components/Head';
 import MovieList from '../components/MovieList';
+import { PageContext } from '../App';
+import useColumns from '../hooks/useColumns';
 
 export default function SeenPage({ match }) {
   const { action } = useHistory();
@@ -37,10 +39,19 @@ export default function SeenPage({ match }) {
     if (!seenLoading) dispatch(loadSeen(username));
   };
 
+  const columns = useColumns(6);
+
   return (
     <>
-      <Head title={`${username}'s Watchlist`} bodyAttributes={movies.length === 0 ? 'overflow-y-hidden' : ''} />
-      <MovieList movies={movies} length={movies.length} loadNext={() => dispatch(loadSeen(username))} cols={6} page="seen" />
+      <Head title={`${username}'s Seen`} bodyAttributes={movies.length === 0 ? 'overflow-y-hidden' : ''} />
+      <PageContext.Provider value={{ page: 'seen', columns }}>
+        <MovieList
+          movies={movies}
+          length={movies.length}
+          loadNext={() => dispatch(loadSeen(username))}
+          loading={seenLoading}
+        />
+      </PageContext.Provider>
     </>
   );
 }

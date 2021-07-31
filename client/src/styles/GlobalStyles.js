@@ -228,7 +228,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   .border-default {
-    border: 1.2px var(--grey) dashed;
+  border: 1.2px var(--grey) dashed;
   }
 
   .z-100 {
@@ -253,7 +253,17 @@ const GlobalStyle = createGlobalStyle`
 
   .fancy-font {
     font-family: 'Domine', serif;  
-    }
+  }
+  
+  .border-red {
+    border: 1px red solid;
+  }
+
+  .ratio {
+    aspect-ratio: 1/1.5;
+  }
+
+  
 `;
 
 export default GlobalStyle;
