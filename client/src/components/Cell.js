@@ -5,20 +5,15 @@ import slugify from 'slugify';
 import styled from 'styled-components';
 import { PageContext } from '../App';
 
-import { breakpoints } from '../styles/mixins';
 import MovieInfo from './MovieInfo';
 import MovieItem from './MovieItem';
 
 const StyledCell = styled.div`
   ${(props) => ({ ...props.reactWindowStyles })};
   top: ${(props) => parseInt(props.reactWindowStyles.top) + 90}px;
-
-  /* @media (max-width: ${breakpoints.sm}) {
-    height: ${(props) => parseInt(props.reactWindowStyles.height) + 100}px;
-  } */
 `;
 
-const Cell = memo(({ columnIndex, data, isScrolling, rowIndex, style, columns, page }) => {
+const Cell = memo(({ columnIndex, data, isScrolling, rowIndex, style, columns, page, showButtons }) => {
   const index = rowIndex * columns + columnIndex;
   const movie = data[index];
 
@@ -32,7 +27,7 @@ const Cell = memo(({ columnIndex, data, isScrolling, rowIndex, style, columns, p
   return (
     <StyledCell reactWindowStyles={style} className="margin-movie-item-default">
       <Link className="flex flex-col" to={`/movie/${movie.id}-${slugify(movie.title, { lower: true, remove: /[*+~.()'"!:@]/g })}`}>
-        <MovieItem key={index} movie={movie} showButtons={true} page={page} />
+        <MovieItem key={index} movie={movie} showButtons={true} page={page} showButtons={showButtons} />
         <MovieInfo movie={movie} page={page} />
       </Link>
     </StyledCell>
@@ -41,7 +36,7 @@ const Cell = memo(({ columnIndex, data, isScrolling, rowIndex, style, columns, p
 
 const CellContainer = (props) => (
   <PageContext.Consumer>
-    {({ page, columns }) => <Cell {...props} page={page} columns={columns} />}
+    {(values) => <Cell {...props} {...values}/>}
   </PageContext.Consumer>
 );
 

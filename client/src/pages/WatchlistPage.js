@@ -58,7 +58,7 @@ export default function WatchlistPage({ match }) {
   return (
     <>
       <Head title={`${username}'s Watchlist`} bodyAttributes={movies.length === 0 ? 'overflow-y-hidden' : ''} />
-      <PageContext.Provider value={{ page: 'watchlist', columns }}>
+      <PageContext.Provider value={{ page: 'watchlist', columns, showButtons: isUserAuth }}>
         <MovieList
           movies={movies}
           length={movies.length}

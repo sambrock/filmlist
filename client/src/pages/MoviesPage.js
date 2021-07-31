@@ -4,7 +4,15 @@ import { motion } from 'framer-motion';
 import { Redirect, useHistory } from 'react-router-dom';
 
 import { transitions } from '../config';
-import { loadMovies, getMovies, loadDefaultMovies, loading, defaultLoaded, clearMovies, hasMore, } from '../store/movies';
+import {
+  loadMovies,
+  getMovies,
+  loadDefaultMovies,
+  loading,
+  defaultLoaded,
+  clearMovies,
+  hasMore,
+} from '../store/movies';
 import { getIsAuthenticated } from '../store/auth';
 import { start, complete } from '../store/loadingBar';
 import { getMoviesError } from '../store/error';
@@ -61,7 +69,7 @@ export default function Movies() {
   return (
     <>
       <Head bodyAttributes={movies.length === 0 ? 'overflow-y-hidden' : ''} />
-      <PageContext.Provider value={{ page: 'movies', columns }}>
+      <PageContext.Provider value={{ page: 'movies', columns, showButtons: isAuthenticated }}>
         <MovieList
           movies={movies}
           length={movies.length}

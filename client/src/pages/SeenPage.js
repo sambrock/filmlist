@@ -18,7 +18,6 @@ export default function SeenPage({ match }) {
 
   const loadedMovies = useSelector(getSeen);
   const seenLoading = useSelector(loading);
-  // const seenHasMore = useSelector(hasMore)
 
   const username = match.params.username;
   const isUserAuth = useIsUserAuth(username);
@@ -44,7 +43,7 @@ export default function SeenPage({ match }) {
   return (
     <>
       <Head title={`${username}'s Seen`} bodyAttributes={movies.length === 0 ? 'overflow-y-hidden' : ''} />
-      <PageContext.Provider value={{ page: 'seen', columns }}>
+      <PageContext.Provider value={{ page: 'seen', columns, showButtons: isUserAuth }}>
         <MovieList
           movies={movies}
           length={movies.length}
