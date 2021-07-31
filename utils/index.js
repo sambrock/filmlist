@@ -5,7 +5,7 @@ function getMovieArrDetails(moviesArr) {
   return moviesArr.map(movie => {
     const { id, title, vote_average, release_date, backdrop_path, poster_path, popularity, rating, like } = movie;
     return { id, title, vote_average: vote_average.toFixed(1), backdrop_path, poster_path, popularity, year: new Date(release_date).getFullYear(), rating, like };
-  }).filter(m => m.popularity > 2);
+  }).filter(m => m.popularity > 2).filter(m => m.poster_path !== null);
 };
 
 function getMovieSearchArrDetails(moviesArr) {

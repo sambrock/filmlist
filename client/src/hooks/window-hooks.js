@@ -17,7 +17,7 @@ export function useHasScrolled() {
   const [hasScrolled, setHasScrolled] = useState(false);
 
   const handleScroll = () => {
-    setHasScrolled(window.pageYOffset !== 0) 
+    setHasScrolled(window.pageYOffset !== 0)
   };
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export function useHasScrolled() {
 
 export function usePageYOffset() {
   const [pageYOffset, setPageYOffset] = useState(0);
-  
+
   const handleScroll = () => {
     setPageYOffset(window.pageYOffset);
   };

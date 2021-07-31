@@ -12,7 +12,7 @@ export default function LikeBtn({ filmId, like, setLike }) {
   const dispatch = useDispatch();
 
   const handleClick = (liked) => {
-    setLike(liked);
+    if(setLike) setLike(liked);
     liked ? dispatch(addMovieLike(filmId)) : dispatch(deleteMovieLike(filmId));
   }
 

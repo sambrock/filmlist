@@ -2,6 +2,7 @@ import { createGlobalStyle } from 'styled-components';
 import Color from 'color';
 
 import './tailwind.css';
+import { breakpoints } from './mixins';
 
 const primary = '#F2A20C';
 
@@ -158,6 +159,15 @@ const GlobalStyle = createGlobalStyle`
     border-bottom: 1px var(--grey) solid;
   }
 
+  .margin-movie-item-default {
+    margin-left: 6vw;
+    @media (max-width: ${breakpoints.lg}) { margin-left: 5px; }
+  }
+
+  .padding-movie-item-default {
+    top: 6rem !important;
+  }
+
   .scale-default {
     transform: scale(1.1);
   }
@@ -218,7 +228,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   .border-default {
-    border: 1.2px var(--grey) dashed;
+  border: 1.2px var(--grey) dashed;
   }
 
   .z-100 {
@@ -243,7 +253,17 @@ const GlobalStyle = createGlobalStyle`
 
   .fancy-font {
     font-family: 'Domine', serif;  
-    }
+  }
+  
+  .border-red {
+    border: 1px red solid;
+  }
+
+  .ratio {
+    aspect-ratio: 1/1.5;
+  }
+
+  
 `;
 
 export default GlobalStyle;

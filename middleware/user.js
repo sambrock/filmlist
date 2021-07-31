@@ -2,15 +2,15 @@ const jwt = require('jsonwebtoken');
 
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
-module.exports = function (req, res, next) {
-  const token = req.header('x-auth-token');
-  if (!token) return next();
+module.exports = function (req, reply, done) {
+  const token = req.headers['x-auth-token'];
+    if (!token) done();
 
   try {
     const decoded = jwt.verify(token, jwtPrivateKey);
     req.user = decoded;
-    next();
+    done();
   } catch (ex) {
-    next();
+    done();
   }
 }

@@ -8,10 +8,11 @@ const StyledAnimatedLoadingItemDiv = styled.div`
     100% {opacity: .4;}
   }
 
-  animation-name: animation;
+  opacity: .4;
+  /* animation-name: animation;
   animation-duration: 2s;
   animation-iteration-count: infinite;
-  animation-timing-function: var(--easing);
+  animation-timing-function: var(--easing); */
 `;
 
 export default function LoadingMovieItem({ showUserRating }) {

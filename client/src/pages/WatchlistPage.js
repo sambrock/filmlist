@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { motion } from 'framer-motion';
@@ -7,8 +7,9 @@ import { loadWatchlist, getWatchlist, loading } from '../store/watchlist';
 import { start, complete } from '../store/loadingBar';
 import useIsUserAuth from '../hooks/useIsUserAuth';
 import MovieList from '../components/MovieList';
-import MovieItem from '../components/MovieItem';
 import Head from '../components/Head';
+import useColumns from '../hooks/useColumns';
+import { PageContext } from '../App';
 
 export default function WatchlistPage({ match }) {
   const { action } = useHistory();
@@ -41,18 +42,31 @@ export default function WatchlistPage({ match }) {
   }, [loadedMovies]);
 
   useEffect(() => {
-    if(watchlistLoading || !mounted) return;
-    if(loadedMovies.length === 0) return setWatchlistEmpty(true);
-  }, [watchlistLoading])
+    if (watchlistLoading || !mounted) return;
+    if (loadedMovies.length === 0) return setWatchlistEmpty(true);
+  }, [watchlistLoading]);
 
-  if (watchlistEmpty) return <motion.div exit={{ opacity: 0 }} className="h-screen w-screen flex justify-center items-center"><div className="font-semibold text-xxl text-opacity-1">No films in this watchlist... yet.</div></motion.div>;
+  const columns = useColumns(6);
+
+  if (watchlistEmpty)
+    return (
+      <motion.div exit={{ opacity: 0 }} className="h-screen w-screen flex justify-center items-center">
+        <div className="font-semibold text-xxl text-opacity-1">No films in this watchlist... yet.</div>
+      </motion.div>
+    );
 
   return (
     <>
       <Head title={`${username}'s Watchlist`} bodyAttributes={movies.length === 0 ? 'overflow-y-hidden' : ''} />
-      <MovieList length={movies.length} loadNext={() => dispatch(loadWatchlist(username))} cols={6} >
-        {movies.map((movie, i) => <MovieItem key={movie.id} movie={movie} page="watchlist" showButtons={isUserAuth} />)}
-      </MovieList>
+      <PageContext.Provider value={{ page: 'watchlist', columns }}>
+        <MovieList
+          movies={movies}
+          length={movies.length}
+          loadNext={() => dispatch(loadWatchlist(username))}
+          loading={watchlistLoading}
+          // hasMore={}
+        />
+      </PageContext.Provider>
     </>
-  )
+  );
 }

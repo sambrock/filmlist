@@ -1,4 +1,3 @@
-const express = require('express');
 const _ = require('lodash');
 
 const User = require('../../models/user');
@@ -6,254 +5,220 @@ const auth = require('../../middleware/auth');
 const TMDbService = require('../../services/TMDbService');
 const { verifyUserRequest, getMovieArrDetails } = require('../../utils');
 
-const router = express.Router();
-
-// @route   GET api/username
-// @desc    Get recommended movies for user
-// @access  Public
-router.post('/:username', async (req, res) => {
-  let user = await User.findOne({ username: req.params.username });
-  if (!user) return res.status(404).send('User does not exist.');
-
-  const { limit } = req.query;
-  const { basedOn } = req.body;
+const userRoutes = async (fastify) => {
+  fastify.post('/:username', async (req, reply) => {
+    let user = await User.findOne({ username: req.params.username });
+    if (!user) return reply.status(404).send('User does not exist.');
 
-  const likes = user.seen.filter(s => s.like === true);
-  if (likes.length < 3) return res.status(400).send({ id: 'MOVIES_ERROR', msg: 'No liked movies.' })
-
-  const randomLikes = _.sampleSize(_.difference(likes.map(m => m.filmId), basedOn), likes.length >= 6 ? 6 : 3);
+    const { limit } = req.query;
+    const { basedOn } = req.body;
 
-  const remove = [...user.seen, ...user.watchlist, ...user.notInterested].map(m => ({ id: m.filmId }));
+    const likes = user.seen.filter((s) => s.like === true);
+    if (likes.length < 3) return reply.status(400).send({ id: 'MOVIES_ERROR', msg: 'Not enough liked movies.' });
 
-  let movies = await TMDbService.getRecommendationsArr(randomLikes);
-  movies = _.differenceBy(movies, remove, 'id');
-  movies = _.uniqBy(movies, 'id');
-  movies = movies.slice(0, limit);
-  movies = getMovieArrDetails(movies);
+    const randomLikes = _.sampleSize(
+      _.difference(
+        likes.map((m) => m.filmId),
+        basedOn
+      ),
+      2
+    ); //likes.length >= 6 ? 6 : 3
 
-  res.send({ basedOn: randomLikes, results: movies });
-});
+    const remove = [...user.seen, ...user.watchlist, ...user.notInterested].map((m) => ({ id: m.filmId }));
 
-// @route   GET api/username/watchlist
-// @desc    Get user watchlist
-// @access  Public
-router.get('/:username/watchlist', async (req, res) => {
-  let user = await User.findOne({ username: req.params.username });
-  if (!user) return res.status(404).send('User does not exist.');
+    let movies = await TMDbService.getRecommendationsArr(randomLikes);
+    movies = _.differenceBy(movies, remove, 'id');
+    movies = _.uniqBy(movies, 'id');
+    movies = movies.slice(0, limit);
+    movies = getMovieArrDetails(movies);
 
-  const { page, limit } = req.query;
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
+    const hasMore = basedOn ? basedOn.length < likes.length : true;
 
-  const userWatchlist = user.watchlist.reverse().slice(startIndex, endIndex);
-  const tmdbData = await TMDbService.getDataArr(userWatchlist.map(m => m.filmId));
-  const watchlist = getMovieArrDetails(tmdbData);
+    reply.send({ basedOn: randomLikes, hasMore, results: movies });
+  });
 
-  res.send(watchlist);
-})
+  fastify.get('/:username/watchlist', async (req, reply) => {
+    let user = await User.findOne({ username: req.params.username });
+    if (!user) return reply.status(404).send('User does not exist.');
 
-// @route   GET api/username/seen
-// @desc    Get user seen
-// @access  Public
-router.get('/:username/seen', async (req, res) => {
-  let user = await User.findOne({ username: req.params.username });
-  if (!user) return res.status(404).send('User does not exist.');
+    const { page, limit } = req.query;
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
 
-  const { page, limit } = req.query;
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
+    const userWatchlist = user.watchlist.reverse().slice(startIndex, endIndex);
+    const tmdbData = await TMDbService.getDataArr(userWatchlist.map((m) => m.filmId));
+    const watchlist = getMovieArrDetails(tmdbData);
 
-  const userSeen = user.seen.reverse().slice(startIndex, endIndex);
-  const tmdbData = await TMDbService.getDataArr(userSeen.map(m => m.filmId));
-  const seen = getMovieArrDetails(tmdbData);
+    reply.send(watchlist);
+  });
 
-  res.send(seen.map((m, i) => ({ ...m, rating: userSeen[i].rating, like: userSeen[i].like })));
-})
+  fastify.get('/:username/seen', async (req, reply) => {
+    let user = await User.findOne({ username: req.params.username });
+    if (!user) return reply.status(404).send('User does not exist.');
 
-// @route   POST api/username/watchlist
-// @desc    Add movie to user watchlist
-// @access  Private 
-router.post('/:username/watchlist', auth, async (req, res) => {
-  const verifyUser = verifyUserRequest(req);
-  if (!verifyUser) return res.status(403).send('Forbidden. Not autorized as that user.');
+    const { page, limit } = req.query;
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
 
-  const user = await User.findOne({ username: req.params.username });
+    const userSeen = user.seen.reverse().slice(startIndex, endIndex);
+    const tmdbData = await TMDbService.getDataArr(userSeen.map((m) => m.filmId));
+    const seen = getMovieArrDetails(tmdbData);
 
-  const index = user.watchlist.map(w => w.filmId).indexOf(req.body.filmId);
-  if (index > -1) return res.status(400).send({ id: 'WATCHLIST_ERROR', msg: `'${req.body.title}' already in your watchlist.` });
+    reply.send(seen.map((m, i) => ({ ...m, rating: userSeen[i].rating, like: userSeen[i].like })));
+  });
 
-  user.watchlist.push({ filmId: req.body.filmId });
-  await user.save();
+  fastify.post('/:username/watchlist', { preValidation: auth }, async (req, reply) => {
+    const verifyUser = verifyUserRequest(req);
+    if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
-  res.status(200).send({ id: 'ADD', msg: `'${req.body.title}' was added to your watchlist.` });
-})
+    const user = await User.findOne({ username: req.params.username });
 
-// @route   DELETE api/username/watchlist
-// @desc    Remove movie from user watchlist
-// @access  Private 
-router.delete('/:username/watchlist', auth, async (req, res) => {
-  const verifyUser = verifyUserRequest(req);
-  if (!verifyUser) return res.status(403).send('Forbidden. Not autorized as that user.');
+    const index = user.watchlist.map((w) => w.filmId).indexOf(req.body.filmId);
+    if (index > -1) return reply.status(400).send({ id: 'WATCHLIST_ERROR', msg: `'${req.body.title}' already in your watchlist.` });
 
-  const user = await User.findOne({ username: req.params.username });
-  const index = user.watchlist.map(w => w.filmId).indexOf(req.body.filmId);
-  if (index == -1) return res.status(400).send('Failed to delete. Film is not in watchlist.');
-  user.watchlist.splice(index, 1);
+    user.watchlist.push({ filmId: req.body.filmId });
+    await user.save();
 
-  await user.save();
+    reply.status(200).send({ id: 'ADD', msg: `'${req.body.title}' was added to your watchlist.` });
+  });
 
-  res.status(200).send({ id: 'DELETE', msg: `'${req.body.title}' was removed from your watchlist.` });
-})
+  fastify.delete('/:username/watchlist', { preValidation: auth }, async (req, reply) => {
+    const verifyUser = verifyUserRequest(req);
+    if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
-// @route   POST api/username/ratings
-// @desc    Add movie rating to user ratings
-// @access  Private 
-router.post('/:username/ratings', auth, async (req, res) => {
-  const verifyUser = verifyUserRequest(req);
-  if (!verifyUser) return res.status(403).send('Forbidden. Not autorized as that user.');
+    const user = await User.findOne({ username: req.params.username });
+    const index = user.watchlist.map((w) => w.filmId).indexOf(req.body.filmId);
+    if (index == -1) return reply.status(400).send('Failed to delete. Film is not in watchlist.');
+    user.watchlist.splice(index, 1);
 
-  const user = await User.findOne({ username: req.params.username });
-  let index = user.seen.map(s => s.filmId).indexOf(req.body.filmId);
+    await user.save();
 
-  index != -1 ? user.seen[index].rating = req.body.rating : user.seen.push({ filmId: req.body.filmId, rating: req.body.rating });
+    reply.status(200).send({ id: 'DELETE', msg: `'${req.body.title}' was removed from your watchlist.` });
+  });
 
-  // Delete from watchlist after rating
-  index = user.watchlist.map(w => w.filmId).indexOf(req.body.filmId);
-  if (index != -1) user.watchlist.splice(index, 1);
+  fastify.post('/:username/ratings', { preValidation: auth }, async (req, reply) => {
+    const verifyUser = verifyUserRequest(req);
+    if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
-  await user.save();
+    const user = await User.findOne({ username: req.params.username });
+    let index = user.seen.map((s) => s.filmId).indexOf(req.body.filmId);
 
-  res.sendStatus(200);
-})
+    index != -1 ? (user.seen[index].rating = req.body.rating) : user.seen.push({ filmId: req.body.filmId, rating: req.body.rating });
 
-// @route   POST api/username/likes
-// @desc    Add movie to user likes
-// @access  Private 
-router.post('/:username/likes', auth, async (req, res) => {
-  const verifyUser = verifyUserRequest(req);
-  if (!verifyUser) return res.status(403).send('Forbidden. Not autorized as that user.');
+    // Delete from watchlist after rating
+    index = user.watchlist.map((w) => w.filmId).indexOf(req.body.filmId);
+    if (index != -1) user.watchlist.splice(index, 1);
 
-  const user = await User.findOne({ username: req.params.username });
-  const index = user.seen.map(s => s.filmId).indexOf(req.body.filmId);
+    await user.save();
 
-  index != -1 ? user.seen[index].like = true : user.seen.push({ filmId: req.body.filmId, like: true });
+    reply.sendStatus(200);
+  });
 
-  await user.save();
+  fastify.post('/:username/likes', { preValidation: auth }, async (req, reply) => {
+    const verifyUser = verifyUserRequest(req);
+    if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
-  res.sendStatus(200);
-})
+    const user = await User.findOne({ username: req.params.username });
+    const index = user.seen.map((s) => s.filmId).indexOf(req.body.filmId);
 
-// @route   DELETE api/username/likes
-// @desc    Remove movie from user likes
-// @access  Private 
-router.delete('/:username/likes', auth, async (req, res) => {
-  const verifyUser = verifyUserRequest(req);
-  if (!verifyUser) return res.status(403).send('Forbidden. Not autorized as that user.');
+    index != -1 ? (user.seen[index].like = true) : user.seen.push({ filmId: req.body.filmId, like: true });
 
-  const user = await User.findOne({ username: req.params.username });
+    await user.save();
 
-  const likes = user.seen.filter(m => m.like === true);
-  if (likes.length <= 4) return res.status(405).send({ id: 'LIKE_ERROR', msg: 'You must have at least 4 liked movies.' });
+    reply.sendStatus(200);
+  });
 
-  const index = user.seen.map(l => l.filmId).indexOf(req.body.filmId);
-  if (index == -1) return res.status(400).send('Failed to delete. Film is already not liked.');
+  fastify.delete('/:username/likes', { preValidation: auth }, async (req, reply) => {
+    const verifyUser = verifyUserRequest(req);
+    if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
-  user.seen[index].like = false;
+    const user = await User.findOne({ username: req.params.username });
 
-  await user.save();
+    const likes = user.seen.filter((m) => m.like === true);
+    if (likes.length <= 4) return reply.status(405).send({ id: 'LIKE_ERROR', msg: 'You must have at least 4 liked movies.' });
 
-  res.sendStatus(200);
-})
+    const index = user.seen.map((l) => l.filmId).indexOf(req.body.filmId);
+    if (index == -1) return reply.status(400).send('Failed to delete. Film is already not liked.');
 
+    user.seen[index].like = false;
 
-// @route   POST api/username/seen
-// @desc    Add movie to user seen
-// @access  Private 
-router.post('/:username/seen', auth, async (req, res) => {
-  const verifyUser = verifyUserRequest(req);
-  if (!verifyUser) return res.status(403).send('Forbidden. Not autorized as that user.');
+    await user.save();
 
-  const user = await User.findOne({ username: req.params.username });
+    reply.sendStatus(200);
+  });
 
-  const index = user.seen.map(s => s.filmId).indexOf(req.body.filmId);
-  if (index != -1) return res.status(400).send('Film already in seen');
+  fastify.post('/:username/seen', { preValidation: auth }, async (req, reply) => {
+    const verifyUser = verifyUserRequest(req);
+    if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
-  user.seen.push({ filmId: req.body.filmId });
+    const user = await User.findOne({ username: req.params.username });
 
-  await user.save();
+    const index = user.seen.map((s) => s.filmId).indexOf(req.body.filmId);
+    if (index != -1) return reply.status(400).send('Film already in seen');
 
-  res.status(200).send({ id: 'ADD', msg: `'${req.body.title}' was added to your seen.` });
-})
+    user.seen.push({ filmId: req.body.filmId });
 
-// @route   DELETE api/username/seen
-// @desc    Remove movie from user seen
-// @access  Private 
-router.delete('/:username/seen', auth, async (req, res) => {
-  const verifyUser = verifyUserRequest(req);
-  if (!verifyUser) return res.status(403).send('Forbidden. Not autorized as that user.');
+    await user.save();
 
-  const user = await User.findOne({ username: req.params.username });
-  const index = user.seen.map(s => s.filmId).indexOf(req.body.filmId);
+    reply.status(200).send({ id: 'ADD', msg: `'${req.body.title}' was added to your seen.` });
+  });
 
-  const likes = user.seen.filter(m => m.like === true);
-  if (likes.length <= 4 && user.seen[index].like === true) return res.status(405).send({ id: 'LIKE_ERROR', msg: 'You must have at least 4 liked movies.' });
+  fastify.delete('/:username/seen', { preValidation: auth }, async (req, reply) => {
+    const verifyUser = verifyUserRequest(req);
+    if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
-  if (index == -1) return res.status(400).send('Failed to delete. Film is not in seen.');
-  user.seen.splice(index, 1);
+    const user = await User.findOne({ username: req.params.username });
+    const index = user.seen.map((s) => s.filmId).indexOf(req.body.filmId);
 
-  await user.save();
+    const likes = user.seen.filter((m) => m.like === true);
+    if (likes.length <= 4 && user.seen[index].like === true) return reply.status(405).send({ id: 'LIKE_ERROR', msg: 'You must have at least 4 liked movies.' });
 
-  res.status(200).send({ id: 'DELETE', msg: `'${req.body.title}' was removed from your seen.` });
-})
+    if (index == -1) return reply.status(400).send('Failed to delete. Film is not in seen.');
+    user.seen.splice(index, 1);
 
-// @route   GET api/username/not-interested
-// @desc    Get user not interested
-// @access  Public
-router.get('/:username/not-interested', async (req, res) => {
-  let user = await User.findOne({ username: req.params.username });
-  if (!user) return res.status(404).send('User does not exist.');
+    await user.save();
 
-  const notInterested = await getMovieData(user.notInterested);
+    reply.status(200).send({ id: 'DELETE', msg: `'${req.body.title}' was removed from your seen.` });
+  });
 
-  res.send(notInterested);
-})
+  fastify.get('/:username/not-interested', async (req, reply) => {
+    let user = await User.findOne({ username: req.params.username });
+    if (!user) return reply.status(404).send('User does not exist.');
 
-// @route   POST api/username/not-interested
-// @desc    Add movie to user not interested
-// @access  Private 
-router.post('/:username/not-interested', auth, async (req, res) => {
-  const verifyUser = verifyUserRequest(req);
-  if (!verifyUser) return res.status(403).send('Forbidden. Not autorized as that user.');
+    const notInterested = await getMovieData(user.notInterested);
 
-  const user = await User.findOne({ username: req.params.username });
+    reply.send(notInterested);
+  });
 
-  const index = user.notInterested.map(n => n.filmId).indexOf(req.body.filmId);
-  if (index != -1) return res.status(400).send('Film already in seen');
+  fastify.post('/:username/not-interested', { preValidation: auth }, async (req, reply) => {
+    const verifyUser = verifyUserRequest(req);
+    if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
-  user.notInterested.push({ filmId: req.body.filmId });
+    const user = await User.findOne({ username: req.params.username });
 
-  await user.save();
+    const index = user.notInterested.map((n) => n.filmId).indexOf(req.body.filmId);
+    if (index != -1) return reply.status(400).send('Film already in seen');
 
-  res.status(200).send({ id: 'ADD', msg: `'${req.body.title}' was added to your not interested.` });
-})
+    user.notInterested.push({ filmId: req.body.filmId });
 
-// @route   DELETE api/username/seen
-// @desc    Remove movie from user seen
-// @access  Private 
-router.delete('/:username/not-interested', auth, async (req, res) => {
-  const verifyUser = verifyUserRequest(req);
-  if (!verifyUser) return res.status(403).send('Forbidden. Not autorized as that user.');
+    await user.save();
 
-  const user = await User.findOne({ username: req.params.username });
-  const index = user.notInterested.map(n => n.filmId).indexOf(req.body.filmId);
-  if (index == -1) return res.status(400).send('Failed to delete. Film is not in seen.');
-  user.notInterested.splice(index, 1);
+    reply.status(200).send({ id: 'ADD', msg: `'${req.body.title}' was added to your not interested.` });
+  });
 
-  await user.save();
+  fastify.delete('/:username/not-interested', { preValidation: auth }, async (req, reply) => {
+    const verifyUser = verifyUserRequest(req);
+    if (!verifyUser) return reply.status(403).send('Forbidden. Not autorized as that user.');
 
-  res.status(200).send({ id: 'DELETE', msg: `'${req.body.title}' was removed from your not interested.` });
-})
+    const user = await User.findOne({ username: req.params.username });
+    const index = user.notInterested.map((n) => n.filmId).indexOf(req.body.filmId);
+    if (index == -1) return reply.status(400).send('Failed to delete. Film is not in seen.');
+    user.notInterested.splice(index, 1);
 
+    await user.save();
 
+    reply.status(200).send({ id: 'DELETE', msg: `'${req.body.title}' was removed from your not interested.` });
+  });
+};
 
-module.exports = router;
+module.exports = userRoutes;

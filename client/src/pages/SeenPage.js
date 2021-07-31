@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
 import { loadSeen, getSeen, loading } from '../store/seen';
 import { start, complete } from '../store/loadingBar';
 import useIsUserAuth from '../hooks/useIsUserAuth';
-import MovieList from '../components/MovieList';
-import MovieItem from '../components/MovieItem';
 import Head from '../components/Head';
+import MovieList from '../components/MovieList';
+import { PageContext } from '../App';
+import useColumns from '../hooks/useColumns';
 
 export default function SeenPage({ match }) {
   const { action } = useHistory();
-
-  const loadedMovies = useSelector(getSeen);
-  const [movies, setMovies] = useState(action === 'POP' ? loadedMovies : []);
+  const [movies, setMovies] = useState([]);
 
   const dispatch = useDispatch();
 
+  const loadedMovies = useSelector(getSeen);
   const seenLoading = useSelector(loading);
+  // const seenHasMore = useSelector(hasMore)
 
   const username = match.params.username;
   const isUserAuth = useIsUserAuth(username);
@@ -36,14 +37,21 @@ export default function SeenPage({ match }) {
 
   const handleLoadMore = () => {
     if (!seenLoading) dispatch(loadSeen(username));
-  }
+  };
+
+  const columns = useColumns(6);
 
   return (
     <>
       <Head title={`${username}'s Seen`} bodyAttributes={movies.length === 0 ? 'overflow-y-hidden' : ''} />
-      <MovieList showUserRating={true} length={movies.length} loadNext={handleLoadMore} cols={6} loading={seenLoading} >
-        {movies.map((movie, i) => <MovieItem key={movie.id} movie={movie} page="seen" showButtons={isUserAuth} />)}
-      </MovieList>
+      <PageContext.Provider value={{ page: 'seen', columns }}>
+        <MovieList
+          movies={movies}
+          length={movies.length}
+          loadNext={() => dispatch(loadSeen(username))}
+          loading={seenLoading}
+        />
+      </PageContext.Provider>
     </>
-  )
+  );
 }

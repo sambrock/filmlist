@@ -8,6 +8,7 @@ const slice = createSlice({
     data: [],
     loading: false,
     pageNum: 1,
+    hasMore: false
   },
   reducers: {
     initialRequested: (seen, action) => {
@@ -22,6 +23,8 @@ const slice = createSlice({
     seenReceived: (seen, action) => {
       seen.data = [...seen.data, ...action.payload];
       seen.loading = false;
+      seen.hasMore = action.payload.hasMore;
+
     },
     seenRequestFailed: (seen, action) => {
       seen.loading = false;
@@ -56,3 +59,4 @@ export const loadSeen = (username, initial = false) => (dispatch, getState) => {
 
 export const getSeen = state => state.entities.seen.data;
 export const loading = state => state.entities.seen.loading;
+export const hasMore = state => state.entities.seen.hasMore;
