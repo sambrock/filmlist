@@ -1,4 +1,5 @@
 const fastify = require('fastify');
+const path = require('path');
 
 const app = async (opts) => {
   const app = fastify(opts);
@@ -13,10 +14,10 @@ const app = async (opts) => {
   app.register(require('./routes/api/user'), { prefix: '/api' });
 
   // Static files
-  app.register(require('fastify-static'), { root: __dirname, prefix: '/client/build/' });
+  app.register(require('fastify-static'), { root: path.join(__dirname, 'client', 'build'), wildcard: false });
 
   if (process.env.NODE_ENV === 'production') {
-    app.get('/', (req, reply) => {
+    app.get('/*', (req, reply) => {
       return reply.sendFile('index.html');
     });
   }
