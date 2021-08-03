@@ -5,21 +5,17 @@ import LikeBtn from './buttons/LikeBtn';
 import WatchlistBtn from './buttons/WatchlistBtn';
 
 export default function MovieButtons({ filmId, title, ui }) {
-  const [rating, setRating] = useState(ui.rating || 0);
-  const [watchlist, setWatchlist] = useState(ui.watchlist || false);
-  const [like, setLike] = useState(ui.like || false);
-
   return (
     <div className="flex items-center justify-start">
       <div className="mr-6">
-        <StarRating filmId={filmId} readOnly={false} rating={rating} setRating={setRating} removeWatchlist={() => setWatchlist(false)} />
+        <StarRating filmId={filmId} readOnly={false} defaultValue={ui.rating} />
       </div>
       <div className="mr-6">
-        <WatchlistBtn filmId={filmId} title={title} watchlist={watchlist} setWatchlist={setWatchlist} />
+        <WatchlistBtn filmId={filmId} title={title} defaultWatchlist={ui.watchlist} />
       </div>
       <div>
-        <LikeBtn filmId={filmId} title={title} like={like} setLike={setLike} />
+        <LikeBtn filmId={filmId} title={title} defaultLike={ui.like} />
       </div>
     </div>
-  )
+  );
 }

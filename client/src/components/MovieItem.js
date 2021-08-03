@@ -3,6 +3,8 @@ import { useSpring, animated } from '@react-spring/web';
 
 import { userActions, springConfig, tmdbImageUrl, springConfigFast } from '../config';
 import MovieItemButtons from './MovieItemButtons';
+import StarRating from './StarRating';
+import LikeBtn from './buttons/LikeBtn';
 
 export default function MovieItem({ movie, page, showButtons }) {
   const [action, setAction] = useState(false);
@@ -65,7 +67,7 @@ export default function MovieItem({ movie, page, showButtons }) {
           className=" max-w-full my-0 mx-auto h-full w-full top-0 left-0 overflow-hidden"
         >
           <div className="relative">
-            {/* <div className="absolute top-0 left-0 bg-opacity-3 w-full ratio" /> */}
+            <div className="absolute top-0 left-0 bg-opacity-3 w-full ratio" />
             <animated.img
               style={{ ...imgAnimationStyles, ...posterImgAnimateStyles }}
               className={`w-full object-cover z-10 ${action ? 'hidden' : 'block'}`}
@@ -77,6 +79,12 @@ export default function MovieItem({ movie, page, showButtons }) {
             className={`flex flex-col justify-center items-center w-full h-full object-cover border-default ratio 
             ${!action ? 'hidden' : 'block'}`}
           >
+            {action.id === 2 && (
+              <div className="z-40 flex absolute top-6 left-6 justify-between">
+                <StarRating filmId={movie.id} color="text-opacity-1" />
+                <LikeBtn filmId={movie.id} className="text-semibold text-opacity-1" />
+              </div>
+            )}
             <span className="material-icons font-bold text-heading mb-2 text-opacity-1">{action.icon}</span>
             <div className="uppercase font-medium text-opacity-1 flex items-center">{action.text}</div>
             <animated.div className="absolute bottom-6 left-6 right-6">

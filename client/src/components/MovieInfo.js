@@ -14,7 +14,7 @@ export default function MovieInfo({ movie, page }) {
           </div>
           {page === 'seen' && (
             <div className="flex sm:hidden items-center ml-auto py-0.5">
-              <StarRating className="text-sm" rating={movie.rating} readOnly={true} />{' '}
+              <StarRating className="text-sm" defaultValue={movie.rating} readOnly={true} />
               {movie.like && <span className="material-icons ml-2 text-sm text-opacity-primary">favorite</span>}
             </div>
           )}
@@ -22,7 +22,7 @@ export default function MovieInfo({ movie, page }) {
       </div>
       {page === 'seen' && (
         <div className="hidden sm:flex justify-between items-center px-2 mb-2">
-          <StarRating rating={movie.rating} readOnly={true} />{' '}
+          <StarRating defaultValue={movie.rating} readOnly={true} />
           {movie.like && <span className="material-icons text-lg ml-3 text-opacity-primary">favorite</span>}
         </div>
       )}

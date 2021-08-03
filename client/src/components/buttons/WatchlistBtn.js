@@ -1,28 +1,30 @@
-import React from 'react'
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import { addMovieWatchlist, deleteMovieWatchlist } from '../../store/movie';
 
 const StyledSpan = styled.button`
-  ${props => props.theme.mixins.buttonSize}
+  ${(props) => props.theme.mixins.buttonSize}
 `;
 
-export default function WatchlistBtn({ filmId, title, watchlist, setWatchlist }) {
+export default function WatchlistBtn({ filmId, defaultWatchlist }) {
+  const [inWatchlist, setInWatchlist] = useState(defaultWatchlist || false);
+
   const dispatch = useDispatch();
 
-  const handleClick = (inWatchlist) => {
-    setWatchlist(inWatchlist)    
-    inWatchlist ? dispatch(addMovieWatchlist(filmId, title)) : dispatch(deleteMovieWatchlist(filmId, title));
-  }
+  const handleClick = (val) => {
+    setInWatchlist(val);
+    val ? dispatch(addMovieWatchlist(filmId)) : dispatch(deleteMovieWatchlist(filmId));
+  };
 
-  return (
-    !watchlist ?
-      <button aria-label="add to watchlist" onClick={() => handleClick(true)}>
-        <StyledSpan className="material-icons text-primary font-bold">add</StyledSpan>
-      </button> :
-      <button aria-label="remove from watchlist" onClick={() => handleClick(false)}>
-        <StyledSpan className="material-icons text-primary font-bold">remove</StyledSpan>
-      </button>
-  )
+  return !inWatchlist ? (
+    <button aria-label="add to watchlist" onClick={() => handleClick(true)}>
+      <StyledSpan className="material-icons text-primary font-bold">add</StyledSpan>
+    </button>
+  ) : (
+    <button aria-label="remove from watchlist" onClick={() => handleClick(false)}>
+      <StyledSpan className="material-icons text-primary font-bold">remove</StyledSpan>
+    </button>
+  );
 }

@@ -74,7 +74,8 @@ const userRoutes = async (fastify) => {
     const user = await User.findOne({ username: req.params.username });
 
     const index = user.watchlist.map((w) => w.filmId).indexOf(req.body.filmId);
-    if (index > -1) return reply.status(400).send({ id: 'WATCHLIST_ERROR', msg: `'${req.body.title}' already in your watchlist.` });
+    if (index > -1)
+      return reply.status(400).send({ id: 'WATCHLIST_ERROR', msg: `'${req.body.title}' already in your watchlist.` });
 
     user.watchlist.push({ filmId: req.body.filmId });
     await user.save();
@@ -103,7 +104,9 @@ const userRoutes = async (fastify) => {
     const user = await User.findOne({ username: req.params.username });
     let index = user.seen.map((s) => s.filmId).indexOf(req.body.filmId);
 
-    index != -1 ? (user.seen[index].rating = req.body.rating) : user.seen.push({ filmId: req.body.filmId, rating: req.body.rating });
+    index != -1
+      ? (user.seen[index].rating = req.body.rating)
+      : user.seen.push({ filmId: req.body.filmId, rating: req.body.rating });
 
     // Delete from watchlist after rating
     index = user.watchlist.map((w) => w.filmId).indexOf(req.body.filmId);
@@ -111,7 +114,7 @@ const userRoutes = async (fastify) => {
 
     await user.save();
 
-    reply.sendStatus(200);
+    reply.status(204);
   });
 
   fastify.post('/:username/likes', { preValidation: auth }, async (req, reply) => {
@@ -125,7 +128,7 @@ const userRoutes = async (fastify) => {
 
     await user.save();
 
-    reply.sendStatus(200);
+    reply.status(204);
   });
 
   fastify.delete('/:username/likes', { preValidation: auth }, async (req, reply) => {
@@ -135,7 +138,8 @@ const userRoutes = async (fastify) => {
     const user = await User.findOne({ username: req.params.username });
 
     const likes = user.seen.filter((m) => m.like === true);
-    if (likes.length <= 4) return reply.status(405).send({ id: 'LIKE_ERROR', msg: 'You must have at least 4 liked movies.' });
+    if (likes.length <= 4)
+      return reply.status(405).send({ id: 'LIKE_ERROR', msg: 'You must have at least 4 liked movies.' });
 
     const index = user.seen.map((l) => l.filmId).indexOf(req.body.filmId);
     if (index == -1) return reply.status(400).send('Failed to delete. Film is already not liked.');
@@ -144,7 +148,7 @@ const userRoutes = async (fastify) => {
 
     await user.save();
 
-    reply.sendStatus(200);
+    reply.status(204);
   });
 
   fastify.post('/:username/seen', { preValidation: auth }, async (req, reply) => {
@@ -171,7 +175,8 @@ const userRoutes = async (fastify) => {
     const index = user.seen.map((s) => s.filmId).indexOf(req.body.filmId);
 
     const likes = user.seen.filter((m) => m.like === true);
-    if (likes.length <= 4 && user.seen[index].like === true) return reply.status(405).send({ id: 'LIKE_ERROR', msg: 'You must have at least 4 liked movies.' });
+    if (likes.length <= 4 && user.seen[index].like === true)
+      return reply.status(405).send({ id: 'LIKE_ERROR', msg: 'You must have at least 4 liked movies.' });
 
     if (index == -1) return reply.status(400).send('Failed to delete. Film is not in seen.');
     user.seen.splice(index, 1);
