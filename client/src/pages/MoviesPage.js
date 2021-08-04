@@ -20,6 +20,9 @@ import MovieList from '../components/MovieList';
 import Head from '../components/Head';
 import { PageContext } from '../App';
 import useColumns from '../hooks/useColumns';
+import useMovies from '../hooks/useMovies';
+
+const DEFAULT_COLUMNS = 5;
 
 export default function Movies() {
   const { action } = useHistory();
@@ -28,55 +31,58 @@ export default function Movies() {
   const dispatch = useDispatch();
 
   const defaultMoviesLoaded = useSelector(defaultLoaded);
-  const loadedMovies = useSelector(getMovies);
+  // const loadedMovies = useSelector(getMovies);
   const moviesLoading = useSelector(loading);
   const isAuthenticated = useSelector(getIsAuthenticated);
   const moviesError = useSelector(getMoviesError);
   const moviesHasMore = useSelector(hasMore);
 
-  useEffect(() => {
-    if (isAuthenticated === null) return;
-    if (action === 'POP' && movies.length !== 0) return;
-    if (movies.length !== 0) return;
+  const { data, isLoading } = useMovies();
+  if (!isLoading) console.log(data.data.results);
 
-    dispatch(start());
-    dispatch(clearMovies());
+  // useEffect(() => {
+  //   if (isAuthenticated === null) return;
+  //   if (action === 'POP' && movies.length !== 0) return;
+  //   if (movies.length !== 0) return;
 
-    isAuthenticated ? dispatch(loadMovies()) : dispatch(loadDefaultMovies());
-  }, [isAuthenticated]);
+  //   dispatch(start());
+  //   dispatch(clearMovies());
 
-  useEffect(() => {
-    if (isAuthenticated === true && defaultMoviesLoaded) {
-      setMovies([]);
-      return dispatch(loadMovies());
-    }
+  //   isAuthenticated ? dispatch(loadMovies()) : dispatch(loadDefaultMovies());
+  // }, [isAuthenticated]);
 
-    setMovies(loadedMovies);
-  }, [loadedMovies]);
+  // useEffect(() => {
+  //   if (isAuthenticated === true && defaultMoviesLoaded) {
+  //     setMovies([]);
+  //     return dispatch(loadMovies());
+  //   }
 
-  const columns = useColumns(5);
+  //   setMovies(data.results);
+  // }, [data]);
 
-  if (moviesError) {
-    return (
-      <motion.div exit={{ opacity: 0 }} transition={transitions.default}>
-        <Redirect to={`/favorite-films`} />
-      </motion.div>
-    );
-  }
+  const columns = useColumns(DEFAULT_COLUMNS);
 
-  dispatch(complete());
+  // if (moviesError) {
+  //   return (
+  //     <motion.div exit={{ opacity: 0 }} transition={transitions.default}>
+  //       <Redirect to={`/favorite-films`} />
+  //     </motion.div>
+  //   );
+  // }
+
+  // dispatch(complete());
 
   return (
     <>
       <Head bodyAttributes={movies.length === 0 ? 'overflow-y-hidden' : ''} />
       <PageContext.Provider value={{ page: 'movies', columns, showButtons: isAuthenticated }}>
-        <MovieList
+        {/* <MovieList
           movies={movies}
           length={movies.length}
           loadNext={() => (isAuthenticated ? dispatch(loadMovies()) : dispatch(loadDefaultMovies()))}
           loading={moviesLoading}
           hasMore={moviesHasMore}
-        />
+        /> */}
       </PageContext.Provider>
     </>
   );
