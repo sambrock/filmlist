@@ -9,6 +9,9 @@ import Head from '../components/Head';
 import MovieList from '../components/MovieList';
 import { PageContext } from '../App';
 import useColumns from '../hooks/useColumns';
+import useSeen from '../hooks/useSeen';
+
+const DEFAULT_COLUMNS = 6;
 
 export default function SeenPage({ match }) {
   const { action } = useHistory();
@@ -16,29 +19,31 @@ export default function SeenPage({ match }) {
 
   const dispatch = useDispatch();
 
-  const loadedMovies = useSelector(getSeen);
-  const seenLoading = useSelector(loading);
-
   const username = match.params.username;
   const isUserAuth = useIsUserAuth(username);
 
-  useEffect(() => {
-    if (action === 'POP' && movies.length !== 0) return;
+  // const loadedMovies = useSelector(getSeen);
+  const seenLoading = useSelector(loading);
 
-    dispatch(start());
-    dispatch(loadSeen(username, true));
-  }, []);
+  const { data, isLoading } = useSeen(username);
 
-  useEffect(() => {
-    setMovies(loadedMovies);
-    dispatch(complete());
-  }, [loadedMovies, dispatch]);
+  // useEffect(() => {
+  //   if (action === 'POP' && movies.length !== 0) return;
 
-  const handleLoadMore = () => {
-    if (!seenLoading) dispatch(loadSeen(username));
-  };
+  //   dispatch(start());
+  //   dispatch(loadSeen(username, true));
+  // }, []);
 
-  const columns = useColumns(6);
+  // useEffect(() => {
+  //   if (!isLoading) setMovies(data.data);
+  //   dispatch(complete());
+  // }, [isLoading, data, dispatch]);
+
+  // const handleLoadMore = () => {
+  //   if (!seenLoading) dispatch(loadSeen(username));
+  // };
+
+  const columns = useColumns(DEFAULT_COLUMNS);
 
   return (
     <>

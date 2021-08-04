@@ -11,7 +11,11 @@ const start = async () => {
 
   // Connect to MongoDB
   mongoose
-    .connect(process.env.DB_CONFIG, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect(process.env.DB_CONFIG, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      tlsAllowInvalidCertificates: true,
+    })
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.log('Error', err));
 
