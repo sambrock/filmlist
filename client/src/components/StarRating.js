@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Rating from '@material-ui/lab/Rating';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
 
-import { addMovieRating } from '../store/movie';
+import useRating from '../hooks/useRating';
 
 const StyledRatingsDiv = styled.div`
   color: ${(props) => props.color};
@@ -33,23 +32,16 @@ const StyledRatingsDiv = styled.div`
   }
 `;
 
-export default function StarRating({ filmId, defaultValue, readOnly, color }) {
-  const [rating, setRating] = useState(defaultValue);
-
-  const dispatch = useDispatch();
-
-  const handleRating = (rating) => {
-    setRating(rating);
-    dispatch(addMovieRating(filmId, rating));
-  };
+export default function StarRating({ movieId, defaultValue, readOnly, color }) {
+  const { mutate } = useRating();
 
   return (
     <StyledRatingsDiv readOnly={readOnly} onClick={(e) => e.stopPropagation()} color={color}>
       <Rating
-        defaultValue={rating}
+        defaultValue={defaultValue}
         precision={0.5}
         readOnly={readOnly || false}
-        onChange={(e, newValue) => handleRating(newValue)}
+        onChange={(e, newValue) => mutate({ movieId, rating: newValue })}
       />
     </StyledRatingsDiv>
   );

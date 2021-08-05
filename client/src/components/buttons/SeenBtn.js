@@ -1,23 +1,18 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { addMovieSeen, deleteMovieSeen } from '../../store/movie';
 
-export default function SeenBtn({ id, title, seen, setSeen, hide }) {
-  const dispatch = useDispatch();
+import useSeen from '../../hooks/useSeen';
 
-  const handleSeen = (e, inSeen) => {
-    e.preventDefault();
-    setSeen(inSeen);
-    inSeen ? dispatch(addMovieSeen(id, title)) : dispatch(deleteMovieSeen(id, title));
-  };
-
-  if (hide) return <div></div>;
+export default function SeenBtn({ movieId }) {
+  const { mutate } = useSeen();
 
   return (
     <button
       className="font-bold text-opacity-2 z-50"
       aria-label="add to watchlist"
-      onClick={(e) => handleSeen(e, true)}
+      onClick={(e) => {
+        e.preventDefault();
+        mutate({ method: 'POST', movieId });
+      }}
     >
       <span className="material-icons">check</span>
     </button>

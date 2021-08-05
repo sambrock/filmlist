@@ -31,10 +31,10 @@ const movieRoutes = async (fastify) => {
       if (req.user) {
         let user = await User.findOne({ username: req.user.username });
 
-        const index1 = user.watchlist.map((w) => w.filmId).indexOf(req.params.id);
+        const index1 = user.watchlist.map((w) => w.movieId).indexOf(req.params.id);
         if (index1 != -1) movie.watchlist = true;
 
-        const index2 = user.seen.map((s) => s.filmId).indexOf(req.params.id);
+        const index2 = user.seen.map((s) => s.movieId).indexOf(req.params.id);
         if (index2 != -1) {
           movie.rating = user.seen[index2].rating ? user.seen[index2].rating : 0;
           movie.like = user.seen[index2].like ? true : false;

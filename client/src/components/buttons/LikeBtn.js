@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { addMovieLike, deleteMovieLike } from '../../store/movie';
+import useLike from '../../hooks/useLike';
 
 const StyledSpan = styled.button`
   ${(props) => props.theme.mixins.buttonSize}
 `;
 
-export default function LikeBtn({ filmId, defaultLike, className }) {
+export default function LikeBtn({ movieId, defaultLike, className }) {
   const [like, setLike] = useState(defaultLike || false);
 
-  const dispatch = useDispatch();
+  const likeQuery = useLike();
 
   const handleClick = (e, val) => {
     e.preventDefault();
     setLike(val);
-    val ? dispatch(addMovieLike(filmId)) : dispatch(deleteMovieLike(filmId));
+    val ? likeQuery.mutate({ method: 'POST', movieId }) : likeQuery.mutate({ method: 'DELETE', movieId });
   };
 
   return !like ? (

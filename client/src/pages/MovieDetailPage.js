@@ -1,62 +1,35 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 import { transitions } from '../config';
-import { loadMovie, getMovieDetails, loading } from '../store/movie';
-import { start, complete } from '../store/loadingBar';
 import BackdropTemplate from './templates/BackdropTemplate';
 import { getIsAuthenticated } from '../store/auth';
 import MovieButtons from '../components/MovieButtons';
 import Head from '../components/Head';
 import CreditItem from '../components/CreditItem';
-import { clearErrors, getMovieError } from '../store/error';
-import Error from '../components/Error';
 import Footer from '../components/layout/Footer';
+import useMovie from '../hooks/useMovie';
 
 export default function MovieDetailPage({ match }) {
-  const loadedMovie = useSelector(getMovieDetails);
-  const [movie, setMovie] = useState(loadedMovie);
-  const [errorRecieved, setErrorRecieved] = useState(false);
+  const [movie, setMovie] = useState();
 
-  const dispatch = useDispatch();
-
-  const isLoading = useSelector(loading);
   const isAuthenticated = useSelector(getIsAuthenticated);
-  const movieError = useSelector(getMovieError);
 
   const movieId = parseInt(match.params.id);
+  const movieQuery = useMovie(movieId);
+
+  console.log(movieQuery);
 
   useEffect(() => {
-    if (!movieId) return;
-    dispatch(loadMovie(movieId));
-  }, [movieId, dispatch]);
+    if (!movieQuery.isLoading) setMovie(movieQuery.data.movie);
+  }, [movieQuery]);
 
-  useEffect(() => {
-    if (!loadedMovie) return;
-    setMovie(loadedMovie);
-  }, [loadedMovie]);
-
-  useEffect(() => {
-    if (!movieError) return;
-    setErrorRecieved(true);
-    dispatch(clearErrors());
-  }, [movieError]);
-
-  if (isLoading) dispatch(start());
-
-  if (errorRecieved || !movieId) {
-    dispatch(complete());
-    return <Error header="404" message="Movie not found" />;
-  }
-
-  if (!movie || movie.id !== movieId) return <div></div>;
-  dispatch(complete());
-  console.log(movie.vote_average);
+  if (movieQuery.isLoading || !movie) return <div></div>;
 
   return (
-    <Fragment>
+    <>
       <Head title={`${movie.title} (${movie.year})`} />
       <BackdropTemplate backdropPath={movie.backdrop_path}>
         <motion.div
@@ -89,7 +62,7 @@ export default function MovieDetailPage({ match }) {
           <motion.div variants={transitions.movieDetailsChildren} className="mb-6">
             {isAuthenticated ? (
               <MovieButtons
-                filmId={movie.id}
+                movieId={movie.id}
                 title={movie.title}
                 ui={{ watchlist: movie.watchlist, rating: movie.rating, like: movie.like }}
               />
@@ -136,6 +109,6 @@ export default function MovieDetailPage({ match }) {
           </div>
         </motion.div>
       </BackdropTemplate>
-    </Fragment>
+    </>
   );
 }

@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { addMovieWatchlist, deleteMovieWatchlist } from '../../store/movie';
+import useWatchlist from '../../hooks/useWatchlist';
 
 const StyledSpan = styled.button`
   ${(props) => props.theme.mixins.buttonSize}
 `;
 
-export default function WatchlistBtn({ filmId, defaultWatchlist }) {
+export default function WatchlistBtn({ movieId, defaultWatchlist }) {
   const [inWatchlist, setInWatchlist] = useState(defaultWatchlist || false);
 
-  const dispatch = useDispatch();
+  const watchlistMutation = useWatchlist();
 
   const handleClick = (val) => {
     setInWatchlist(val);
-    val ? dispatch(addMovieWatchlist(filmId)) : dispatch(deleteMovieWatchlist(filmId));
+    val ? watchlistMutation.mutate({ method: 'POST', movieId }) : watchlistMutation.mutate({ method: 'DELETE', movieId });
   };
 
   return !inWatchlist ? (

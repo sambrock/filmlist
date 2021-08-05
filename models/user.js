@@ -6,14 +6,14 @@ const bcrypt = require('bcryptjs');
 const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
 const watchlistSchema = new Schema({
-  filmId: {
+  movieId: {
     type: Number,
     required: true
   }
 });
 
 const seenSchema = new Schema({
-  filmId: {
+  movieId: {
     type: Number,
     required: true
   },
@@ -22,7 +22,7 @@ const seenSchema = new Schema({
 });
 
 const notInterestedSchema = new Schema({
-  filmId: {
+  movieId: {
     type: Number,
     required: true
   },

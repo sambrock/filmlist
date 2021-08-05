@@ -1,72 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
 import { motion } from 'framer-motion';
 
-import { loadWatchlist, getWatchlist, loading } from '../store/watchlist';
-import { start, complete } from '../store/loadingBar';
-import useIsUserAuth from '../hooks/useIsUserAuth';
-import MovieList from '../components/MovieList';
-import Head from '../components/Head';
-import useColumns from '../hooks/useColumns';
 import { PageContext } from '../App';
+import useIsUserAuth from '../hooks/useIsUserAuth';
+import useColumns from '../hooks/useColumns';
+import useWatchlistMovies from '../hooks/useWatchlistMovies';
+import Head from '../components/Head';
+import MovieList from '../components/MovieList';
+
+const DEFAULT_COLUMNS = 6;
 
 export default function WatchlistPage({ match }) {
-  const { action } = useHistory();
-  const [watchlistEmpty, setWatchlistEmpty] = useState();
-  const [mounted, setMounted] = useState(false);
+  const [movies, setMovies] = useState([]);
 
-  const loadedMovies = useSelector(getWatchlist);
-  const watchlistLoading = useSelector(loading);
-  const [movies, setMovies] = useState(action === 'POP' ? loadedMovies : []);
-
-  const dispatch = useDispatch();
+  const columns = useColumns(DEFAULT_COLUMNS);
 
   const username = match.params.username;
   const isUserAuth = useIsUserAuth(username);
 
-  useEffect(() => {
-    if (action === 'POP' && movies.length !== 0) return;
-
-    dispatch(start());
-    dispatch(loadWatchlist(username, true));
-    setMounted(true);
-  }, [username, action]);
+  const watchlistQuery = useWatchlistMovies(username);
 
   useEffect(() => {
-    console.log(loadedMovies);
-    setMovies(loadedMovies);
-    dispatch(complete());
-
-    setWatchlistEmpty(false);
-  }, [loadedMovies]);
-
-  useEffect(() => {
-    if (watchlistLoading || !mounted) return;
-    if (loadedMovies.length === 0) return setWatchlistEmpty(true);
-  }, [watchlistLoading]);
-
-  const columns = useColumns(6);
-
-  if (watchlistEmpty)
-    return (
-      <motion.div exit={{ opacity: 0 }} className="h-screen w-screen flex justify-center items-center">
-        <div className="font-semibold text-xxl text-opacity-1">No films in this watchlist... yet.</div>
-      </motion.div>
-    );
+    if (!watchlistQuery.isFetching) setMovies([...watchlistQuery.data.pages.map((m) => m.data.results).flat()]);
+  }, [watchlistQuery.isFetching, watchlistQuery.data]);
 
   return (
-    <>
+    <motion.div exit={{ opacity: 0 }}>
       <Head title={`${username}'s Watchlist`} bodyAttributes={movies.length === 0 ? 'overflow-y-hidden' : ''} />
       <PageContext.Provider value={{ page: 'watchlist', columns, showButtons: isUserAuth }}>
         <MovieList
           movies={movies}
           length={movies.length}
-          loadNext={() => dispatch(loadWatchlist(username))}
-          loading={watchlistLoading}
-          // hasMore={}
+          loadNext={watchlistQuery.fetchNextPage}
+          loading={watchlistQuery.isFetching}
+          hasMore={true}
         />
       </PageContext.Provider>
-    </>
+    </motion.div>
   );
 }

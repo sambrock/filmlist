@@ -6,11 +6,10 @@ import MovieItemButtons from './MovieItemButtons';
 import StarRating from './StarRating';
 import LikeBtn from './buttons/LikeBtn';
 
-export default function MovieItem({ movie, page, showButtons }) {
+export default function MovieItem({ movie }) {
   const [action, setAction] = useState(false);
   const [show, setShow] = useState();
   const [imgLoaded, setImgLoaded] = useState(false);
-  const [buttonsActive] = useState(showButtons);
   const [imgAnimated, setImgAnimated] = useState(false);
 
   const [posterAnimateStyles, posterAnimate] = useSpring(() => ({ opacity: 1, config: springConfig }));
@@ -115,15 +114,7 @@ export default function MovieItem({ movie, page, showButtons }) {
               onLoad={() => setImgLoaded(true)}
             />
           </div>
-          {buttonsActive && (
-            <MovieItemButtons
-              show={show}
-              page={page}
-              id={movie.id}
-              title={movie.title}
-              disable={action ? true : false}
-            />
-          )}
+          <MovieItemButtons show={show} movieId={movie.id} disable={action ? true : false} />
           <animated.div style={infoAnimateStyles} className="absolute bottom-6 left-6 right-6">
             <div className="font-bold text-xl">{movie.title}</div>
             <div className="flex justify-between items-center mt-1">

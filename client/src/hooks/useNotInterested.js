@@ -12,7 +12,7 @@ export default function useNotInterested() {
   const mutate = ({ method, movieId }) =>
     axios({
       method: method,
-      url: `/api/${user.username}/seen`,
+      url: `/api/${user.username}/not-interested`,
       headers: tokenConfig(token).headers,
       data: { movieId },
     });

@@ -4,7 +4,7 @@ import StarRating from './StarRating';
 
 export default function MovieInfo({ movie, page }) {
   return (
-    <div className="px-2">
+    <div className="px-2 md:px-0">
       <div className="block sm:hidden mt-2 mb-4">
         <div className="font-bold text-md whitespace-nowrap overflow-hidden overflow-ellipsis">{movie.title}</div>
         <div className="flex items-center mt-1">

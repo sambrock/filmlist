@@ -1,21 +1,34 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 
-import { deleteMovieSeen, deleteMovieWatchlist } from '../../store/movie';
+import { PageContext } from '../../App';
+import useWatchlist from '../../hooks/useWatchlist';
+import useSeen from '../../hooks/useSeen';
 
-export default function WatchlistRemoveBtn({ id, title, removeFrom }) {
-  const dispatch = useDispatch();
+const Button = ({ remove }) => (
+  <button className="font-bold text-opacity-2" aria-label="remove" onClick={(e) => {e.preventDefault(); remove()}}>
+    <span className="material-icons">clear</span>
+  </button>
+);
 
-  const handleClick = (e) => {
-    e.preventDefault();
+const RemoveWatchlist = ({ movieId }) => {
+  const { mutate } = useWatchlist();
 
-    if (removeFrom === 'watchlist') return dispatch(deleteMovieWatchlist(id, title));
-    if (removeFrom === 'seen') return dispatch(deleteMovieSeen(id, title));
-  }
+  return <Button remove={() => mutate({ method: 'DELETE', movieId })} />;
+};
 
+const RemoveSeen = ({ movieId }) => {
+  const { mutate } = useSeen();
+
+  return <Button remove={() => mutate({ method: 'DELETE', movieId })} />;
+};
+
+export default function RemoveBtn({ movieId }) {
   return (
-    <button className="font-bold text-opacity-2" aria-label="remove" onClick={(e) => handleClick(e)}>
-      <span className="material-icons">clear</span>
-    </button>
-  )
+    <PageContext.Consumer>
+      {({ page }) => {
+        if (page === 'watchlist') return <RemoveWatchlist movieId={movieId} />;
+        if (page === 'seen') return <RemoveSeen movieId={movieId} />;
+      }}
+    </PageContext.Consumer>
+  );
 }
