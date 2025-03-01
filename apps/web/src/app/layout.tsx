@@ -6,7 +6,6 @@ import { GlobalStoreProvider } from '@/providers/GlobalStoreProvider';
 import { Header } from '@/components/layout/header/Header';
 import { SideNav } from '@/components/sidenav/SideNav';
 import './globals.css';
-import { MainWrapper } from '@/components/layout/MainWrapper';
 
 export const metadata: Metadata = {
   title: 'filmlist',
@@ -30,9 +29,9 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           <div className="flex h-[calc(100vh-64px)] gap-2 px-2 pb-2">
             <SideNav className="w-90" />
 
-            <MainWrapper>
+            <div className="bg-bg-subtle @container/main w-full overflow-y-scroll rounded-lg">
               <main>{children}</main>
-            </MainWrapper>
+            </div>
           </div>
         </GlobalStoreProvider>
       </body>

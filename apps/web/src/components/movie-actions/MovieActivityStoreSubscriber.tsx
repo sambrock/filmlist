@@ -24,6 +24,9 @@ export const MovieActivityStoreSubscriber = () => {
           if (diff.path[0] === 'liked') {
             trpc.activity.likeMovie.mutate({ movieId: movie.movieId, userId: 1, liked: diff.value });
           }
+          if (diff.path[0] === 'rating') {
+            trpc.activity.rateMovie.mutate({ movieId: movie.movieId, userId: 1, rating: diff.value });
+          }
           if (diff.path[0] === 'watched') {
             trpc.activity.watchMovie.mutate({ movieId: movie.movieId, userId: 1, watched: diff.value });
           }

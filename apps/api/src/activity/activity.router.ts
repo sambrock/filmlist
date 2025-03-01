@@ -1,7 +1,7 @@
 import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
 
-import { getUserMovieActivity, likeMovie, watchMovie } from './activity.service';
+import { getUserMovieActivity, likeMovie, rateMovie, watchMovie } from './activity.service';
 
 const t = initTRPC.create();
 
@@ -29,5 +29,12 @@ export const router = t.router({
     .mutation(async (opts) => {
       const { movieId, userId, liked } = opts.input;
       return likeMovie(movieId, userId, liked);
+    }),
+
+  rateMovie: t.procedure
+    .input(z.object({ movieId: z.number(), userId: z.number(), rating: z.number() }))
+    .mutation(async (opts) => {
+      const { movieId, userId, rating } = opts.input;
+      return rateMovie(movieId, userId, rating);
     }),
 });

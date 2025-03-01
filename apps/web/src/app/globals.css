@@ -21,6 +21,10 @@
   --color-orange-subtle: oklch(69.59% 0.1814 50.51 / 70.59%);
   --color-orange-muted: oklch(69.59% 0.1814 50.51 / 50%);
 
+  --color-yellow-default: oklch(81.93% 0.1648 86.7);
+  --color-yellow-subtle: oklch(81.93% 0.1648 86.7 / 70.59%);
+  --color-yellow-muted: oklch(81.93% 0.1648 86.7 / 50%);
+
   --height-input-xs: 1.6rem;
   --height-input-sm: 2rem;
   --height-input-md: 2.5rem;
@@ -33,6 +37,9 @@
   --width-icon-md: 1.5rem;
   --width-icon-sm: 1.3rem;
 
+  --breakpoints-2xl: 100rem;
+  --breakpoints-3xl: 110rem;
+
   --spacing-margin: 2rem;
 }
 
@@ -40,30 +47,40 @@
   border: 1px red solid;
 }
 
-/* @keyframes scale-a-lil {
-  from {
-    scale: 0.5;
-  }
-}
-
-.img-test {
-  animation: scale-a-lil linear both;
-  animation-timeline: view();
-  animation-range: 25vh 75vh;
-} */
-
-@keyframes KF {
+@keyframes backdrop-scroll-kf {
   from {
     transform: translateY(0);
-    /* scale: 1; */
   }
   to {
-    transform: translateY(100%);
-    /* scale: 1.05; */
+    transform: translateY(30%);
   }
 }
 
-.backdrop {
-  animation: KF linear;
+.backdrop-scroll-animation {
+  animation: backdrop-scroll-kf linear;
   animation-timeline: scroll();
+  will-change: transform;
+}
+
+@keyframes poster-scroll-kf {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(30%);
+  }
+}
+
+.poster-scroll-animation {
+  animation: poster-scroll-kf linear;
+  animation-timeline: scroll();
+  will-change: transform;
+}
+
+.scroll-snap-parent {
+  scroll-snap-type: x mandatory;
+}
+
+.scroll-snap-child {
+  scroll-snap-align: start;
 }

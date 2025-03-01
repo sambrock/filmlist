@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 
-import { db, likes, watched } from '@filmlist/drizzle';
+import { db, likes, ratings, watched } from '@filmlist/drizzle';
 import { UserMovieActivity } from './activity.schema';
 
 export const getUserMovieActivity = async (movieId: number, userId: number) => {
@@ -41,4 +41,15 @@ export const likeMovie = async (movieId: number, userId: number, update: boolean
   } else {
     await db.delete(likes).where(and(eq(likes.movieId, movieId), eq(likes.userId, userId)));
   }
+};
+
+export const rateMovie = async (movieId: number, userId: number, rating: number) => {
+  await db
+    .insert(ratings)
+    .values({ movieId, userId, rating })
+    .onConflictDoUpdate({
+      target: [ratings.movieId, ratings.userId],
+      set: { rating },
+      targetWhere: and(eq(ratings.movieId, movieId), eq(ratings.userId, userId)),
+    });
 };
