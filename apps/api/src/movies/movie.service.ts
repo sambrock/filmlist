@@ -41,3 +41,25 @@ export const getMovie = async (movieId: number) => {
     genres: data.genres ? data.genres?.map((genre) => genre.name as string) : [],
   };
 };
+
+export const getMovieCast = async (movieId: number) => {
+  const { data } = await tmdb.client.GET('/3/movie/{movie_id}/credits', {
+    params: {
+      path: { movie_id: movieId },
+    },
+  });
+
+  if (!data) {
+    throw new Error('');
+  }
+  if (!data.cast) {
+    return [];
+  }
+
+  return data.cast.map((person) => ({
+    id: person.id as number,
+    character: person.character as string,
+    name: person.name as string,
+    profilePath: person.profile_path as string,
+  }));
+};

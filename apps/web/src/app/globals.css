@@ -56,11 +56,11 @@
   }
 }
 
-.backdrop-scroll-animation {
+/* .backdrop-scroll-animation {
   animation: backdrop-scroll-kf linear;
   animation-timeline: scroll();
   will-change: transform;
-}
+} */
 
 @keyframes poster-scroll-kf {
   from {
@@ -71,16 +71,19 @@
   }
 }
 
-.poster-scroll-animation {
+/* .poster-scroll-animation {
   animation: poster-scroll-kf linear;
   animation-timeline: scroll();
   will-change: transform;
+} */
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-.scroll-snap-parent {
-  scroll-snap-type: x mandatory;
-}
-
-.scroll-snap-child {
-  scroll-snap-align: start;
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }

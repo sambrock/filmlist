@@ -1,15 +1,18 @@
+import { Suspense } from 'react';
+
 import type { Movie, UserMovieActivity } from '@filmlist/api/app.types';
 import { cn } from '@/lib/utils/cn';
 import { runtimeMinutesToHours } from '@/lib/utils/runtime';
 import { MovieActivityStoreProvider } from '@/providers/MovieActivityStoreProvider';
 import { MovieProvider } from '@/providers/MovieProvider';
-import { DividerDot } from '../common/Divider';
-import { MovieActionLikeButton, MovieActionWatchButton } from '../movie-actions/MovieActions';
-import { MovieActivityStoreSubscriber } from '../movie-actions/MovieActivityStoreSubscriber';
-import { MovieActionsRating } from '../movie-actions/MoviesActionsRating';
-import { MovieBackdropImage } from '../movie/MovieBackdrop';
-import { MovieGenre } from '../movie/MovieGenre';
-import { MoviePoster } from '../movie/MoviePoster';
+import { DividerDot } from '../../common/Divider';
+import { MovieActionLikeButton, MovieActionWatchButton } from '../../movie-actions/MovieActions';
+import { MovieActivityStoreSubscriber } from '../../movie-actions/MovieActivityStoreSubscriber';
+import { MovieActionsRating } from '../../movie-actions/MoviesActionsRating';
+import { MovieBackdropImage } from '../../movie/MovieBackdrop';
+import { MovieGenre } from '../../movie/MovieGenre';
+import { MoviePoster } from '../../movie/MoviePoster';
+import { MovieViewCast } from './MovieViewCast';
 
 type MovieViewProps = {
   movie: Movie;
@@ -63,7 +66,7 @@ export const MovieView = ({ movie, initialActivity }: MovieViewProps) => {
           </MovieViewGrid>
         </div>
 
-        <div className="px-margin container mx-auto mt-4 debug">
+        <div className="px-margin container mx-auto mt-4">
           <MovieViewGrid className="gap-8">
             <div></div>
             <div>
@@ -79,28 +82,15 @@ export const MovieView = ({ movie, initialActivity }: MovieViewProps) => {
                 </div>
               )}
             </div>
-            <div className="debug"></div>
-            <div className="debug">
-              <h2 className="mx-auto mt-20 mb-4 px-8 text-2xl font-bold">Cast</h2>
-
-              <div className="relative debug overflow-x-scroll">
-                <div className="mb-[400px] w-full debug flex snap-x snap-mandatory scroll-p-[5rem] items-center gap-4 overflow-x-scroll">
-                  <div className="aspect-square w-[240px] shrink-0 snap-start rounded-md bg-white/10"></div>
-                  <div className="aspect-square w-[240px] shrink-0 snap-start rounded-md bg-white/10"></div>
-                  <div className="aspect-square w-[240px] shrink-0 snap-start rounded-md bg-white/10"></div>
-                  <div className="aspect-square w-[240px] shrink-0 snap-start rounded-md bg-white/10"></div>
-                  <div className="aspect-square w-[240px] shrink-0 snap-start rounded-md bg-white/10"></div>
-                  <div className="aspect-square w-[240px] shrink-0 snap-start rounded-md bg-white/10"></div>
-                  <div className="aspect-square w-[240px] shrink-0 snap-start rounded-md bg-white/10"></div>
-                  <div className="aspect-square w-[240px] shrink-0 snap-start rounded-md bg-white/10"></div>
-                  <div className="aspect-square w-[240px] shrink-0 snap-start rounded-md bg-white/10"></div>
-                  <div className="aspect-square w-[240px] shrink-0 snap-start rounded-md bg-white/10"></div>
-                </div>
-                <div className="from-bg-subtle absolute top-0 -left-[2px] z-10 h-full w-[4rem] bg-linear-to-r to-transparent"></div>
-                <div className="from-bg-subtle absolute top-0 -right-[2px] z-10 h-full w-[4rem] bg-linear-to-l to-transparent"></div>
-              </div>
-            </div>
+            <div className=""></div>
           </MovieViewGrid>
+        </div>
+
+        <div className="container mx-auto mb-[300px] px-8 pt-16">
+          <h2 className="text-text-subtle mb-4 text-xl font-bold">Cast</h2>
+          <Suspense>
+            <MovieViewCast movieId={movie.movieId} />
+          </Suspense>
         </div>
 
         <MovieActivityStoreSubscriber />

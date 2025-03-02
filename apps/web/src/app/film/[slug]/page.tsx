@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { trpc } from '@/lib/trpc';
-import { MovieView } from '@/components/views/MovieView';
+import { MovieView } from '@/components/views/MovieView/MovieView';
 
 type Props = {
   params: Promise<{

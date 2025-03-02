@@ -82,7 +82,7 @@ const MovieActionButton = ({ icon, text, className, ...props }: MovieActionButto
   return (
     <button
       className={cn(
-        'h-10 w-10 flex rounded-full cursor-pointer items-center justify-center gap-2',
+        'h-10 w-10 shrink-0 flex rounded-full cursor-pointer items-center justify-center gap-2',
         className
       )}
       {...props}
