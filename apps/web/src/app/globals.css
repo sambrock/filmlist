@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 
 @theme {
+  /* Colors */
+
   --color-bg-default: oklch(19.13% 0 0);
   --color-bg-subtle: oklch(20.9% 0 0);
   --color-bg-muted: oklch(24.68% 0 0);
@@ -25,22 +27,23 @@
   --color-yellow-subtle: oklch(81.93% 0.1648 86.7 / 70.59%);
   --color-yellow-muted: oklch(81.93% 0.1648 86.7 / 50%);
 
+  /* Sizes */
+
   --height-input-xs: 1.6rem;
   --height-input-sm: 2rem;
   --height-input-md: 2.5rem;
   --height-input-lg: 3rem;
 
-  --height-icon-lg: 1.8rem;
+  --size-icon: 1.5rem;
+
+  --max-width-container: 88rem;
+
+  /* --height-icon-lg: 1.8rem;
   --height-icon-md: 1.5rem;
   --height-icon-sm: 1.3rem;
   --width-icon-lg: 1.8rem;
   --width-icon-md: 1.5rem;
-  --width-icon-sm: 1.3rem;
-
-  --breakpoints-2xl: 100rem;
-  --breakpoints-3xl: 110rem;
-
-  --spacing-margin: 2rem;
+  --width-icon-sm: 1.3rem; */
 }
 
 .debug {
@@ -56,11 +59,11 @@
   }
 }
 
-/* .backdrop-scroll-animation {
+.animate-backdrop-scroll {
   animation: backdrop-scroll-kf linear;
   animation-timeline: scroll();
   will-change: transform;
-} */
+}
 
 @keyframes poster-scroll-kf {
   from {

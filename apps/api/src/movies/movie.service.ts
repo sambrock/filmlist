@@ -63,3 +63,36 @@ export const getMovieCast = async (movieId: number) => {
     profilePath: person.profile_path as string,
   }));
 };
+
+export const getMovieWatchProviders = async (movieId: number) => {
+  const { data } = await tmdb.client.GET('/3/movie/{movie_id}/watch/providers', {
+    params: {
+      path: { movie_id: movieId },
+    },
+  });
+
+  if (!data) {
+    throw new Error('');
+  }
+  if (!data.results) {
+    return [];
+  }
+
+  const results = data.results['GB'];
+
+  const providers = [
+    ...(results?.buy?.map((p) => ({ ...p, type: 'Buy' })) || []),
+    ...(results?.rent?.map((p) => ({ ...p, type: 'Rent' })) || []),
+    ...(results?.flatrate?.map((p) => ({ ...p, type: 'Stream' })) || []),
+  ].sort((a, b) => (a.display_priority > b.display_priority ? 1 : -1));
+  const uniqueProviderIds = [...new Set(providers.map((provider) => provider.provider_id))];
+
+  return uniqueProviderIds.map((providerId) => ({
+    providerId,
+    providerName: providers.find((provider) => provider.provider_id === providerId)?.provider_name as string,
+    logoPath: providers.find((provider) => provider.provider_id === providerId)?.logo_path as string,
+    options: providers
+      .filter((provider) => provider.provider_id === providerId)
+      .map((provider) => provider.type),
+  }));
+};

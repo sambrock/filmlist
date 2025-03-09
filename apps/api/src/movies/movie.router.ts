@@ -1,7 +1,7 @@
 import { initTRPC } from '@trpc/server';
 import { z } from 'zod';
 
-import { getMovie, getMovieCast } from './movie.service';
+import { getMovie, getMovieCast, getMovieWatchProviders } from './movie.service';
 
 const t = initTRPC.create();
 
@@ -16,5 +16,10 @@ export const router = t.router({
   getMovieCast: t.procedure.input(z.object({ movieId: z.number() })).query(async (opts) => {
     const { movieId } = opts.input;
     return getMovieCast(movieId);
+  }),
+
+  getMovieWatchProviders: t.procedure.input(z.object({ movieId: z.number() })).query(async (opts) => {
+    const { movieId } = opts.input;
+    return getMovieWatchProviders(movieId);
   }),
 });

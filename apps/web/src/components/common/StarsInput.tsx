@@ -55,7 +55,7 @@ export const StarsInput = ({ initialRating, onRatingChange }: StarsInputProps) =
         }}
       >
         {[...Array(STAR_COUNT).keys()].map((i) => (
-          <Star key={i} className="fill-green-default" />
+          <Star key={i} className="fill-green-default stroke-green-default" />
         ))}
       </div>
     </div>
@@ -65,10 +65,10 @@ export const StarsInput = ({ initialRating, onRatingChange }: StarsInputProps) =
 const Star = ({ className, ...props }: LucideProps) => {
   return (
     <Icon
-      className={cn('size-[2.2rem] stroke-transparent', className)}
+      className={cn('size-[2rem]', className)}
       {...props}
       name="star"
-      strokeWidth={3}
+      strokeWidth={0}
     />
   );
 };

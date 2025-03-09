@@ -1,5 +1,4 @@
-import { type Movie } from '@filmlist/api/app.schemas';
-
+import { type Movie } from '@filmlist/api/app.types';
 import { cn } from '@/lib/utils/cn';
 
 type MovieGenresProps = React.ComponentProps<'div'> & {

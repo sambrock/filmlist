@@ -29,7 +29,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           <div className="flex h-[calc(100vh-64px)] gap-2 px-2 pb-2">
             <SideNav className="w-90" />
 
-            <div className="bg-bg-subtle @container/main w-full overflow-y-scroll rounded-lg">
+            <div className="bg-bg-subtle @container/main w-full overflow-y-scroll rounded-lg px-8">
               <main>{children}</main>
             </div>
           </div>
