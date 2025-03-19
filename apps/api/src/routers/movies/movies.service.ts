@@ -1,6 +1,14 @@
-import { tmdb, type TMDBOperations } from '@filmlist/tmdb';
+import { tmdb, TMDBOperations } from '@filmlist/tmdb';
+import { Context } from '@/routers/trpc';
+import {
+  GetMovieCastInput,
+  GetMovieInput,
+  GetMovieOutput,
+  GetMovieWatchProvidersInput,
+  GetMovieWatchProvidersOutput,
+} from './movies.schema';
 
-export const getMovie = async (movieId: number) => {
+export const getMovie = async ({ movieId }: GetMovieInput, ctx: Context): Promise<GetMovieOutput> => {
   const { data } = await tmdb.client.GET('/3/movie/{movie_id}', {
     params: {
       path: { movie_id: movieId },
@@ -42,7 +50,7 @@ export const getMovie = async (movieId: number) => {
   };
 };
 
-export const getMovieCast = async (movieId: number) => {
+export const getMovieCast = async ({ movieId }: GetMovieCastInput, ctx: Context) => {
   const { data } = await tmdb.client.GET('/3/movie/{movie_id}/credits', {
     params: {
       path: { movie_id: movieId },
@@ -64,7 +72,10 @@ export const getMovieCast = async (movieId: number) => {
   }));
 };
 
-export const getMovieWatchProviders = async (movieId: number) => {
+export const getMovieWatchProviders = async (
+  { movieId }: GetMovieWatchProvidersInput,
+  ctx: Context
+): Promise<GetMovieWatchProvidersOutput[]> => {
   const { data } = await tmdb.client.GET('/3/movie/{movie_id}/watch/providers', {
     params: {
       path: { movie_id: movieId },
@@ -93,6 +104,6 @@ export const getMovieWatchProviders = async (movieId: number) => {
     logoPath: providers.find((provider) => provider.provider_id === providerId)?.logo_path as string,
     options: providers
       .filter((provider) => provider.provider_id === providerId)
-      .map((provider) => provider.type),
+      .map((provider) => provider.type) as GetMovieWatchProvidersOutput['options'],
   }));
 };

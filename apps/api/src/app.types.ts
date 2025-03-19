@@ -1,2 +1,2 @@
-export type * from './movies/movie.schema';
-export type * from './activity/activity.schema';
+export type * from './routers/movies/movies.schema';
+export { type AppRouter } from './routers/app.router';

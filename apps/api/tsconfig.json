@@ -1,14 +1,17 @@
 {
   "extends": "@filmlist/tsconfig/base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
+    "composite": true,
+    "target": "ES2017",
     "skipLibCheck": true,
+    "downlevelIteration": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "strict": true,
-    "outDir": "dist",
-    "rootDir": "src"
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
