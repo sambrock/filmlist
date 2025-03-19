@@ -22,21 +22,21 @@ export const MovieActivityStoreSubscriber = () => {
       diffArr.forEach((diff) => {
         if (diff.type === 'CHANGE') {
           if (diff.path[0] === 'liked') {
-            trpc.activity.likeMovie.mutate({ movieId: movie.movieId, userId: 1, liked: diff.value });
+            trpc.likeMovie.mutate({ movieId: movie.movieId, liked: diff.value });
           }
           if (diff.path[0] === 'rating') {
-            trpc.activity.rateMovie.mutate({ movieId: movie.movieId, userId: 1, rating: diff.value });
+            trpc.rateMovie.mutate({ movieId: movie.movieId, rating: diff.value });
           }
           if (diff.path[0] === 'watched') {
-            trpc.activity.watchMovie.mutate({ movieId: movie.movieId, userId: 1, watched: diff.value });
+            trpc.watchMovie.mutate({ movieId: movie.movieId, watched: diff.value });
           }
-          if (diff.path[0] === 'watchlist') {
-            if (diff.value) {
-              trpc.watchlist.addToWatchlist.mutate({ movieId: movie.movieId, userId: 1 });
-            } else {
-              trpc.watchlist.removeFromWatchlist.mutate({ movieId: movie.movieId, userId: 1 });
-            }
-          }
+          // if (diff.path[0] === 'watchlist') {
+          //   if (diff.value) {
+          //     trpc.addToWatchlist.mutate({ movieId: movie.movieId, userId: 1 });
+          //   } else {
+          //     trpc.removeFromWatchlist.mutate({ movieId: movie.movieId, userId: 1 });
+          //   }
+          // }
         }
       });
     });

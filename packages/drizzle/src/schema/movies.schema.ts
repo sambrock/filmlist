@@ -1,23 +1,27 @@
-import { relations } from 'drizzle-orm';
-import { integer, pgTable, varchar, date, timestamp } from 'drizzle-orm/pg-core';
+import { relations, sql } from 'drizzle-orm';
+import { integer, text, sqliteTable } from 'drizzle-orm/sqlite-core';
 
 import { likes } from './likes.schema';
 import { ratings } from './ratings.schema';
 import { watched } from './watched.schema';
 
-export const movies = pgTable('movies', {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+export const movies = sqliteTable('movies', {
+  id: integer().primaryKey(),
   tmdbId: integer().notNull().unique(),
-  title: varchar({ length: 255 }).notNull(),
-  backdropPath: varchar({ length: 255 }).notNull(),
-  posterPath: varchar({ length: 255 }).notNull(),
-  overview: varchar({ length: 255 }).notNull(),
-  releaseDate: date().notNull(),
-  createdAt: timestamp().notNull().defaultNow(),
-  updatedAt: timestamp()
+  title: text().notNull(),
+  backdropPath: text().notNull(),
+  posterPath: text().notNull(),
+  overview: text().notNull(),
+  releaseDate: text()
     .notNull()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
+    .default(sql`(CURRENT_DATE)`),
+  createdAt: text()
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+  updatedAt: text()
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 });
 
 export const moviesRelations = relations(movies, ({ many }) => ({

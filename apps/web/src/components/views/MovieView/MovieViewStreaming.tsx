@@ -9,7 +9,7 @@ type MovieViewCastProps = {
 };
 
 export const MovieViewStreaming = async ({ movieId, title }: MovieViewCastProps) => {
-  const providers = await trpc.movies.getMovieWatchProviders.query({ movieId });
+  const providers = await trpc.getMovieWatchProviders.query({ movieId });
 
   return (
     <div className="relative">

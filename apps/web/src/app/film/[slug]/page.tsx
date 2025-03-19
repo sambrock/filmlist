@@ -18,8 +18,8 @@ export default async function MoviePage(props: Props) {
   }
 
   const [movie, initialActivity] = await Promise.all([
-    trpc.movies.getMovie.query({ movieId }),
-    trpc.activity.getUserMovieActivity.query({ movieId, userId: 1 }),
+    trpc.getMovie.query({ movieId }),
+    trpc.getUserMovieActivity.query({ movieId }),
   ]);
 
   return <MovieView movie={movie} initialActivity={initialActivity} />;

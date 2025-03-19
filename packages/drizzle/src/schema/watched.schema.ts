@@ -1,14 +1,16 @@
-import { relations } from 'drizzle-orm';
-import { integer, pgTable, timestamp } from 'drizzle-orm/pg-core';
+import { relations, sql } from 'drizzle-orm';
+import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 import { movies } from './movies.schema';
 import { users } from './users.schema';
 
-export const watched = pgTable('watched', {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+export const watched = sqliteTable('watched', {
+  id: integer().primaryKey(),
   userId: integer().notNull(),
   movieId: integer().notNull(),
-  createdAt: timestamp().notNull().defaultNow(),
+  createdAt: text()
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
 });
 
 export const watchedRelations = relations(watched, ({ one }) => ({

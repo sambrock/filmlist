@@ -1,17 +1,19 @@
-import { relations } from 'drizzle-orm';
-import { integer, pgTable, timestamp, unique } from 'drizzle-orm/pg-core';
+import { relations, sql } from 'drizzle-orm';
+import { integer, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core';
 
 import { movies } from './movies.schema';
 import { users } from './users.schema';
 
-export const ratings = pgTable(
+export const ratings = sqliteTable(
   'ratings',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: integer().primaryKey(),
     userId: integer().notNull(),
     movieId: integer().notNull(),
     rating: integer().notNull(),
-    createdAt: timestamp().notNull().defaultNow(),
+    createdAt: text()
+      .notNull()
+      .default(sql`(CURRENT_TIMESTAMP)`),
   },
   (t) => [unique().on(t.userId, t.movieId)]
 );
