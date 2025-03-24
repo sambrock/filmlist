@@ -2,9 +2,6 @@
   "name": "@filmlist/api",
   "version": "0.0.1",
   "private": true,
-  "exports": {
-    "./app": "./src/app.ts"
-  },
   "types": "./src/app.types.ts",
   "scripts": {
     "dev": "wrangler dev",

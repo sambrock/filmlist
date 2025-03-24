@@ -22,6 +22,7 @@ module.exports = {
     '^@/app.*$',
     '^@/lib.*$',
     '^@/store.*$',
+    '^@/routers.*$',
     '^@/providers.*$',
     '^@/hooks.*$',
     '^@/components.*$',

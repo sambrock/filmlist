@@ -7,9 +7,9 @@ import { users } from './schema/users.schema';
 import { watched } from './schema/watched.schema';
 import { watchlist } from './schema/watchlist.schema';
 
-export type Database = ReturnType<typeof initDatabase>;
+export type DrizzleDatabase = ReturnType<typeof initDrizzleDatabase>;
 
-export const initDatabase = (binding: {}) => {
+export const initDrizzleDatabase = (binding: {}) => {
   return drizzle(binding, {
     schema: {
       likes,

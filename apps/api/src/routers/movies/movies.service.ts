@@ -1,5 +1,5 @@
 import { tmdb, TMDBOperations } from '@filmlist/tmdb';
-import { Context } from '@/routers/trpc';
+import { Context } from '@/lib/trpc';
 import {
   GetMovieCastInput,
   GetMovieInput,

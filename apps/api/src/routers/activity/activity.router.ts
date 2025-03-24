@@ -1,5 +1,4 @@
-import { authedProcedure, router } from '@/routers/trpc';
-
+import { authedProcedure, router } from '@/lib/trpc';
 import {
   getUserMovieActivityInput,
   likeMovieInput,

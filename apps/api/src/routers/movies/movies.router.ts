@@ -1,4 +1,4 @@
-import { procedure, router } from '@/routers/trpc';
+import { procedure, router } from '@/lib/trpc';
 import { getMovieCastInput, getMovieInput, getMovieWatchProvidersInput } from './movies.schema';
 import { getMovie, getMovieCast, getMovieWatchProviders } from './movies.service';
 

@@ -1,14 +1,13 @@
-import { Context } from '@/routers/trpc';
 import { and, eq } from 'drizzle-orm';
 
 import { likes, ratings, watched } from '@filmlist/drizzle';
+import { Context } from '@/lib/trpc';
 import {
   GetUserMovieActivityInput,
   LikeMovieInput,
   RateMovieInput,
   WatchMovieInput,
 } from './activity.schema';
-
 
 export const getUserMovieActivity = async (input: GetUserMovieActivityInput, ctx: Context) => {
   const { movieId } = input;
