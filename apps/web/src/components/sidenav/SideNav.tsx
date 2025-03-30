@@ -5,7 +5,7 @@ import { SideNavListItemLiked, SideNavListItemSeen, SideNavListItemWatchlist } f
 
 export const SideNav = ({ className, ...props }: React.ComponentProps<'aside'>) => {
   return (
-    <aside className={cn('bg-bg-subtle h-full rounded-lg p-2', className)} {...props}>
+    <aside className={cn('bg-[#121212] h-full rounded-lg p-2', className)} {...props}>
       <SideNavHeader />
 
       <nav className="my-2">

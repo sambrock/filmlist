@@ -22,8 +22,6 @@ export default async function MoviePage(props: Props) {
     trpc.getUserMovieActivity.query({ movieId }),
   ]);
 
-  console.log('MOVIE', movie);
-
   return <MovieView movie={movie} initialActivity={initialActivity} />;
 }
 

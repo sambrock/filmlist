@@ -8,7 +8,7 @@ export const Input = forwardRef<HTMLInputElement, React.ComponentProps<'input'>>
       <input
         type={type}
         className={cn(
-          'h-input-sm placeholder:text-secondary rounded-md px-3 text-sm focus:outline-none',
+          'h-input-sm placeholder:text-neutral-500 rounded-md px-3 text-sm focus:outline-none',
           className
         )}
         ref={ref}

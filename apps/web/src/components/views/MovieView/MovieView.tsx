@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import type { Movie, UserMovieActivity } from '@filmlist/api/app.types';
+import type { Movie } from '@filmlist/api';
 import { runtimeMinutesToHours } from '@/lib/utils/runtime';
 import { MovieActivityStoreProvider } from '@/providers/MovieActivityStoreProvider';
 import { MovieProvider } from '@/providers/MovieProvider';
@@ -30,7 +30,7 @@ export const MovieView = ({ movie, initialActivity }: MovieViewProps) => {
             backdropPath={movie.backdropPath}
           />
         </div>
-        <div className="from-bg-subtle absolute -right-8 -bottom-[2px] -left-8 h-full bg-linear-to-t to-transparent" />
+        <div className="absolute -right-8 -bottom-[2px] -left-8 h-full bg-linear-to-t from-[#121212] to-transparent" />
 
         <div className="px-margin max-w-container absolute bottom-0 left-1/2 mb-6 grid w-full -translate-x-1/2 grid-cols-[minmax(240px,240px)_5fr] gap-8">
           <MoviePoster
@@ -42,10 +42,10 @@ export const MovieView = ({ movie, initialActivity }: MovieViewProps) => {
             <div className="wrap flex items-baseline">
               <h1 className="text-5xl leading-10 font-black antialiased drop-shadow-md">{movie.title}</h1>
 
-              <div className="text-text-default/60 ml-4 text-base font-medium">
+              <div className="ml-4 text-base font-medium text-neutral-100/70">
                 <span>{new Date(movie.releaseDate).getFullYear()}</span>
                 <span className="ml-2">
-                  <span className="text-text-default/40 font-normal">Directed by</span>{' '}
+                  <span className="font-normal text-neutral-100/50">Directed by</span>{' '}
                   <span className="">{movie.directors.join(', ')}</span>
                 </span>
               </div>
@@ -66,10 +66,10 @@ export const MovieView = ({ movie, initialActivity }: MovieViewProps) => {
 
       <div className="max-w-container mx-auto mt-4 grid w-full grid-cols-[minmax(240px,240px)_5fr] gap-8">
         <div className="col-start-2">
-          <p className="text-text-muted">{movie.overview}</p>
+          <p className="text-neutral-400">{movie.overview}</p>
 
           {movie.genres && (
-            <div className="text-text-muted mt-6 flex items-center gap-2">
+            <div className="mt-6 flex items-center gap-2 text-neutral-400">
               {movie.genres.map((genre) => (
                 <MovieGenre key={genre} genre={genre} />
               ))}
@@ -81,14 +81,14 @@ export const MovieView = ({ movie, initialActivity }: MovieViewProps) => {
       </div>
 
       <div className="max-w-container mx-auto mb-8 w-full pt-16">
-        <h2 className="text-text-subtle mb-4 text-xl font-bold">Cast</h2>
+        <h2 className="mb-4 text-xl font-bold text-neutral-200">Cast</h2>
         <Suspense fallback={<div>Loading...</div>}>
           <MovieViewCast movieId={movie.movieId} />
         </Suspense>
       </div>
 
       <div className="max-w-container mx-auto mb-[300px] w-full pt-16">
-        <h2 className="text-text-subtle mb-4 text-xl font-bold">Watch</h2>
+        <h2 className="mb-4 text-xl font-bold text-neutral-200">Watch</h2>
         <Suspense fallback={<div>Loading...</div>}>
           <MovieViewStreaming movieId={movie.movieId} title={movie.title} />
         </Suspense>

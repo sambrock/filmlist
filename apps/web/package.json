@@ -14,6 +14,7 @@
     "@filmlist/lib": "*",
     "@radix-ui/react-dialog": "^1.1.4",
     "@radix-ui/react-slot": "^1.1.1",
+    "@tanstack/react-query": "^5.69.0",
     "@trpc/client": "^10.45.2",
     "class-variance-authority": "^0.7.1",
     "immer": "^10.1.1",
