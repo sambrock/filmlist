@@ -3,6 +3,9 @@
 @theme {
   /* Colors */
 
+  --color-bg-default: #111112;
+  --color-bg-subtle: #1b1b1c;
+
   --color-green-default: oklch(85.28% 0.2261 142.76);
   --color-green-subtle: oklch(85.28% 0.2261 142.76 / 70.59%);
   --color-green-muted: oklch(85.28% 0.2261 142.76 / 50%);

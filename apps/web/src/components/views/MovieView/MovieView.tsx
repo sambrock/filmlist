@@ -30,7 +30,7 @@ export const MovieView = ({ movie, initialActivity }: MovieViewProps) => {
             backdropPath={movie.backdropPath}
           />
         </div>
-        <div className="absolute -right-8 -bottom-[2px] -left-8 h-full bg-linear-to-t from-[#121212] to-transparent" />
+        <div className="absolute -right-8 -bottom-[2px] -left-8 h-full bg-linear-to-t from-bg-subtle to-transparent" />
 
         <div className="px-margin max-w-container absolute bottom-0 left-1/2 mb-6 grid w-full -translate-x-1/2 grid-cols-[minmax(240px,240px)_5fr] gap-8">
           <MoviePoster
