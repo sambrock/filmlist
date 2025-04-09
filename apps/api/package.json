@@ -6,12 +6,11 @@
   "scripts": {
     "dev": "wrangler dev",
     "test": "vitest --run",
-    "db:setup:local": "wrangler d1 execute prod-d1-filmlist --local --file=../../packages/drizzle/drizzle/schema.sql"
+    "db:setup": "wrangler d1 execute prod-d1-filmlist --local --file=../../packages/drizzle/drizzle/schema.sql"
   },
   "license": "MIT",
   "dependencies": {
     "@filmlist/drizzle": "*",
-    "@filmlist/lib": "*",
     "@filmlist/tmdb": "*",
     "@hono/trpc-server": "^0.3.4",
     "@trpc/client": "^10.45.2",

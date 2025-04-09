@@ -1,9 +1,7 @@
 import { relations, sql } from 'drizzle-orm';
 import { integer, text, sqliteTable } from 'drizzle-orm/sqlite-core';
 
-import { likes } from './likes.schema';
-import { ratings } from './ratings.schema';
-import { watched } from './watched.schema';
+import { listMovies } from './list-movies.schema';
 
 export const movies = sqliteTable('movies', {
   id: integer().primaryKey(),
@@ -25,7 +23,5 @@ export const movies = sqliteTable('movies', {
 });
 
 export const moviesRelations = relations(movies, ({ many }) => ({
-  likes: many(likes),
-  ratings: many(ratings),
-  watched: many(watched),
+  listMovies: many(listMovies),
 }));

@@ -11,13 +11,10 @@
   },
   "dependencies": {
     "dotenv": "^16.4.7",
-    "drizzle-orm": "^0.39.3",
-    "pg": "^8.13.3"
+    "drizzle-orm": "^0.39.3"
   },
   "devDependencies": {
     "@filmlist/tsconfig": "*",
-    "@types/pg": "^8.11.11",
-    "drizzle-kit": "^0.30.4",
-    "tsx": "^4.19.2"
+    "drizzle-kit": "^0.30.4"
   }
 }

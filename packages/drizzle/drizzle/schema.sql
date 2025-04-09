@@ -1,50 +1,36 @@
-CREATE TABLE `likes` (
-	`id` integer PRIMARY KEY NOT NULL,
-	`userId` integer NOT NULL,
-	`movieId` integer NOT NULL,
-	`createdAt` text DEFAULT (CURRENT_TIMESTAMP) NOT NULL
+CREATE TABLE `LIST-MOVIES` (
+	`LISTID` INTEGER,
+	`MOVIEID` INTEGER,
+	`ORDER` INTEGER NOT NULL,
+	`CREATEDAT` TEXT DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
+	FOREIGN KEY (`LISTID`) REFERENCES `LISTS`(`ID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	FOREIGN KEY (`MOVIEID`) REFERENCES `MOVIES`(`ID`) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
+
 --> statement-breakpoint
-CREATE TABLE `movies` (
-	`id` integer PRIMARY KEY NOT NULL,
-	`tmdbId` integer NOT NULL,
-	`title` text NOT NULL,
-	`backdropPath` text NOT NULL,
-	`posterPath` text NOT NULL,
-	`overview` text NOT NULL,
-	`releaseDate` text DEFAULT (CURRENT_DATE) NOT NULL,
-	`createdAt` text DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
-	`updatedAt` text DEFAULT (CURRENT_TIMESTAMP) NOT NULL
+CREATE TABLE `LISTS` (
+	`ID` INTEGER PRIMARY KEY NOT NULL,
+	`PUBLICID` TEXT(12),
+	`TITLE` TEXT,
+	`CREATEDAT` TEXT DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
+	`UPDATEDAT` TEXT DEFAULT (CURRENT_TIMESTAMP) NOT NULL
 );
+
 --> statement-breakpoint
-CREATE UNIQUE INDEX `movies_tmdbId_unique` ON `movies` (`tmdbId`);--> statement-breakpoint
-CREATE TABLE `ratings` (
-	`id` integer PRIMARY KEY NOT NULL,
-	`userId` integer NOT NULL,
-	`movieId` integer NOT NULL,
-	`rating` integer NOT NULL,
-	`createdAt` text DEFAULT (CURRENT_TIMESTAMP) NOT NULL
-);
+CREATE UNIQUE INDEX `LISTS_PUBLICID_UNIQUE` ON `LISTS` (`PUBLICID`);
+
 --> statement-breakpoint
-CREATE UNIQUE INDEX `ratings_userId_movieId_unique` ON `ratings` (`userId`,`movieId`);--> statement-breakpoint
-CREATE TABLE `users` (
-	`id` integer PRIMARY KEY NOT NULL,
-	`email` text NOT NULL,
-	`username` text NOT NULL,
-	`password` text NOT NULL
+CREATE TABLE `MOVIES` (
+	`ID` INTEGER PRIMARY KEY NOT NULL,
+	`TMDBID` INTEGER NOT NULL,
+	`TITLE` TEXT NOT NULL,
+	`BACKDROPPATH` TEXT NOT NULL,
+	`POSTERPATH` TEXT NOT NULL,
+	`OVERVIEW` TEXT NOT NULL,
+	`RELEASEDATE` TEXT DEFAULT (CURRENT_DATE) NOT NULL,
+	`CREATEDAT` TEXT DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
+	`UPDATEDAT` TEXT DEFAULT (CURRENT_TIMESTAMP) NOT NULL
 );
+
 --> statement-breakpoint
-CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);--> statement-breakpoint
-CREATE TABLE `watched` (
-	`id` integer PRIMARY KEY NOT NULL,
-	`userId` integer NOT NULL,
-	`movieId` integer NOT NULL,
-	`createdAt` text DEFAULT (CURRENT_TIMESTAMP) NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE `watchlist` (
-	`id` integer PRIMARY KEY NOT NULL,
-	`userId` integer NOT NULL,
-	`movieId` integer NOT NULL,
-	`createdAt` text DEFAULT (CURRENT_TIMESTAMP) NOT NULL
-);
+CREATE UNIQUE INDEX `MOVIES_TMDBID_UNIQUE` ON `MOVIES` (`TMDBID`);
