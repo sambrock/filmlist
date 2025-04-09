@@ -1,7 +1,7 @@
-import { mergeRouters } from '@/lib/trpc';
-import { activityRouter } from '@/routers/activity/activity.router';
-import { movieRouter } from '@/routers/movies/movies.router';
+import { mergeRouters } from './lib/trpc';
+import { listRouter } from './lists/lists.router';
+import { movieRouter } from './movies/movies.router';
 
-export const appRouter = mergeRouters(activityRouter, movieRouter);
+export const appRouter = mergeRouters(listRouter, movieRouter);
 
 export type AppRouter = typeof appRouter;

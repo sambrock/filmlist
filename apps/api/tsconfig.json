@@ -2,16 +2,11 @@
   "extends": "@filmlist/tsconfig/base.json",
   "compilerOptions": {
     "composite": true,
-    "target": "ES2017",
-    "skipLibCheck": true,
-    "downlevelIteration": true,
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
     "strict": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "target": "esnext",
+    "module": "esnext"
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
