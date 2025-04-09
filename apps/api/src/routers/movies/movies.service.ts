@@ -6,6 +6,8 @@ import {
   GetMovieOutput,
   GetMovieWatchProvidersInput,
   GetMovieWatchProvidersOutput,
+  GetPopularMoviesOutput,
+  Movie,
   SearchMoviesInput,
   SearchMoviesOutput,
 } from './movies.schema';
@@ -154,5 +156,22 @@ export const searchMovies = async (
     releaseDate: movie.release_date as string,
     posterPath: movie.poster_path as string,
     directors: movie.directors as string[],
+  }));
+};
+
+export const getPopularMovies = async (): Promise<GetPopularMoviesOutput[]> => {
+  const { data } = await tmdb.client.GET('/3/movie/popular');
+
+  const results = data?.results;
+
+  if (!results) {
+    throw new Error();
+  }
+
+  return results?.map((movie) => ({
+    movieId: movie.id as number,
+    title: movie.title as string,
+    releaseDate: movie.release_date as string,
+    posterPath: movie.poster_path as string,
   }));
 };

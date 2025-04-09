@@ -14,6 +14,8 @@ export type GetMovieWatchProvidersOutput = z.infer<typeof getMovieWatchProviders
 export type SearchMoviesInput = z.infer<typeof searchMoviesInput>;
 export type SearchMoviesOutput = z.infer<typeof searchMoviesOutput>;
 
+export type GetPopularMoviesOutput = z.infer<typeof getPopularMoviesOutput>
+
 export const getMovieInput = z.object({
   movieId: z.number(),
 });
@@ -60,4 +62,11 @@ export const searchMoviesOutput = z.object({
   releaseDate: z.string(),
   posterPath: z.string(),
   directors: z.string().array(),
+});
+
+export const getPopularMoviesOutput = z.object({
+  movieId: z.number(),
+  title: z.string(),
+  releaseDate: z.string(),
+  posterPath: z.string(),
 });

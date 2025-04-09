@@ -5,9 +5,19 @@ import {
   getMovieWatchProvidersInput,
   searchMoviesInput,
 } from './movies.schema';
-import { getMovie, getMovieCast, getMovieWatchProviders, searchMovies } from './movies.service';
+import {
+  getMovie,
+  getMovieCast,
+  getMovieWatchProviders,
+  getPopularMovies,
+  searchMovies,
+} from './movies.service';
 
 export const movieRouter = router({
+  getPopularMovies: procedure.query(async () => {
+    return getPopularMovies();
+  }),
+
   searchMovies: procedure.input(searchMoviesInput).query(async (opts) => {
     return searchMovies(opts.input, opts.ctx);
   }),
