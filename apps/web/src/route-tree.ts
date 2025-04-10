@@ -12,19 +12,12 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
-import { Route as ListsFilmIdImport } from './routes/lists/$filmId'
 
 // Create/Update Routes
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const ListsFilmIdRoute = ListsFilmIdImport.update({
-  id: '/lists/$filmId',
-  path: '/lists/$filmId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -39,13 +32,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/lists/$filmId': {
-      id: '/lists/$filmId'
-      path: '/lists/$filmId'
-      fullPath: '/lists/$filmId'
-      preLoaderRoute: typeof ListsFilmIdImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
@@ -53,37 +39,32 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/lists/$filmId': typeof ListsFilmIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/lists/$filmId': typeof ListsFilmIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/lists/$filmId': typeof ListsFilmIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/lists/$filmId'
+  fullPaths: '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/lists/$filmId'
-  id: '__root__' | '/' | '/lists/$filmId'
+  to: '/'
+  id: '__root__' | '/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ListsFilmIdRoute: typeof ListsFilmIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ListsFilmIdRoute: ListsFilmIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -96,15 +77,11 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/lists/$filmId"
+        "/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/lists/$filmId": {
-      "filePath": "lists/$filmId.tsx"
     }
   }
 }
