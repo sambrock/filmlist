@@ -4,7 +4,7 @@ import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { lists } from './lists.schema';
 import { movies } from './movies.schema';
 
-export const listMovies = sqliteTable('list-movies', {
+export const listMovies = sqliteTable('list_movies', {
   listId: integer().references(() => lists.id),
   movieId: integer().references(() => movies.id),
   order: integer().notNull(),

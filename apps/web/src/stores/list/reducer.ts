@@ -1,17 +1,12 @@
-import { ListStore, ListStoreActions } from './types';
+import { ListStoreAction, ListStoreState } from './types';
 
-export const reducer = (state: ListStore, action: ListStoreActions) => {
+export const reducer = (state: ListStoreState, action: ListStoreAction) => {
   switch (action.type) {
     case 'ADD_MOVIE':
-      return {
-        ...state,
-        movies: [...state.movies, action.payload],
-      };
-    case 'REMOVE_MOVIE':
-      return {
-        ...state,
-        movies: state.movies.filter((movie) => movie.movieId !== action.payload.movieId),
-      };
+      return state;
+    case 'REMOVE_MOVIE': {
+      return state;
+    }
     default:
       return state;
   }

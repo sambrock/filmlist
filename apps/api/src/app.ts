@@ -7,6 +7,6 @@ import { appRouter } from './app.router';
 const app = new Hono();
 
 app.use(cors({ origin: 'http://localhost:5173' }));
-app.use('/trpc/*', trpcServer({ router: appRouter }));
+app.use('/api/*', trpcServer({ router: appRouter }));
 
 export default app;

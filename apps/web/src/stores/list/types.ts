@@ -1,11 +1,13 @@
-export type ListStore = {
+export type ListStoreState = {
   list: unknown;
-  movies: unknown[];
-
-  dispatch: (action: ListStoreActions) => void;
+  movies: Map<number, { title: string }>;
 };
 
-export type ListStoreActions =
+export type ListStoreActions = {
+  dispatch: (action: ListStoreAction) => void;
+};
+
+export type ListStoreAction =
   | {
       type: 'ADD_MOVIE';
       payload: {

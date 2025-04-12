@@ -21,16 +21,7 @@ export const mergeRouters = t.mergeRouters;
 
 /* Middleware */
 
-export const databaseMiddleware = t.middleware(({ ctx, next }) => {
-  let db = ctx.db;
-  if (!db) db = initDrizzleDatabase(ctx.env.DB);
-
-  return next({
-    ctx: { ...ctx, db } satisfies Context,
-  });
-});
-
-export const authMiddleware = t.middleware(({ ctx, next }) => {
+export const middlewareAuth = t.middleware(({ ctx, next }) => {
   const user = { id: 1, username: 'username' }; // TODO: implement auth
 
   return next({
@@ -38,6 +29,11 @@ export const authMiddleware = t.middleware(({ ctx, next }) => {
   });
 });
 
-/* Procedures */
+export const middlewareDatabase = t.middleware(({ ctx, next }) => {
+  let db = ctx.db;
+  if (!db) db = initDrizzleDatabase(ctx.env.DB);
 
-export const authedProcedure = procedure.use(authMiddleware).use(databaseMiddleware);
+  return next({
+    ctx: { ...ctx, db } satisfies Context,
+  });
+});
