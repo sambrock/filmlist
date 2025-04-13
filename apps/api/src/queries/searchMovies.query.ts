@@ -48,9 +48,8 @@ export const searchMovies = procedure
     );
 
     return withDirectors.map((movie) => ({
-      movieId: movie.id as number,
+      tmdbId: movie.id as number,
       title: movie.title as string,
-      releaseDate: movie.release_date as string,
       posterPath: movie.poster_path as string,
       directors: movie.directors as string[],
     }));

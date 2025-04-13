@@ -1,3 +1,7 @@
 {
-  "extends": "@filmlist/tsconfig/base.json"
+  "extends": "@filmlist/tsconfig/base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "nodenext"
+  }
 }

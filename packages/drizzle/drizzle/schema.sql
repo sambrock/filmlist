@@ -1,36 +1,36 @@
-CREATE TABLE `LIST_MOVIES` (
-	`LISTID` INTEGER,
-	`MOVIEID` INTEGER,
-	`ORDER` INTEGER NOT NULL,
-	`CREATEDAT` TEXT DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
-	FOREIGN KEY (`LISTID`) REFERENCES `LISTS`(`ID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
-	FOREIGN KEY (`MOVIEID`) REFERENCES `MOVIES`(`ID`) ON UPDATE NO ACTION ON DELETE NO ACTION
+CREATE TABLE `list_movies` (
+	`listId` integer NOT NULL,
+	`movieId` integer NOT NULL,
+	`order` integer NOT NULL,
+	`createdAt` integer NOT NULL,
+	FOREIGN KEY (`listId`) REFERENCES `lists`(`listId`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`movieId`) REFERENCES `movies`(`movieId`) ON UPDATE no action ON DELETE no action
 );
-
 --> statement-breakpoint
-CREATE TABLE `LISTS` (
-	`ID` INTEGER PRIMARY KEY NOT NULL,
-	`PUBLICID` TEXT(12),
-	`TITLE` TEXT,
-	`CREATEDAT` TEXT DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
-	`UPDATEDAT` TEXT DEFAULT (CURRENT_TIMESTAMP) NOT NULL
+CREATE TABLE `lists` (
+	`listId` integer PRIMARY KEY NOT NULL,
+	`readId` text(12) NOT NULL,
+	`editId` text(22) NOT NULL,
+	`title` text NOT NULL,
+	`description` text DEFAULT '' NOT NULL,
+	`locked` integer DEFAULT false NOT NULL,
+	`owner` text NOT NULL,
+	`createdAt` integer NOT NULL,
+	`updatedAt` integer NOT NULL,
+	`lastUpdate` integer NOT NULL
 );
-
 --> statement-breakpoint
-CREATE UNIQUE INDEX `LISTS_PUBLICID_UNIQUE` ON `LISTS` (`PUBLICID`);
-
---> statement-breakpoint
-CREATE TABLE `MOVIES` (
-	`ID` INTEGER PRIMARY KEY NOT NULL,
-	`TMDBID` INTEGER NOT NULL,
-	`TITLE` TEXT NOT NULL,
-	`BACKDROPPATH` TEXT NOT NULL,
-	`POSTERPATH` TEXT NOT NULL,
-	`OVERVIEW` TEXT NOT NULL,
-	`RELEASEDATE` TEXT DEFAULT (CURRENT_DATE) NOT NULL,
-	`CREATEDAT` TEXT DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
-	`UPDATEDAT` TEXT DEFAULT (CURRENT_TIMESTAMP) NOT NULL
+CREATE UNIQUE INDEX `lists_readId_unique` ON `lists` (`readId`);--> statement-breakpoint
+CREATE UNIQUE INDEX `lists_editId_unique` ON `lists` (`editId`);--> statement-breakpoint
+CREATE TABLE `movies` (
+	`movieId` integer PRIMARY KEY NOT NULL,
+	`tmdbId` integer NOT NULL,
+	`title` text NOT NULL,
+	`posterPath` text NOT NULL,
+	`releaseDate` text NOT NULL,
+	`slug` text NOT NULL,
+	`createdAt` integer NOT NULL
 );
-
 --> statement-breakpoint
-CREATE UNIQUE INDEX `MOVIES_TMDBID_UNIQUE` ON `MOVIES` (`TMDBID`);
+CREATE UNIQUE INDEX `movies_tmdbId_unique` ON `movies` (`tmdbId`);--> statement-breakpoint
+CREATE UNIQUE INDEX `movies_slug_unique` ON `movies` (`slug`);

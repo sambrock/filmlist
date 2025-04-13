@@ -3,10 +3,10 @@
   "compilerOptions": {
     "composite": true,
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "esModuleInterop": true,
     "target": "esnext",
-    "module": "esnext"
+    "module": "NodeNext"
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

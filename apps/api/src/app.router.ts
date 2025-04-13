@@ -1,6 +1,7 @@
 import { router } from './lib/trpc';
 import { createListMovie } from './mutations/createListMovie.mutation';
-import { findList } from './queries/findList.query';
+import { initializeList } from './mutations/initializeList.mutation';
+import { loadList } from './queries/loadList.query';
 import { searchMovies } from './queries/searchMovies.query';
 
 export const appRouter = router({
@@ -9,7 +10,8 @@ export const appRouter = router({
   },
 
   list: {
-    find: findList,
+    initialize: initializeList,
+    load: loadList,
     add: createListMovie,
   },
 });

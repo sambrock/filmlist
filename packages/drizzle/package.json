@@ -5,14 +5,17 @@
   "main": "./src/index.ts",
   "types": "./src/index.d.ts",
   "scripts": {
+    "dev": "drizzle-kit studio",
     "generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@filmlist/lib": "*",
     "better-sqlite3": "^11.9.1",
     "dotenv": "^16.4.7",
-    "drizzle-orm": "^0.39.3"
+    "drizzle-orm": "^0.39.3",
+    "drizzle-zod": "^0.7.1"
   },
   "devDependencies": {
     "@filmlist/tsconfig": "*",

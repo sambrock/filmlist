@@ -1,4 +1,5 @@
 import { initTRPC } from '@trpc/server';
+import superjson from 'superjson';
 
 import { DrizzleDatabase, initDrizzleDatabase } from '@filmlist/drizzle';
 
@@ -13,7 +14,9 @@ export interface Context {
   };
 }
 
-const t = initTRPC.context<Context>().create();
+const t = initTRPC.context<Context>().create({
+  transformer: superjson,
+});
 
 export const procedure = t.procedure;
 export const router = t.router;

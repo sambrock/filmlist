@@ -1086,6 +1086,61 @@ var init_modules_watch_stub = __esm({
   }
 });
 
+// ../../node_modules/slugify/slugify.js
+var require_slugify = __commonJS({
+  "../../node_modules/slugify/slugify.js"(exports, module) {
+    init_modules_watch_stub();
+    init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+    init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+    init_performance2();
+    (function(name, root, factory) {
+      if (typeof exports === "object") {
+        module.exports = factory();
+        module.exports["default"] = factory();
+      } else if (typeof define === "function" && define.amd) {
+        define(factory);
+      } else {
+        root[name] = factory();
+      }
+    })("slugify", exports, function() {
+      var charMap = JSON.parse(`{"$":"dollar","%":"percent","&":"and","<":"less",">":"greater","|":"or","\xA2":"cent","\xA3":"pound","\xA4":"currency","\xA5":"yen","\xA9":"(c)","\xAA":"a","\xAE":"(r)","\xBA":"o","\xC0":"A","\xC1":"A","\xC2":"A","\xC3":"A","\xC4":"A","\xC5":"A","\xC6":"AE","\xC7":"C","\xC8":"E","\xC9":"E","\xCA":"E","\xCB":"E","\xCC":"I","\xCD":"I","\xCE":"I","\xCF":"I","\xD0":"D","\xD1":"N","\xD2":"O","\xD3":"O","\xD4":"O","\xD5":"O","\xD6":"O","\xD8":"O","\xD9":"U","\xDA":"U","\xDB":"U","\xDC":"U","\xDD":"Y","\xDE":"TH","\xDF":"ss","\xE0":"a","\xE1":"a","\xE2":"a","\xE3":"a","\xE4":"a","\xE5":"a","\xE6":"ae","\xE7":"c","\xE8":"e","\xE9":"e","\xEA":"e","\xEB":"e","\xEC":"i","\xED":"i","\xEE":"i","\xEF":"i","\xF0":"d","\xF1":"n","\xF2":"o","\xF3":"o","\xF4":"o","\xF5":"o","\xF6":"o","\xF8":"o","\xF9":"u","\xFA":"u","\xFB":"u","\xFC":"u","\xFD":"y","\xFE":"th","\xFF":"y","\u0100":"A","\u0101":"a","\u0102":"A","\u0103":"a","\u0104":"A","\u0105":"a","\u0106":"C","\u0107":"c","\u010C":"C","\u010D":"c","\u010E":"D","\u010F":"d","\u0110":"DJ","\u0111":"dj","\u0112":"E","\u0113":"e","\u0116":"E","\u0117":"e","\u0118":"e","\u0119":"e","\u011A":"E","\u011B":"e","\u011E":"G","\u011F":"g","\u0122":"G","\u0123":"g","\u0128":"I","\u0129":"i","\u012A":"i","\u012B":"i","\u012E":"I","\u012F":"i","\u0130":"I","\u0131":"i","\u0136":"k","\u0137":"k","\u013B":"L","\u013C":"l","\u013D":"L","\u013E":"l","\u0141":"L","\u0142":"l","\u0143":"N","\u0144":"n","\u0145":"N","\u0146":"n","\u0147":"N","\u0148":"n","\u014C":"O","\u014D":"o","\u0150":"O","\u0151":"o","\u0152":"OE","\u0153":"oe","\u0154":"R","\u0155":"r","\u0158":"R","\u0159":"r","\u015A":"S","\u015B":"s","\u015E":"S","\u015F":"s","\u0160":"S","\u0161":"s","\u0162":"T","\u0163":"t","\u0164":"T","\u0165":"t","\u0168":"U","\u0169":"u","\u016A":"u","\u016B":"u","\u016E":"U","\u016F":"u","\u0170":"U","\u0171":"u","\u0172":"U","\u0173":"u","\u0174":"W","\u0175":"w","\u0176":"Y","\u0177":"y","\u0178":"Y","\u0179":"Z","\u017A":"z","\u017B":"Z","\u017C":"z","\u017D":"Z","\u017E":"z","\u018F":"E","\u0192":"f","\u01A0":"O","\u01A1":"o","\u01AF":"U","\u01B0":"u","\u01C8":"LJ","\u01C9":"lj","\u01CB":"NJ","\u01CC":"nj","\u0218":"S","\u0219":"s","\u021A":"T","\u021B":"t","\u0259":"e","\u02DA":"o","\u0386":"A","\u0388":"E","\u0389":"H","\u038A":"I","\u038C":"O","\u038E":"Y","\u038F":"W","\u0390":"i","\u0391":"A","\u0392":"B","\u0393":"G","\u0394":"D","\u0395":"E","\u0396":"Z","\u0397":"H","\u0398":"8","\u0399":"I","\u039A":"K","\u039B":"L","\u039C":"M","\u039D":"N","\u039E":"3","\u039F":"O","\u03A0":"P","\u03A1":"R","\u03A3":"S","\u03A4":"T","\u03A5":"Y","\u03A6":"F","\u03A7":"X","\u03A8":"PS","\u03A9":"W","\u03AA":"I","\u03AB":"Y","\u03AC":"a","\u03AD":"e","\u03AE":"h","\u03AF":"i","\u03B0":"y","\u03B1":"a","\u03B2":"b","\u03B3":"g","\u03B4":"d","\u03B5":"e","\u03B6":"z","\u03B7":"h","\u03B8":"8","\u03B9":"i","\u03BA":"k","\u03BB":"l","\u03BC":"m","\u03BD":"n","\u03BE":"3","\u03BF":"o","\u03C0":"p","\u03C1":"r","\u03C2":"s","\u03C3":"s","\u03C4":"t","\u03C5":"y","\u03C6":"f","\u03C7":"x","\u03C8":"ps","\u03C9":"w","\u03CA":"i","\u03CB":"y","\u03CC":"o","\u03CD":"y","\u03CE":"w","\u0401":"Yo","\u0402":"DJ","\u0404":"Ye","\u0406":"I","\u0407":"Yi","\u0408":"J","\u0409":"LJ","\u040A":"NJ","\u040B":"C","\u040F":"DZ","\u0410":"A","\u0411":"B","\u0412":"V","\u0413":"G","\u0414":"D","\u0415":"E","\u0416":"Zh","\u0417":"Z","\u0418":"I","\u0419":"J","\u041A":"K","\u041B":"L","\u041C":"M","\u041D":"N","\u041E":"O","\u041F":"P","\u0420":"R","\u0421":"S","\u0422":"T","\u0423":"U","\u0424":"F","\u0425":"H","\u0426":"C","\u0427":"Ch","\u0428":"Sh","\u0429":"Sh","\u042A":"U","\u042B":"Y","\u042C":"","\u042D":"E","\u042E":"Yu","\u042F":"Ya","\u0430":"a","\u0431":"b","\u0432":"v","\u0433":"g","\u0434":"d","\u0435":"e","\u0436":"zh","\u0437":"z","\u0438":"i","\u0439":"j","\u043A":"k","\u043B":"l","\u043C":"m","\u043D":"n","\u043E":"o","\u043F":"p","\u0440":"r","\u0441":"s","\u0442":"t","\u0443":"u","\u0444":"f","\u0445":"h","\u0446":"c","\u0447":"ch","\u0448":"sh","\u0449":"sh","\u044A":"u","\u044B":"y","\u044C":"","\u044D":"e","\u044E":"yu","\u044F":"ya","\u0451":"yo","\u0452":"dj","\u0454":"ye","\u0456":"i","\u0457":"yi","\u0458":"j","\u0459":"lj","\u045A":"nj","\u045B":"c","\u045D":"u","\u045F":"dz","\u0490":"G","\u0491":"g","\u0492":"GH","\u0493":"gh","\u049A":"KH","\u049B":"kh","\u04A2":"NG","\u04A3":"ng","\u04AE":"UE","\u04AF":"ue","\u04B0":"U","\u04B1":"u","\u04BA":"H","\u04BB":"h","\u04D8":"AE","\u04D9":"ae","\u04E8":"OE","\u04E9":"oe","\u0531":"A","\u0532":"B","\u0533":"G","\u0534":"D","\u0535":"E","\u0536":"Z","\u0537":"E'","\u0538":"Y'","\u0539":"T'","\u053A":"JH","\u053B":"I","\u053C":"L","\u053D":"X","\u053E":"C'","\u053F":"K","\u0540":"H","\u0541":"D'","\u0542":"GH","\u0543":"TW","\u0544":"M","\u0545":"Y","\u0546":"N","\u0547":"SH","\u0549":"CH","\u054A":"P","\u054B":"J","\u054C":"R'","\u054D":"S","\u054E":"V","\u054F":"T","\u0550":"R","\u0551":"C","\u0553":"P'","\u0554":"Q'","\u0555":"O''","\u0556":"F","\u0587":"EV","\u0621":"a","\u0622":"aa","\u0623":"a","\u0624":"u","\u0625":"i","\u0626":"e","\u0627":"a","\u0628":"b","\u0629":"h","\u062A":"t","\u062B":"th","\u062C":"j","\u062D":"h","\u062E":"kh","\u062F":"d","\u0630":"th","\u0631":"r","\u0632":"z","\u0633":"s","\u0634":"sh","\u0635":"s","\u0636":"dh","\u0637":"t","\u0638":"z","\u0639":"a","\u063A":"gh","\u0641":"f","\u0642":"q","\u0643":"k","\u0644":"l","\u0645":"m","\u0646":"n","\u0647":"h","\u0648":"w","\u0649":"a","\u064A":"y","\u064B":"an","\u064C":"on","\u064D":"en","\u064E":"a","\u064F":"u","\u0650":"e","\u0652":"","\u0660":"0","\u0661":"1","\u0662":"2","\u0663":"3","\u0664":"4","\u0665":"5","\u0666":"6","\u0667":"7","\u0668":"8","\u0669":"9","\u067E":"p","\u0686":"ch","\u0698":"zh","\u06A9":"k","\u06AF":"g","\u06CC":"y","\u06F0":"0","\u06F1":"1","\u06F2":"2","\u06F3":"3","\u06F4":"4","\u06F5":"5","\u06F6":"6","\u06F7":"7","\u06F8":"8","\u06F9":"9","\u0E3F":"baht","\u10D0":"a","\u10D1":"b","\u10D2":"g","\u10D3":"d","\u10D4":"e","\u10D5":"v","\u10D6":"z","\u10D7":"t","\u10D8":"i","\u10D9":"k","\u10DA":"l","\u10DB":"m","\u10DC":"n","\u10DD":"o","\u10DE":"p","\u10DF":"zh","\u10E0":"r","\u10E1":"s","\u10E2":"t","\u10E3":"u","\u10E4":"f","\u10E5":"k","\u10E6":"gh","\u10E7":"q","\u10E8":"sh","\u10E9":"ch","\u10EA":"ts","\u10EB":"dz","\u10EC":"ts","\u10ED":"ch","\u10EE":"kh","\u10EF":"j","\u10F0":"h","\u1E62":"S","\u1E63":"s","\u1E80":"W","\u1E81":"w","\u1E82":"W","\u1E83":"w","\u1E84":"W","\u1E85":"w","\u1E9E":"SS","\u1EA0":"A","\u1EA1":"a","\u1EA2":"A","\u1EA3":"a","\u1EA4":"A","\u1EA5":"a","\u1EA6":"A","\u1EA7":"a","\u1EA8":"A","\u1EA9":"a","\u1EAA":"A","\u1EAB":"a","\u1EAC":"A","\u1EAD":"a","\u1EAE":"A","\u1EAF":"a","\u1EB0":"A","\u1EB1":"a","\u1EB2":"A","\u1EB3":"a","\u1EB4":"A","\u1EB5":"a","\u1EB6":"A","\u1EB7":"a","\u1EB8":"E","\u1EB9":"e","\u1EBA":"E","\u1EBB":"e","\u1EBC":"E","\u1EBD":"e","\u1EBE":"E","\u1EBF":"e","\u1EC0":"E","\u1EC1":"e","\u1EC2":"E","\u1EC3":"e","\u1EC4":"E","\u1EC5":"e","\u1EC6":"E","\u1EC7":"e","\u1EC8":"I","\u1EC9":"i","\u1ECA":"I","\u1ECB":"i","\u1ECC":"O","\u1ECD":"o","\u1ECE":"O","\u1ECF":"o","\u1ED0":"O","\u1ED1":"o","\u1ED2":"O","\u1ED3":"o","\u1ED4":"O","\u1ED5":"o","\u1ED6":"O","\u1ED7":"o","\u1ED8":"O","\u1ED9":"o","\u1EDA":"O","\u1EDB":"o","\u1EDC":"O","\u1EDD":"o","\u1EDE":"O","\u1EDF":"o","\u1EE0":"O","\u1EE1":"o","\u1EE2":"O","\u1EE3":"o","\u1EE4":"U","\u1EE5":"u","\u1EE6":"U","\u1EE7":"u","\u1EE8":"U","\u1EE9":"u","\u1EEA":"U","\u1EEB":"u","\u1EEC":"U","\u1EED":"u","\u1EEE":"U","\u1EEF":"u","\u1EF0":"U","\u1EF1":"u","\u1EF2":"Y","\u1EF3":"y","\u1EF4":"Y","\u1EF5":"y","\u1EF6":"Y","\u1EF7":"y","\u1EF8":"Y","\u1EF9":"y","\u2013":"-","\u2018":"'","\u2019":"'","\u201C":"\\"","\u201D":"\\"","\u201E":"\\"","\u2020":"+","\u2022":"*","\u2026":"...","\u20A0":"ecu","\u20A2":"cruzeiro","\u20A3":"french franc","\u20A4":"lira","\u20A5":"mill","\u20A6":"naira","\u20A7":"peseta","\u20A8":"rupee","\u20A9":"won","\u20AA":"new shequel","\u20AB":"dong","\u20AC":"euro","\u20AD":"kip","\u20AE":"tugrik","\u20AF":"drachma","\u20B0":"penny","\u20B1":"peso","\u20B2":"guarani","\u20B3":"austral","\u20B4":"hryvnia","\u20B5":"cedi","\u20B8":"kazakhstani tenge","\u20B9":"indian rupee","\u20BA":"turkish lira","\u20BD":"russian ruble","\u20BF":"bitcoin","\u2120":"sm","\u2122":"tm","\u2202":"d","\u2206":"delta","\u2211":"sum","\u221E":"infinity","\u2665":"love","\u5143":"yuan","\u5186":"yen","\uFDFC":"rial","\uFEF5":"laa","\uFEF7":"laa","\uFEF9":"lai","\uFEFB":"la"}`);
+      var locales = JSON.parse('{"bg":{"\u0419":"Y","\u0426":"Ts","\u0429":"Sht","\u042A":"A","\u042C":"Y","\u0439":"y","\u0446":"ts","\u0449":"sht","\u044A":"a","\u044C":"y"},"de":{"\xC4":"AE","\xE4":"ae","\xD6":"OE","\xF6":"oe","\xDC":"UE","\xFC":"ue","\xDF":"ss","%":"prozent","&":"und","|":"oder","\u2211":"summe","\u221E":"unendlich","\u2665":"liebe"},"es":{"%":"por ciento","&":"y","<":"menor que",">":"mayor que","|":"o","\xA2":"centavos","\xA3":"libras","\xA4":"moneda","\u20A3":"francos","\u2211":"suma","\u221E":"infinito","\u2665":"amor"},"fr":{"%":"pourcent","&":"et","<":"plus petit",">":"plus grand","|":"ou","\xA2":"centime","\xA3":"livre","\xA4":"devise","\u20A3":"franc","\u2211":"somme","\u221E":"infini","\u2665":"amour"},"pt":{"%":"porcento","&":"e","<":"menor",">":"maior","|":"ou","\xA2":"centavo","\u2211":"soma","\xA3":"libra","\u221E":"infinito","\u2665":"amor"},"uk":{"\u0418":"Y","\u0438":"y","\u0419":"Y","\u0439":"y","\u0426":"Ts","\u0446":"ts","\u0425":"Kh","\u0445":"kh","\u0429":"Shch","\u0449":"shch","\u0413":"H","\u0433":"h"},"vi":{"\u0110":"D","\u0111":"d"},"da":{"\xD8":"OE","\xF8":"oe","\xC5":"AA","\xE5":"aa","%":"procent","&":"og","|":"eller","$":"dollar","<":"mindre end",">":"st\xF8rre end"},"nb":{"&":"og","\xC5":"AA","\xC6":"AE","\xD8":"OE","\xE5":"aa","\xE6":"ae","\xF8":"oe"},"it":{"&":"e"},"nl":{"&":"en"},"sv":{"&":"och","\xC5":"AA","\xC4":"AE","\xD6":"OE","\xE5":"aa","\xE4":"ae","\xF6":"oe"}}');
+      function replace(string, options) {
+        if (typeof string !== "string") {
+          throw new Error("slugify: string argument expected");
+        }
+        options = typeof options === "string" ? { replacement: options } : options || {};
+        var locale = locales[options.locale] || {};
+        var replacement = options.replacement === void 0 ? "-" : options.replacement;
+        var trim = options.trim === void 0 ? true : options.trim;
+        var slug = string.normalize().split("").reduce(function(result, ch) {
+          var appendChar = locale[ch];
+          if (appendChar === void 0) appendChar = charMap[ch];
+          if (appendChar === void 0) appendChar = ch;
+          if (appendChar === replacement) appendChar = " ";
+          return result + appendChar.replace(options.remove || /[^\w\s$*_+~.()'"!\-:@]+/g, "");
+        }, "");
+        if (options.strict) {
+          slug = slug.replace(/[^A-Za-z0-9\s]/g, "");
+        }
+        if (trim) {
+          slug = slug.trim();
+        }
+        slug = slug.replace(/\s+/g, replacement);
+        if (options.lower) {
+          slug = slug.toLowerCase();
+        }
+        return slug;
+      }
+      __name(replace, "replace");
+      replace.extend = function(customMap) {
+        Object.assign(charMap, customMap);
+      };
+      return replace;
+    });
+  }
+});
+
 // ../../node_modules/unenv/dist/runtime/node/internal/fs/promises.mjs
 var access, copyFile, cp, open, opendir, rename, truncate, rm, rmdir, mkdir, readdir, readlink, symlink, lstat, stat, link, unlink, chmod, lchmod, lchown, chown, utimes, lutimes, realpath, mkdtemp, writeFile, appendFile, readFile, watch, statfs, glob;
 var init_promises = __esm({
@@ -2336,11 +2391,11 @@ var require_main = __commonJS({
     var fs = require_fs();
     var path = require_path();
     var os = require_os();
-    var crypto = require_crypto();
+    var crypto2 = require_crypto();
     var packageJson = require_package();
     var version4 = packageJson.version;
     var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
-    function parse(src) {
+    function parse2(src) {
       const obj = {};
       let lines = src.toString();
       lines = lines.replace(/\r\n?/mg, "\n");
@@ -2359,7 +2414,7 @@ var require_main = __commonJS({
       }
       return obj;
     }
-    __name(parse, "parse");
+    __name(parse2, "parse");
     function _parseVault(options) {
       const vaultPath = _vaultPath(options);
       const result = DotenvModule.configDotenv({ path: vaultPath });
@@ -2544,7 +2599,7 @@ var require_main = __commonJS({
       const authTag = ciphertext.subarray(-16);
       ciphertext = ciphertext.subarray(12, -16);
       try {
-        const aesgcm = crypto.createDecipheriv("aes-256-gcm", key, nonce);
+        const aesgcm = crypto2.createDecipheriv("aes-256-gcm", key, nonce);
         aesgcm.setAuthTag(authTag);
         return `${aesgcm.update(ciphertext)}${aesgcm.final()}`;
       } catch (error3) {
@@ -2597,7 +2652,7 @@ var require_main = __commonJS({
       _parseVault,
       config: config3,
       decrypt,
-      parse,
+      parse: parse2,
       populate
     };
     module.exports.configDotenv = DotenvModule.configDotenv;
@@ -2611,13 +2666,13 @@ var require_main = __commonJS({
   }
 });
 
-// .wrangler/tmp/bundle-IfhnOv/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-FMKfFs/middleware-loader.entry.ts
 init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
 init_performance2();
 
-// .wrangler/tmp/bundle-IfhnOv/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-FMKfFs/middleware-insertion-facade.js
 init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
@@ -4196,14 +4251,14 @@ async function* createBatchStreamProducer(opts) {
 __name(createBatchStreamProducer, "createBatchStreamProducer");
 function jsonlStreamProducer(opts) {
   let stream = readableStreamFrom(createBatchStreamProducer(opts));
-  const { serialize } = opts;
-  if (serialize) {
+  const { serialize: serialize2 } = opts;
+  if (serialize2) {
     stream = stream.pipeThrough(new TransformStream({
       transform(chunk, controller) {
         if (chunk === PING_SYM) {
           controller.enqueue(PING_SYM);
         } else {
-          controller.enqueue(serialize(chunk));
+          controller.enqueue(serialize2(chunk));
         }
       }
     }));
@@ -4243,7 +4298,7 @@ var SERIALIZED_ERROR_EVENT = "serialized-error";
 var CONNECTED_EVENT = "connected";
 var RETURN_EVENT = "return";
 function sseStreamProducer(opts) {
-  const { serialize = identity } = opts;
+  const { serialize: serialize2 = identity } = opts;
   const ping = {
     enabled: opts.ping?.enabled ?? false,
     intervalMs: opts.ping?.intervalMs ?? 1e3
@@ -4288,7 +4343,7 @@ function sseStreamProducer(opts) {
       } : {
         data: value
       };
-      chunk.data = JSON.stringify(serialize(chunk.data));
+      chunk.data = JSON.stringify(serialize2(chunk.data));
       yield chunk;
       value = null;
       chunk = null;
@@ -4312,7 +4367,7 @@ function sseStreamProducer(opts) {
       }) ?? null;
       yield {
         event: SERIALIZED_ERROR_EVENT,
-        data: JSON.stringify(serialize(data))
+        data: JSON.stringify(serialize2(data))
       };
     }
   }
@@ -6346,7 +6401,7 @@ var compose = /* @__PURE__ */ __name((middleware, onError, onNotFound) => {
       }
       index = i;
       let res;
-      let isError = false;
+      let isError2 = false;
       let handler;
       if (middleware[i]) {
         handler = middleware[i][0][0];
@@ -6369,13 +6424,13 @@ var compose = /* @__PURE__ */ __name((middleware, onError, onNotFound) => {
           if (err instanceof Error && isContext && onError) {
             context2.error = err;
             res = await onError(err, context2);
-            isError = true;
+            isError2 = true;
           } else {
             throw err;
           }
         }
       }
-      if (res && (context2.finalized === false || isError)) {
+      if (res && (context2.finalized === false || isError2)) {
         context2.res = res;
       }
       return context2;
@@ -7447,12 +7502,12 @@ function createMiddlewareFactory() {
   return createMiddleware;
 }
 __name(createMiddlewareFactory, "createMiddlewareFactory");
-function createInputMiddleware(parse) {
+function createInputMiddleware(parse2) {
   const inputMiddleware = /* @__PURE__ */ __name(async function inputValidatorMiddleware(opts) {
     let parsedInput;
     const rawInput = await opts.getRawInput();
     try {
-      parsedInput = await parse(rawInput);
+      parsedInput = await parse2(rawInput);
     } catch (cause) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -7471,14 +7526,14 @@ function createInputMiddleware(parse) {
   return inputMiddleware;
 }
 __name(createInputMiddleware, "createInputMiddleware");
-function createOutputMiddleware(parse) {
+function createOutputMiddleware(parse2) {
   const outputMiddleware = /* @__PURE__ */ __name(async function outputValidatorMiddleware({ next }) {
     const result = await next();
     if (!result.ok) {
       return result;
     }
     try {
-      const data = await parse(result.data);
+      const data = await parse2(result.data);
       return {
         ...result,
         data
@@ -7857,6 +7912,889 @@ var TRPCBuilder = class _TRPCBuilder {
   }
 };
 var initTRPC = new TRPCBuilder();
+
+// ../../node_modules/superjson/dist/index.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../node_modules/superjson/dist/class-registry.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../node_modules/superjson/dist/registry.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../node_modules/superjson/dist/double-indexed-kv.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var DoubleIndexedKV = class {
+  static {
+    __name(this, "DoubleIndexedKV");
+  }
+  constructor() {
+    this.keyToValue = /* @__PURE__ */ new Map();
+    this.valueToKey = /* @__PURE__ */ new Map();
+  }
+  set(key, value) {
+    this.keyToValue.set(key, value);
+    this.valueToKey.set(value, key);
+  }
+  getByKey(key) {
+    return this.keyToValue.get(key);
+  }
+  getByValue(value) {
+    return this.valueToKey.get(value);
+  }
+  clear() {
+    this.keyToValue.clear();
+    this.valueToKey.clear();
+  }
+};
+
+// ../../node_modules/superjson/dist/registry.js
+var Registry = class {
+  static {
+    __name(this, "Registry");
+  }
+  constructor(generateIdentifier) {
+    this.generateIdentifier = generateIdentifier;
+    this.kv = new DoubleIndexedKV();
+  }
+  register(value, identifier) {
+    if (this.kv.getByValue(value)) {
+      return;
+    }
+    if (!identifier) {
+      identifier = this.generateIdentifier(value);
+    }
+    this.kv.set(identifier, value);
+  }
+  clear() {
+    this.kv.clear();
+  }
+  getIdentifier(value) {
+    return this.kv.getByValue(value);
+  }
+  getValue(identifier) {
+    return this.kv.getByKey(identifier);
+  }
+};
+
+// ../../node_modules/superjson/dist/class-registry.js
+var ClassRegistry = class extends Registry {
+  static {
+    __name(this, "ClassRegistry");
+  }
+  constructor() {
+    super((c) => c.name);
+    this.classToAllowedProps = /* @__PURE__ */ new Map();
+  }
+  register(value, options) {
+    if (typeof options === "object") {
+      if (options.allowProps) {
+        this.classToAllowedProps.set(value, options.allowProps);
+      }
+      super.register(value, options.identifier);
+    } else {
+      super.register(value, options);
+    }
+  }
+  getAllowedProps(value) {
+    return this.classToAllowedProps.get(value);
+  }
+};
+
+// ../../node_modules/superjson/dist/custom-transformer-registry.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../node_modules/superjson/dist/util.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+function valuesOfObj(record) {
+  if ("values" in Object) {
+    return Object.values(record);
+  }
+  const values = [];
+  for (const key in record) {
+    if (record.hasOwnProperty(key)) {
+      values.push(record[key]);
+    }
+  }
+  return values;
+}
+__name(valuesOfObj, "valuesOfObj");
+function find(record, predicate) {
+  const values = valuesOfObj(record);
+  if ("find" in values) {
+    return values.find(predicate);
+  }
+  const valuesNotNever = values;
+  for (let i = 0; i < valuesNotNever.length; i++) {
+    const value = valuesNotNever[i];
+    if (predicate(value)) {
+      return value;
+    }
+  }
+  return void 0;
+}
+__name(find, "find");
+function forEach(record, run2) {
+  Object.entries(record).forEach(([key, value]) => run2(value, key));
+}
+__name(forEach, "forEach");
+function includes(arr, value) {
+  return arr.indexOf(value) !== -1;
+}
+__name(includes, "includes");
+function findArr(record, predicate) {
+  for (let i = 0; i < record.length; i++) {
+    const value = record[i];
+    if (predicate(value)) {
+      return value;
+    }
+  }
+  return void 0;
+}
+__name(findArr, "findArr");
+
+// ../../node_modules/superjson/dist/custom-transformer-registry.js
+var CustomTransformerRegistry = class {
+  static {
+    __name(this, "CustomTransformerRegistry");
+  }
+  constructor() {
+    this.transfomers = {};
+  }
+  register(transformer) {
+    this.transfomers[transformer.name] = transformer;
+  }
+  findApplicable(v) {
+    return find(this.transfomers, (transformer) => transformer.isApplicable(v));
+  }
+  findByName(name) {
+    return this.transfomers[name];
+  }
+};
+
+// ../../node_modules/superjson/dist/plainer.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../node_modules/superjson/dist/is.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var getType = /* @__PURE__ */ __name((payload) => Object.prototype.toString.call(payload).slice(8, -1), "getType");
+var isUndefined = /* @__PURE__ */ __name((payload) => typeof payload === "undefined", "isUndefined");
+var isNull = /* @__PURE__ */ __name((payload) => payload === null, "isNull");
+var isPlainObject2 = /* @__PURE__ */ __name((payload) => {
+  if (typeof payload !== "object" || payload === null)
+    return false;
+  if (payload === Object.prototype)
+    return false;
+  if (Object.getPrototypeOf(payload) === null)
+    return true;
+  return Object.getPrototypeOf(payload) === Object.prototype;
+}, "isPlainObject");
+var isEmptyObject = /* @__PURE__ */ __name((payload) => isPlainObject2(payload) && Object.keys(payload).length === 0, "isEmptyObject");
+var isArray = /* @__PURE__ */ __name((payload) => Array.isArray(payload), "isArray");
+var isString = /* @__PURE__ */ __name((payload) => typeof payload === "string", "isString");
+var isNumber = /* @__PURE__ */ __name((payload) => typeof payload === "number" && !isNaN(payload), "isNumber");
+var isBoolean = /* @__PURE__ */ __name((payload) => typeof payload === "boolean", "isBoolean");
+var isRegExp = /* @__PURE__ */ __name((payload) => payload instanceof RegExp, "isRegExp");
+var isMap = /* @__PURE__ */ __name((payload) => payload instanceof Map, "isMap");
+var isSet = /* @__PURE__ */ __name((payload) => payload instanceof Set, "isSet");
+var isSymbol = /* @__PURE__ */ __name((payload) => getType(payload) === "Symbol", "isSymbol");
+var isDate = /* @__PURE__ */ __name((payload) => payload instanceof Date && !isNaN(payload.valueOf()), "isDate");
+var isError = /* @__PURE__ */ __name((payload) => payload instanceof Error, "isError");
+var isNaNValue = /* @__PURE__ */ __name((payload) => typeof payload === "number" && isNaN(payload), "isNaNValue");
+var isPrimitive = /* @__PURE__ */ __name((payload) => isBoolean(payload) || isNull(payload) || isUndefined(payload) || isNumber(payload) || isString(payload) || isSymbol(payload), "isPrimitive");
+var isBigint = /* @__PURE__ */ __name((payload) => typeof payload === "bigint", "isBigint");
+var isInfinite = /* @__PURE__ */ __name((payload) => payload === Infinity || payload === -Infinity, "isInfinite");
+var isTypedArray = /* @__PURE__ */ __name((payload) => ArrayBuffer.isView(payload) && !(payload instanceof DataView), "isTypedArray");
+var isURL = /* @__PURE__ */ __name((payload) => payload instanceof URL, "isURL");
+
+// ../../node_modules/superjson/dist/pathstringifier.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var escapeKey = /* @__PURE__ */ __name((key) => key.replace(/\./g, "\\."), "escapeKey");
+var stringifyPath = /* @__PURE__ */ __name((path) => path.map(String).map(escapeKey).join("."), "stringifyPath");
+var parsePath = /* @__PURE__ */ __name((string) => {
+  const result = [];
+  let segment = "";
+  for (let i = 0; i < string.length; i++) {
+    let char = string.charAt(i);
+    const isEscapedDot = char === "\\" && string.charAt(i + 1) === ".";
+    if (isEscapedDot) {
+      segment += ".";
+      i++;
+      continue;
+    }
+    const isEndOfSegment = char === ".";
+    if (isEndOfSegment) {
+      result.push(segment);
+      segment = "";
+      continue;
+    }
+    segment += char;
+  }
+  const lastSegment = segment;
+  result.push(lastSegment);
+  return result;
+}, "parsePath");
+
+// ../../node_modules/superjson/dist/transformer.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+function simpleTransformation(isApplicable, annotation, transform, untransform) {
+  return {
+    isApplicable,
+    annotation,
+    transform,
+    untransform
+  };
+}
+__name(simpleTransformation, "simpleTransformation");
+var simpleRules = [
+  simpleTransformation(isUndefined, "undefined", () => null, () => void 0),
+  simpleTransformation(isBigint, "bigint", (v) => v.toString(), (v) => {
+    if (typeof BigInt !== "undefined") {
+      return BigInt(v);
+    }
+    console.error("Please add a BigInt polyfill.");
+    return v;
+  }),
+  simpleTransformation(isDate, "Date", (v) => v.toISOString(), (v) => new Date(v)),
+  simpleTransformation(isError, "Error", (v, superJson) => {
+    const baseError = {
+      name: v.name,
+      message: v.message
+    };
+    superJson.allowedErrorProps.forEach((prop) => {
+      baseError[prop] = v[prop];
+    });
+    return baseError;
+  }, (v, superJson) => {
+    const e = new Error(v.message);
+    e.name = v.name;
+    e.stack = v.stack;
+    superJson.allowedErrorProps.forEach((prop) => {
+      e[prop] = v[prop];
+    });
+    return e;
+  }),
+  simpleTransformation(isRegExp, "regexp", (v) => "" + v, (regex) => {
+    const body = regex.slice(1, regex.lastIndexOf("/"));
+    const flags = regex.slice(regex.lastIndexOf("/") + 1);
+    return new RegExp(body, flags);
+  }),
+  simpleTransformation(
+    isSet,
+    "set",
+    // (sets only exist in es6+)
+    // eslint-disable-next-line es5/no-es6-methods
+    (v) => [...v.values()],
+    (v) => new Set(v)
+  ),
+  simpleTransformation(isMap, "map", (v) => [...v.entries()], (v) => new Map(v)),
+  simpleTransformation((v) => isNaNValue(v) || isInfinite(v), "number", (v) => {
+    if (isNaNValue(v)) {
+      return "NaN";
+    }
+    if (v > 0) {
+      return "Infinity";
+    } else {
+      return "-Infinity";
+    }
+  }, Number),
+  simpleTransformation((v) => v === 0 && 1 / v === -Infinity, "number", () => {
+    return "-0";
+  }, Number),
+  simpleTransformation(isURL, "URL", (v) => v.toString(), (v) => new URL(v))
+];
+function compositeTransformation(isApplicable, annotation, transform, untransform) {
+  return {
+    isApplicable,
+    annotation,
+    transform,
+    untransform
+  };
+}
+__name(compositeTransformation, "compositeTransformation");
+var symbolRule = compositeTransformation((s, superJson) => {
+  if (isSymbol(s)) {
+    const isRegistered = !!superJson.symbolRegistry.getIdentifier(s);
+    return isRegistered;
+  }
+  return false;
+}, (s, superJson) => {
+  const identifier = superJson.symbolRegistry.getIdentifier(s);
+  return ["symbol", identifier];
+}, (v) => v.description, (_, a, superJson) => {
+  const value = superJson.symbolRegistry.getValue(a[1]);
+  if (!value) {
+    throw new Error("Trying to deserialize unknown symbol");
+  }
+  return value;
+});
+var constructorToName = [
+  Int8Array,
+  Uint8Array,
+  Int16Array,
+  Uint16Array,
+  Int32Array,
+  Uint32Array,
+  Float32Array,
+  Float64Array,
+  Uint8ClampedArray
+].reduce((obj, ctor) => {
+  obj[ctor.name] = ctor;
+  return obj;
+}, {});
+var typedArrayRule = compositeTransformation(isTypedArray, (v) => ["typed-array", v.constructor.name], (v) => [...v], (v, a) => {
+  const ctor = constructorToName[a[1]];
+  if (!ctor) {
+    throw new Error("Trying to deserialize unknown typed array");
+  }
+  return new ctor(v);
+});
+function isInstanceOfRegisteredClass(potentialClass, superJson) {
+  if (potentialClass?.constructor) {
+    const isRegistered = !!superJson.classRegistry.getIdentifier(potentialClass.constructor);
+    return isRegistered;
+  }
+  return false;
+}
+__name(isInstanceOfRegisteredClass, "isInstanceOfRegisteredClass");
+var classRule = compositeTransformation(isInstanceOfRegisteredClass, (clazz, superJson) => {
+  const identifier = superJson.classRegistry.getIdentifier(clazz.constructor);
+  return ["class", identifier];
+}, (clazz, superJson) => {
+  const allowedProps = superJson.classRegistry.getAllowedProps(clazz.constructor);
+  if (!allowedProps) {
+    return { ...clazz };
+  }
+  const result = {};
+  allowedProps.forEach((prop) => {
+    result[prop] = clazz[prop];
+  });
+  return result;
+}, (v, a, superJson) => {
+  const clazz = superJson.classRegistry.getValue(a[1]);
+  if (!clazz) {
+    throw new Error(`Trying to deserialize unknown class '${a[1]}' - check https://github.com/blitz-js/superjson/issues/116#issuecomment-773996564`);
+  }
+  return Object.assign(Object.create(clazz.prototype), v);
+});
+var customRule = compositeTransformation((value, superJson) => {
+  return !!superJson.customTransformerRegistry.findApplicable(value);
+}, (value, superJson) => {
+  const transformer = superJson.customTransformerRegistry.findApplicable(value);
+  return ["custom", transformer.name];
+}, (value, superJson) => {
+  const transformer = superJson.customTransformerRegistry.findApplicable(value);
+  return transformer.serialize(value);
+}, (v, a, superJson) => {
+  const transformer = superJson.customTransformerRegistry.findByName(a[1]);
+  if (!transformer) {
+    throw new Error("Trying to deserialize unknown custom value");
+  }
+  return transformer.deserialize(v);
+});
+var compositeRules = [classRule, symbolRule, customRule, typedArrayRule];
+var transformValue = /* @__PURE__ */ __name((value, superJson) => {
+  const applicableCompositeRule = findArr(compositeRules, (rule) => rule.isApplicable(value, superJson));
+  if (applicableCompositeRule) {
+    return {
+      value: applicableCompositeRule.transform(value, superJson),
+      type: applicableCompositeRule.annotation(value, superJson)
+    };
+  }
+  const applicableSimpleRule = findArr(simpleRules, (rule) => rule.isApplicable(value, superJson));
+  if (applicableSimpleRule) {
+    return {
+      value: applicableSimpleRule.transform(value, superJson),
+      type: applicableSimpleRule.annotation
+    };
+  }
+  return void 0;
+}, "transformValue");
+var simpleRulesByAnnotation = {};
+simpleRules.forEach((rule) => {
+  simpleRulesByAnnotation[rule.annotation] = rule;
+});
+var untransformValue = /* @__PURE__ */ __name((json, type2, superJson) => {
+  if (isArray(type2)) {
+    switch (type2[0]) {
+      case "symbol":
+        return symbolRule.untransform(json, type2, superJson);
+      case "class":
+        return classRule.untransform(json, type2, superJson);
+      case "custom":
+        return customRule.untransform(json, type2, superJson);
+      case "typed-array":
+        return typedArrayRule.untransform(json, type2, superJson);
+      default:
+        throw new Error("Unknown transformation: " + type2);
+    }
+  } else {
+    const transformation = simpleRulesByAnnotation[type2];
+    if (!transformation) {
+      throw new Error("Unknown transformation: " + type2);
+    }
+    return transformation.untransform(json, superJson);
+  }
+}, "untransformValue");
+
+// ../../node_modules/superjson/dist/accessDeep.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var getNthKey = /* @__PURE__ */ __name((value, n) => {
+  if (n > value.size)
+    throw new Error("index out of bounds");
+  const keys = value.keys();
+  while (n > 0) {
+    keys.next();
+    n--;
+  }
+  return keys.next().value;
+}, "getNthKey");
+function validatePath(path) {
+  if (includes(path, "__proto__")) {
+    throw new Error("__proto__ is not allowed as a property");
+  }
+  if (includes(path, "prototype")) {
+    throw new Error("prototype is not allowed as a property");
+  }
+  if (includes(path, "constructor")) {
+    throw new Error("constructor is not allowed as a property");
+  }
+}
+__name(validatePath, "validatePath");
+var getDeep = /* @__PURE__ */ __name((object, path) => {
+  validatePath(path);
+  for (let i = 0; i < path.length; i++) {
+    const key = path[i];
+    if (isSet(object)) {
+      object = getNthKey(object, +key);
+    } else if (isMap(object)) {
+      const row = +key;
+      const type2 = +path[++i] === 0 ? "key" : "value";
+      const keyOfRow = getNthKey(object, row);
+      switch (type2) {
+        case "key":
+          object = keyOfRow;
+          break;
+        case "value":
+          object = object.get(keyOfRow);
+          break;
+      }
+    } else {
+      object = object[key];
+    }
+  }
+  return object;
+}, "getDeep");
+var setDeep = /* @__PURE__ */ __name((object, path, mapper) => {
+  validatePath(path);
+  if (path.length === 0) {
+    return mapper(object);
+  }
+  let parent = object;
+  for (let i = 0; i < path.length - 1; i++) {
+    const key = path[i];
+    if (isArray(parent)) {
+      const index = +key;
+      parent = parent[index];
+    } else if (isPlainObject2(parent)) {
+      parent = parent[key];
+    } else if (isSet(parent)) {
+      const row = +key;
+      parent = getNthKey(parent, row);
+    } else if (isMap(parent)) {
+      const isEnd = i === path.length - 2;
+      if (isEnd) {
+        break;
+      }
+      const row = +key;
+      const type2 = +path[++i] === 0 ? "key" : "value";
+      const keyOfRow = getNthKey(parent, row);
+      switch (type2) {
+        case "key":
+          parent = keyOfRow;
+          break;
+        case "value":
+          parent = parent.get(keyOfRow);
+          break;
+      }
+    }
+  }
+  const lastKey = path[path.length - 1];
+  if (isArray(parent)) {
+    parent[+lastKey] = mapper(parent[+lastKey]);
+  } else if (isPlainObject2(parent)) {
+    parent[lastKey] = mapper(parent[lastKey]);
+  }
+  if (isSet(parent)) {
+    const oldValue = getNthKey(parent, +lastKey);
+    const newValue = mapper(oldValue);
+    if (oldValue !== newValue) {
+      parent.delete(oldValue);
+      parent.add(newValue);
+    }
+  }
+  if (isMap(parent)) {
+    const row = +path[path.length - 2];
+    const keyToRow = getNthKey(parent, row);
+    const type2 = +lastKey === 0 ? "key" : "value";
+    switch (type2) {
+      case "key": {
+        const newKey = mapper(keyToRow);
+        parent.set(newKey, parent.get(keyToRow));
+        if (newKey !== keyToRow) {
+          parent.delete(keyToRow);
+        }
+        break;
+      }
+      case "value": {
+        parent.set(keyToRow, mapper(parent.get(keyToRow)));
+        break;
+      }
+    }
+  }
+  return object;
+}, "setDeep");
+
+// ../../node_modules/superjson/dist/plainer.js
+function traverse(tree, walker2, origin = []) {
+  if (!tree) {
+    return;
+  }
+  if (!isArray(tree)) {
+    forEach(tree, (subtree, key) => traverse(subtree, walker2, [...origin, ...parsePath(key)]));
+    return;
+  }
+  const [nodeValue, children] = tree;
+  if (children) {
+    forEach(children, (child, key) => {
+      traverse(child, walker2, [...origin, ...parsePath(key)]);
+    });
+  }
+  walker2(nodeValue, origin);
+}
+__name(traverse, "traverse");
+function applyValueAnnotations(plain, annotations, superJson) {
+  traverse(annotations, (type2, path) => {
+    plain = setDeep(plain, path, (v) => untransformValue(v, type2, superJson));
+  });
+  return plain;
+}
+__name(applyValueAnnotations, "applyValueAnnotations");
+function applyReferentialEqualityAnnotations(plain, annotations) {
+  function apply(identicalPaths, path) {
+    const object = getDeep(plain, parsePath(path));
+    identicalPaths.map(parsePath).forEach((identicalObjectPath) => {
+      plain = setDeep(plain, identicalObjectPath, () => object);
+    });
+  }
+  __name(apply, "apply");
+  if (isArray(annotations)) {
+    const [root, other] = annotations;
+    root.forEach((identicalPath) => {
+      plain = setDeep(plain, parsePath(identicalPath), () => plain);
+    });
+    if (other) {
+      forEach(other, apply);
+    }
+  } else {
+    forEach(annotations, apply);
+  }
+  return plain;
+}
+__name(applyReferentialEqualityAnnotations, "applyReferentialEqualityAnnotations");
+var isDeep = /* @__PURE__ */ __name((object, superJson) => isPlainObject2(object) || isArray(object) || isMap(object) || isSet(object) || isInstanceOfRegisteredClass(object, superJson), "isDeep");
+function addIdentity(object, path, identities) {
+  const existingSet = identities.get(object);
+  if (existingSet) {
+    existingSet.push(path);
+  } else {
+    identities.set(object, [path]);
+  }
+}
+__name(addIdentity, "addIdentity");
+function generateReferentialEqualityAnnotations(identitites, dedupe) {
+  const result = {};
+  let rootEqualityPaths = void 0;
+  identitites.forEach((paths) => {
+    if (paths.length <= 1) {
+      return;
+    }
+    if (!dedupe) {
+      paths = paths.map((path) => path.map(String)).sort((a, b) => a.length - b.length);
+    }
+    const [representativePath, ...identicalPaths] = paths;
+    if (representativePath.length === 0) {
+      rootEqualityPaths = identicalPaths.map(stringifyPath);
+    } else {
+      result[stringifyPath(representativePath)] = identicalPaths.map(stringifyPath);
+    }
+  });
+  if (rootEqualityPaths) {
+    if (isEmptyObject(result)) {
+      return [rootEqualityPaths];
+    } else {
+      return [rootEqualityPaths, result];
+    }
+  } else {
+    return isEmptyObject(result) ? void 0 : result;
+  }
+}
+__name(generateReferentialEqualityAnnotations, "generateReferentialEqualityAnnotations");
+var walker = /* @__PURE__ */ __name((object, identities, superJson, dedupe, path = [], objectsInThisPath = [], seenObjects = /* @__PURE__ */ new Map()) => {
+  const primitive = isPrimitive(object);
+  if (!primitive) {
+    addIdentity(object, path, identities);
+    const seen = seenObjects.get(object);
+    if (seen) {
+      return dedupe ? {
+        transformedValue: null
+      } : seen;
+    }
+  }
+  if (!isDeep(object, superJson)) {
+    const transformed2 = transformValue(object, superJson);
+    const result2 = transformed2 ? {
+      transformedValue: transformed2.value,
+      annotations: [transformed2.type]
+    } : {
+      transformedValue: object
+    };
+    if (!primitive) {
+      seenObjects.set(object, result2);
+    }
+    return result2;
+  }
+  if (includes(objectsInThisPath, object)) {
+    return {
+      transformedValue: null
+    };
+  }
+  const transformationResult = transformValue(object, superJson);
+  const transformed = transformationResult?.value ?? object;
+  const transformedValue = isArray(transformed) ? [] : {};
+  const innerAnnotations = {};
+  forEach(transformed, (value, index) => {
+    if (index === "__proto__" || index === "constructor" || index === "prototype") {
+      throw new Error(`Detected property ${index}. This is a prototype pollution risk, please remove it from your object.`);
+    }
+    const recursiveResult = walker(value, identities, superJson, dedupe, [...path, index], [...objectsInThisPath, object], seenObjects);
+    transformedValue[index] = recursiveResult.transformedValue;
+    if (isArray(recursiveResult.annotations)) {
+      innerAnnotations[index] = recursiveResult.annotations;
+    } else if (isPlainObject2(recursiveResult.annotations)) {
+      forEach(recursiveResult.annotations, (tree, key) => {
+        innerAnnotations[escapeKey(index) + "." + key] = tree;
+      });
+    }
+  });
+  const result = isEmptyObject(innerAnnotations) ? {
+    transformedValue,
+    annotations: !!transformationResult ? [transformationResult.type] : void 0
+  } : {
+    transformedValue,
+    annotations: !!transformationResult ? [transformationResult.type, innerAnnotations] : innerAnnotations
+  };
+  if (!primitive) {
+    seenObjects.set(object, result);
+  }
+  return result;
+}, "walker");
+
+// ../../node_modules/copy-anything/dist/index.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../node_modules/is-what/dist/index.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+function getType2(payload) {
+  return Object.prototype.toString.call(payload).slice(8, -1);
+}
+__name(getType2, "getType");
+function isArray2(payload) {
+  return getType2(payload) === "Array";
+}
+__name(isArray2, "isArray");
+function isPlainObject3(payload) {
+  if (getType2(payload) !== "Object")
+    return false;
+  const prototype = Object.getPrototypeOf(payload);
+  return !!prototype && prototype.constructor === Object && prototype === Object.prototype;
+}
+__name(isPlainObject3, "isPlainObject");
+function isNull2(payload) {
+  return getType2(payload) === "Null";
+}
+__name(isNull2, "isNull");
+function isOneOf(a, b, c, d, e) {
+  return (value) => a(value) || b(value) || !!c && c(value) || !!d && d(value) || !!e && e(value);
+}
+__name(isOneOf, "isOneOf");
+function isUndefined2(payload) {
+  return getType2(payload) === "Undefined";
+}
+__name(isUndefined2, "isUndefined");
+var isNullOrUndefined = isOneOf(isNull2, isUndefined2);
+
+// ../../node_modules/copy-anything/dist/index.js
+function assignProp(carry, key, newVal, originalObject, includeNonenumerable) {
+  const propType = {}.propertyIsEnumerable.call(originalObject, key) ? "enumerable" : "nonenumerable";
+  if (propType === "enumerable")
+    carry[key] = newVal;
+  if (includeNonenumerable && propType === "nonenumerable") {
+    Object.defineProperty(carry, key, {
+      value: newVal,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    });
+  }
+}
+__name(assignProp, "assignProp");
+function copy(target, options = {}) {
+  if (isArray2(target)) {
+    return target.map((item) => copy(item, options));
+  }
+  if (!isPlainObject3(target)) {
+    return target;
+  }
+  const props = Object.getOwnPropertyNames(target);
+  const symbols = Object.getOwnPropertySymbols(target);
+  return [...props, ...symbols].reduce((carry, key) => {
+    if (isArray2(options.props) && !options.props.includes(key)) {
+      return carry;
+    }
+    const val = target[key];
+    const newVal = copy(val, options);
+    assignProp(carry, key, newVal, target, options.nonenumerable);
+    return carry;
+  }, {});
+}
+__name(copy, "copy");
+
+// ../../node_modules/superjson/dist/index.js
+var SuperJSON = class {
+  static {
+    __name(this, "SuperJSON");
+  }
+  /**
+   * @param dedupeReferentialEqualities  If true, SuperJSON will make sure only one instance of referentially equal objects are serialized and the rest are replaced with `null`.
+   */
+  constructor({ dedupe = false } = {}) {
+    this.classRegistry = new ClassRegistry();
+    this.symbolRegistry = new Registry((s) => s.description ?? "");
+    this.customTransformerRegistry = new CustomTransformerRegistry();
+    this.allowedErrorProps = [];
+    this.dedupe = dedupe;
+  }
+  serialize(object) {
+    const identities = /* @__PURE__ */ new Map();
+    const output = walker(object, identities, this, this.dedupe);
+    const res = {
+      json: output.transformedValue
+    };
+    if (output.annotations) {
+      res.meta = {
+        ...res.meta,
+        values: output.annotations
+      };
+    }
+    const equalityAnnotations = generateReferentialEqualityAnnotations(identities, this.dedupe);
+    if (equalityAnnotations) {
+      res.meta = {
+        ...res.meta,
+        referentialEqualities: equalityAnnotations
+      };
+    }
+    return res;
+  }
+  deserialize(payload) {
+    const { json, meta } = payload;
+    let result = copy(json);
+    if (meta?.values) {
+      result = applyValueAnnotations(result, meta.values, this);
+    }
+    if (meta?.referentialEqualities) {
+      result = applyReferentialEqualityAnnotations(result, meta.referentialEqualities);
+    }
+    return result;
+  }
+  stringify(object) {
+    return JSON.stringify(this.serialize(object));
+  }
+  parse(string) {
+    return this.deserialize(JSON.parse(string));
+  }
+  registerClass(v, options) {
+    this.classRegistry.register(v, options);
+  }
+  registerSymbol(v, identifier) {
+    this.symbolRegistry.register(v, identifier);
+  }
+  registerCustom(transformer, name) {
+    this.customTransformerRegistry.register({
+      name,
+      ...transformer
+    });
+  }
+  allowErrorProps(...props) {
+    this.allowedErrorProps.push(...props);
+  }
+};
+SuperJSON.defaultInstance = new SuperJSON();
+SuperJSON.serialize = SuperJSON.defaultInstance.serialize.bind(SuperJSON.defaultInstance);
+SuperJSON.deserialize = SuperJSON.defaultInstance.deserialize.bind(SuperJSON.defaultInstance);
+SuperJSON.stringify = SuperJSON.defaultInstance.stringify.bind(SuperJSON.defaultInstance);
+SuperJSON.parse = SuperJSON.defaultInstance.parse.bind(SuperJSON.defaultInstance);
+SuperJSON.registerClass = SuperJSON.defaultInstance.registerClass.bind(SuperJSON.defaultInstance);
+SuperJSON.registerSymbol = SuperJSON.defaultInstance.registerSymbol.bind(SuperJSON.defaultInstance);
+SuperJSON.registerCustom = SuperJSON.defaultInstance.registerCustom.bind(SuperJSON.defaultInstance);
+SuperJSON.allowErrorProps = SuperJSON.defaultInstance.allowErrorProps.bind(SuperJSON.defaultInstance);
+var serialize = SuperJSON.serialize;
+var deserialize = SuperJSON.deserialize;
+var stringify = SuperJSON.stringify;
+var parse = SuperJSON.parse;
+var registerClass = SuperJSON.registerClass;
+var registerCustom = SuperJSON.registerCustom;
+var registerSymbol = SuperJSON.registerSymbol;
+var allowErrorProps = SuperJSON.allowErrorProps;
 
 // ../../packages/drizzle/src/index.ts
 init_modules_watch_stub();
@@ -9476,10 +10414,10 @@ function notInArray(column, values) {
   return sql`${column} not in ${bindIfParam(values, column)}`;
 }
 __name(notInArray, "notInArray");
-function isNull(value) {
+function isNull3(value) {
   return sql`${value} is null`;
 }
-__name(isNull, "isNull");
+__name(isNull3, "isNull");
 function isNotNull(value) {
   return sql`${value} is not null`;
 }
@@ -9612,7 +10550,7 @@ function getOperators() {
     gte,
     ilike,
     inArray,
-    isNull,
+    isNull: isNull3,
     isNotNull,
     like,
     lt,
@@ -13588,12 +14526,70 @@ init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
 init_performance2();
+
+// ../../packages/lib/src/utils/index.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../packages/lib/src/utils/nanoid.utils.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../packages/lib/node_modules/nanoid/index.browser.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var random = /* @__PURE__ */ __name((bytes) => crypto.getRandomValues(new Uint8Array(bytes)), "random");
+var customRandom = /* @__PURE__ */ __name((alphabet, defaultSize, getRandom) => {
+  let mask = (2 << Math.log2(alphabet.length - 1)) - 1;
+  let step = -~(1.6 * mask * defaultSize / alphabet.length);
+  return (size = defaultSize) => {
+    let id = "";
+    while (true) {
+      let bytes = getRandom(step);
+      let j = step | 0;
+      while (j--) {
+        id += alphabet[bytes[j] & mask] || "";
+        if (id.length >= size) return id;
+      }
+    }
+  };
+}, "customRandom");
+var customAlphabet = /* @__PURE__ */ __name((alphabet, size = 21) => customRandom(alphabet, size | 0, random), "customAlphabet");
+
+// ../../packages/lib/src/utils/nanoid.utils.ts
+var generateNanoid = /* @__PURE__ */ __name((length) => {
+  const alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
+  return customAlphabet(alphabet, length)();
+}, "generateNanoid");
+
+// ../../packages/lib/src/utils/slug.utils.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var import_slugify = __toESM(require_slugify());
+var createUrlSlug = /* @__PURE__ */ __name((string, year) => {
+  return (0, import_slugify.default)(string.toLowerCase());
+}, "createUrlSlug");
+
+// ../../packages/drizzle/src/schema/lists.schema.ts
 var lists = sqliteTable("lists", {
-  id: integer().primaryKey(),
-  publicId: text({ length: 12 }).unique(),
-  title: text(),
-  createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
-  updatedAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`)
+  listId: integer().primaryKey(),
+  readId: text({ length: 12 }).unique().notNull().$defaultFn(() => generateNanoid(12)),
+  editId: text({ length: 22 }).unique().notNull().$defaultFn(() => generateNanoid(22)),
+  title: text().notNull(),
+  description: text().notNull().default(""),
+  locked: integer({ mode: "boolean" }).notNull().default(false),
+  owner: text().notNull(),
+  createdAt: integer({ mode: "timestamp" }).notNull().$defaultFn(() => /* @__PURE__ */ new Date()),
+  updatedAt: integer({ mode: "timestamp" }).notNull().$onUpdate(() => /* @__PURE__ */ new Date()).$defaultFn(() => /* @__PURE__ */ new Date()),
+  lastUpdate: integer({ mode: "timestamp" }).notNull().$onUpdate(() => /* @__PURE__ */ new Date()).$defaultFn(() => /* @__PURE__ */ new Date())
 });
 var listRelations = relations(lists, ({ many }) => ({
   listMovies: many(listMovies)
@@ -13605,15 +14601,13 @@ init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
 init_performance2();
 var movies = sqliteTable("movies", {
-  id: integer().primaryKey(),
+  movieId: integer().primaryKey(),
   tmdbId: integer().notNull().unique(),
   title: text().notNull(),
-  backdropPath: text().notNull(),
   posterPath: text().notNull(),
-  overview: text().notNull(),
-  releaseDate: text().notNull().default(sql`(CURRENT_DATE)`),
-  createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
-  updatedAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`).$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
+  releaseDate: text().notNull(),
+  slug: text().notNull().unique(),
+  createdAt: integer({ mode: "timestamp" }).notNull().$defaultFn(() => /* @__PURE__ */ new Date())
 });
 var moviesRelations = relations(movies, ({ many }) => ({
   listMovies: many(listMovies)
@@ -13621,19 +14615,24 @@ var moviesRelations = relations(movies, ({ many }) => ({
 
 // ../../packages/drizzle/src/schema/list-movies.schema.ts
 var listMovies = sqliteTable("list_movies", {
-  listId: integer().references(() => lists.id),
-  movieId: integer().references(() => movies.id),
+  listId: integer().notNull().references(() => lists.listId),
+  movieId: integer().notNull().references(() => movies.movieId),
   order: integer().notNull(),
-  createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`)
+  createdAt: integer({ mode: "timestamp" }).notNull().$defaultFn(() => /* @__PURE__ */ new Date())
 });
 var listMoviesRelations = relations(listMovies, ({ one }) => ({
-  list: one(lists, { fields: [listMovies.listId], references: [lists.id] }),
-  movie: one(movies, { fields: [listMovies.movieId], references: [movies.id] })
+  list: one(lists, { fields: [listMovies.listId], references: [lists.listId] }),
+  movie: one(movies, { fields: [listMovies.movieId], references: [movies.movieId] })
 }));
 
 // ../../packages/drizzle/src/index.ts
 var initDrizzleDatabase = /* @__PURE__ */ __name((binding2) => {
   return drizzle(binding2, {
+    logger: {
+      logQuery: /* @__PURE__ */ __name((msg) => {
+        console.log(msg);
+      }, "logQuery")
+    },
     schema: {
       listMovies,
       listMoviesRelations,
@@ -13646,7 +14645,9 @@ var initDrizzleDatabase = /* @__PURE__ */ __name((binding2) => {
 }, "initDrizzleDatabase");
 
 // src/lib/trpc.ts
-var t = initTRPC.context().create();
+var t = initTRPC.context().create({
+  transformer: SuperJSON
+});
 var procedure = t.procedure;
 var router = t.router;
 var mergeRouters2 = t.mergeRouters;
@@ -17879,56 +18880,6 @@ var z = /* @__PURE__ */ Object.freeze({
   ZodError
 });
 
-// src/mutations/createListMovie.mutation.ts
-var createListMovie = procedure.use(middlewareDatabase).input(
-  z.object({
-    listId: z.number(),
-    movieId: z.number(),
-    title: z.string(),
-    overview: z.string(),
-    posterPath: z.string(),
-    backdropPath: z.string()
-  })
-).mutation(async ({ input, ctx }) => {
-  const [{ insertedId }] = await ctx.db.insert(movies).values({
-    tmdbId: input.movieId,
-    title: input.title,
-    overview: input.overview,
-    posterPath: input.posterPath,
-    backdropPath: input.backdropPath
-  }).returning({ insertedId: movies.id });
-  await ctx.db.insert(listMovies).values({
-    listId: input.listId,
-    movieId: insertedId,
-    order: 1
-  });
-});
-
-// src/queries/findList.query.ts
-init_modules_watch_stub();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
-init_performance2();
-var findList = procedure.use(middlewareDatabase).input(
-  z.object({
-    listId: z.number()
-  })
-).query(async ({ input, ctx }) => {
-  const movies2 = await ctx.db.query.listMovies.findMany({
-    where: /* @__PURE__ */ __name((listMovie) => eq(listMovie.listId, input.listId), "where"),
-    with: {
-      movie: true
-    }
-  });
-  return movies2;
-});
-
-// src/queries/searchMovies.query.ts
-init_modules_watch_stub();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
-init_performance2();
-
 // ../../packages/tmdb/src/index.ts
 init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
@@ -18403,7 +19354,92 @@ var client = createClient({
   }
 });
 
+// src/mutations/createListMovie.mutation.ts
+var createListMovie = procedure.use(middlewareDatabase).input(
+  z.object({
+    editId: z.string(),
+    tmdbId: z.number()
+  })
+).mutation(async ({ input, ctx }) => {
+  const movie = await client_exports.client.GET("/3/movie/{movie_id}", {
+    params: {
+      path: {
+        movie_id: input.tmdbId
+      }
+    }
+  });
+  if (!movie || !movie.data) {
+    throw new Error("Movie not found");
+  }
+  const [{ movieId }] = await ctx.db.insert(movies).values({
+    tmdbId: movie.data.id,
+    title: movie.data.title,
+    overview: movie.data.overview,
+    posterPath: movie.data.poster_path,
+    backdropPath: movie.data.backdrop_path,
+    releaseDate: movie.data.release_date,
+    slug: createUrlSlug(movie.data.title)
+  }).returning({ movieId: movies.movieId });
+  const list = await ctx.db.query.lists.findFirst({
+    where: /* @__PURE__ */ __name((list2) => eq(list2.editId, input.editId), "where")
+  });
+  if (!list) {
+    throw new Error("List not found");
+  }
+  await ctx.db.insert(listMovies).values({
+    listId: list.listId,
+    movieId,
+    order: 1
+  });
+});
+
+// src/mutations/initializeList.mutation.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var initializeList = procedure.use(middlewareDatabase).mutation(async ({ ctx }) => {
+  const count3 = await ctx.db.$count(lists);
+  await ctx.db.insert(lists).values({
+    title: `Untitled #${count3 + 1}`,
+    owner: "test"
+  });
+});
+
+// src/queries/loadList.query.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var loadList = procedure.use(middlewareDatabase).input(z.string()).query(async ({ input, ctx }) => {
+  const data = await ctx.db.query.lists.findFirst({
+    where: /* @__PURE__ */ __name((list2) => eq(list2.editId, input), "where"),
+    with: {
+      listMovies: {
+        limit: 50,
+        with: {
+          movie: true
+        }
+      }
+    }
+  });
+  if (!data) {
+    throw new Error("List not found");
+  }
+  const { listMovies: listMovies2, ...list } = data;
+  return {
+    list,
+    movies: listMovies2.map(({ order, movie }) => {
+      return { ...movie, order };
+    })
+  };
+});
+
 // src/queries/searchMovies.query.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
 var searchMovies = procedure.input(
   z.object({
     query: z.string(),
@@ -18438,9 +19474,8 @@ var searchMovies = procedure.input(
     })
   );
   return withDirectors.map((movie) => ({
-    movieId: movie.id,
+    tmdbId: movie.id,
     title: movie.title,
-    releaseDate: movie.release_date,
     posterPath: movie.poster_path,
     directors: movie.directors
   }));
@@ -18452,7 +19487,8 @@ var appRouter = router({
     search: searchMovies
   },
   list: {
-    find: findList,
+    initialize: initializeList,
+    load: loadList,
     add: createListMovie
   }
 });
@@ -18512,7 +19548,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env2, _ctx, middlewareCtx
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// .wrangler/tmp/bundle-IfhnOv/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-FMKfFs/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -18548,7 +19584,7 @@ function __facade_invoke__(request, env2, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-IfhnOv/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-FMKfFs/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

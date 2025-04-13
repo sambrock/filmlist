@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useDebounceValue } from 'usehooks-ts';
 
 import { trpc } from '../../lib/trpc';
+import { dispatch } from '../../stores/useGlobalStore/store';
 
 export const MovieSearch = () => {
   const [query, setQuery] = useState('');
 
-  const [debouncedQuery] = useDebounceValue(query, 200);
+  const timeoutRef = useRef<number>(null);
 
   const searchMoviesQuery = useQuery({
-    queryKey: ['search', debouncedQuery],
-    queryFn: () => trpc.movies.search.query({ query: debouncedQuery }),
+    queryKey: ['search', query],
+    queryFn: () => trpc.movies.search.query({ query }),
     enabled: Boolean(query),
   });
 
@@ -20,11 +20,33 @@ export const MovieSearch = () => {
       <input
         className="bg-neutral-700"
         onChange={(e) => {
-          setQuery(e.target.value);
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+          }
+          timeoutRef.current = setTimeout(() => {
+            setQuery(e.target.value);
+          }, 500);
         }}
       />
 
-      {searchMoviesQuery.data?.map((m) => <div key={m.movieId}>{m.title}</div>)}
+      {searchMoviesQuery.data?.map((m) => (
+        <div
+          key={m.tmdbId}
+          className="flex cursor-pointer items-center gap-2 p-2 hover:bg-neutral-700"
+          onClick={() => {
+            dispatch({
+              type: 'ADD_MOVIE',
+              payload: {
+                tmdbId: m.tmdbId,
+                title: m.title,
+                posterPath: m.posterPath,
+              },
+            });
+          }}
+        >
+          {m.title}
+        </div>
+      ))}
     </div>
   );
 };

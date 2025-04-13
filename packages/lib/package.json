@@ -1,0 +1,13 @@
+{
+  "name": "@filmlist/lib",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "exports": {
+    "./utils": "./src/utils/index.ts"
+  },
+  "dependencies": {
+    "nanoid": "^5.1.5",
+    "slugify": "^1.6.6"
+  }
+}

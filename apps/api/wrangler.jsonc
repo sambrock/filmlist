@@ -9,4 +9,13 @@
       "database_id": "0e541b24-e43e-4e45-992c-ac597bf59b3c",
     },
   ],
+  "vars": {},
+  "env": {
+    "local": {
+      "vars": {
+        "DB": "./local-db.sqlite",
+        "D1_DB": "./local-db-1.sqlite",
+      },
+    },
+  },
 }

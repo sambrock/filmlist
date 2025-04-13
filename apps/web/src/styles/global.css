@@ -1,8 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@100..900&display=swap');
 @import 'tailwindcss';
 
-:root {
+@theme {
+  --font-sans: 'Noto Sans Tamil', sans-serif;
+
+  --color-bg-default: #0e1216;
 }
 
 body {
-  @apply bg-neutral-800 text-neutral-100;
+  @apply bg-bg-default font-sans text-neutral-100;
 }

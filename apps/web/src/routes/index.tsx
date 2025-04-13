@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { List } from '../components/list/List';
-import { MovieSearch } from '../components/search/MovieSearch';
+import { trpc } from '../lib/trpc';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -10,7 +9,13 @@ export const Route = createFileRoute('/')({
 function Index() {
   return (
     <div className="p-8">
-      <MovieSearch />
+      <button
+        onClick={() => {
+          trpc.list.initialize.mutate();
+        }}
+      >
+        INITIALIZE LIST
+      </button>
     </div>
   );
 }

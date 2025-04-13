@@ -1,21 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
+import { useListMovies } from '../../stores/useGlobalStore/store';
 
-import { trpc } from '../../lib/trpc';
-
-type ListProps = {
-  listId: number;
-};
-
-export const List = ({ listId }: ListProps) => {
-  const listMoviesQuery = useQuery({
-    queryKey: ['list'],
-    queryFn: () => trpc.list.find.query({ listId }),
-  });
+export const List = () => {
+  const movies = useListMovies();
 
   return (
-    <div>
-      {/* <button onClick={() => trpc.initializeList.mutate()}>Initialize list</button> */}
-      {listMoviesQuery.data?.map((m) => m.movieId)}
+    <div className="grid grid-cols-6 gap-1">
+      {[...movies.values()].map((movie) => (
+        <div key={movie.tmdbId} className="overflow-clip rounded-sm">
+          <img src={`https://image.tmdb.org/t/p/w342/${movie.posterPath}`} />
+        </div>
+      ))}
     </div>
   );
 };

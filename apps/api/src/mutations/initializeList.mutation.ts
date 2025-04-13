@@ -1,13 +1,11 @@
 import { lists } from '@filmlist/drizzle';
-import { Context } from '../lib/trpc';
+import { middlewareDatabase, procedure } from '../lib/trpc';
 
-export const initializeListHandler = async (ctx: Context) => {
-  const { db } = ctx;
+export const initializeList = procedure.use(middlewareDatabase).mutation(async ({ ctx }) => {
+  const count = await ctx.db.$count(lists);
 
-  await db.insert(lists).values({
-    publicId: 'test',
-    title: 'untitled',
+  await ctx.db.insert(lists).values({
+    title: `Untitled #${count + 1}`,
+    owner: 'test',
   });
-
-  return;
-};
+});
