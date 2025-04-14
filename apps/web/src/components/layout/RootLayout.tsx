@@ -1,18 +1,22 @@
 import { useEventListener } from 'usehooks-ts';
 
-import { dispatch } from '../../stores/useGlobalStore/store';
+import { useGlobalStore } from '../../stores/useGlobalStore/store';
+
+const storeActions = useGlobalStore.getState().actions;
 
 export const RootLayout = (props: React.PropsWithChildren) => {
   useEventListener('keydown', (e) => {
     if (e.metaKey && e.shiftKey && e.key === 'z') {
       console.log('REDO');
-      dispatch({ type: 'REDO' });
+      e.preventDefault();
+      storeActions.redo();
       return;
     }
 
     if (e.metaKey && e.key === 'z') {
       console.log('UNDO');
-      dispatch({ type: 'UNDO' });
+      e.preventDefault();
+      storeActions.undo();
       return;
     }
   });

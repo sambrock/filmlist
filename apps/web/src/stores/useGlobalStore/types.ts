@@ -10,13 +10,20 @@ export type GlobalStoreState = {
     movies: Map<number, { tmdbId: number; title: string; posterPath: string; order: number }>;
   };
 
-  patches: Patch[][];
-  inversePatches: Patch[][];
-  pointer: number;
+  // patches: Patch[][];
+  // inversePatches: Patch[][];
+  // pointer: number;
+
+  patches: {
+    stack: [Patch[], Patch[]][]; // [patches, inversePatches]
+    pointer: number;
+  };
 };
 
 export type GlobalStoreActions = {
   dispatch: (action: GlobalStoreAction) => void;
+  undo: () => void;
+  redo: () => void;
 };
 
 export type GlobalStoreAction =
