@@ -2,7 +2,9 @@ import { useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { trpc } from '../../lib/trpc';
-import { dispatch } from '../../stores/useGlobalStore/store';
+import { useListStore } from '../../stores/useListStore';
+
+const { dispatch } = useListStore.getState().actions;
 
 export const MovieSearch = () => {
   const [query, setQuery] = useState('');

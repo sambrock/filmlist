@@ -3,7 +3,9 @@ import { createFileRoute } from '@tanstack/react-router';
 import { List } from '../components/list/List';
 import { MovieSearch } from '../components/search/MovieSearch';
 import { trpc } from '../lib/trpc';
-import { dispatch } from '../stores/useGlobalStore/store';
+import { useListStore } from '../stores/useListStore';
+
+const { dispatch } = useListStore.getState().actions;
 
 export const Route = createFileRoute('/list/$id')({
   component: ListPage,
@@ -20,11 +22,9 @@ export const Route = createFileRoute('/list/$id')({
 });
 
 function ListPage() {
-  const { id } = Route.useParams();
-
   return (
     <div className="grid grid-cols-[1fr_6fr] gap-4">
-      <MovieSearch editId={id} />
+      <MovieSearch />
       <List />
     </div>
   );

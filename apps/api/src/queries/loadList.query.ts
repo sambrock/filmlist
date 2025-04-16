@@ -26,8 +26,6 @@ export const loadList = procedure
 
     return {
       list,
-      movies: listMovies.map(({ order, movie }) => {
-        return { ...movie, order };
-      }),
+      movies: listMovies,
     };
   });
