@@ -1,8 +1,8 @@
 import { enableMapSet, enablePatches } from 'immer';
 import { create } from 'zustand';
 
-import type { List, ListMovie, Movie } from '@filmlist/drizzle';
-import { createPatches } from '../usePatchesStore/usePatchesStore.store';
+import type { List, ListMovie, Movie } from '@repo/drizzle';
+import { pushPatches } from '../usePatchesStore/usePatchesStore.store';
 import { ListStoreAction, reducer } from './useListStore.reducer';
 
 enableMapSet();
@@ -26,10 +26,10 @@ export const useListStore = create<ListStore>((set) => ({
   actions: {
     dispatch: (action) => {
       set((state) => {
-        const newState = reducer(state, action);
+        const [newState, patches, inversePatches] = reducer(state, action);
 
-        if (action.type === 'ADD_MOVIE' || action.type === 'REMOVE_MOVIE') {
-          createPatches('list_store', state, newState);
+        if (typeof patches !== 'undefined' && typeof inversePatches !== 'undefined') {
+          pushPatches('list_store', patches, inversePatches);
         }
 
         return newState;

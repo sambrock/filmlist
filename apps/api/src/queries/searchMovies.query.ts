@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import { tmdb } from '@filmlist/tmdb';
+import { tmdb } from '@repo/tmdb';
 import { procedure } from '../lib/trpc';
 
 export const searchMovies = procedure

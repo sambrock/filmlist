@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { trpc } from '../../lib/trpc';
+import { trpc } from '../../lib/api/trpc';
 import { useListStore } from '../../stores/useListStore';
 
 const { dispatch } = useListStore.getState().actions;

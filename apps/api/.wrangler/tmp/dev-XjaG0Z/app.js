@@ -2666,13 +2666,13 @@ var require_main = __commonJS({
   }
 });
 
-// .wrangler/tmp/bundle-Khev9P/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-tRxs6o/middleware-loader.entry.ts
 init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
 init_performance2();
 
-// .wrangler/tmp/bundle-Khev9P/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-tRxs6o/middleware-insertion-facade.js
 init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
@@ -8961,6 +8961,10 @@ var Table = class {
     this[BaseName] = baseName;
   }
 };
+function isTable(table3) {
+  return typeof table3 === "object" && table3 !== null && IsDrizzleTable in table3;
+}
+__name(isTable, "isTable");
 function getTableName(table3) {
   return table3[TableName];
 }
@@ -10137,6 +10141,10 @@ var View = class {
     return new SQL([this]);
   }
 };
+function isView(view) {
+  return typeof view === "object" && view !== null && IsDrizzleView in view;
+}
+__name(isView, "isView");
 Column.prototype.getSQL = function() {
   return new SQL([this]);
 };
@@ -10257,6 +10265,10 @@ function getTableColumns(table3) {
   return table3[Table.Symbol.Columns];
 }
 __name(getTableColumns, "getTableColumns");
+function getViewSelectedFields(view) {
+  return view[ViewBaseConfig].selectedFields;
+}
+__name(getViewSelectedFields, "getViewSelectedFields");
 function getTableLikeName(table3) {
   return is(table3, Subquery) ? table3._.alias : is(table3, View) ? table3[ViewBaseConfig].name : is(table3, SQL) ? void 0 : table3[Table.Symbol.IsAlias] ? table3[Table.Symbol.Name] : table3[Table.Symbol.BaseName];
 }
@@ -14521,146 +14533,7 @@ init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
 init_performance2();
 
-// ../../packages/drizzle/src/schema/lists.schema.ts
-init_modules_watch_stub();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
-init_performance2();
-
-// ../../packages/lib/src/utils/index.ts
-init_modules_watch_stub();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
-init_performance2();
-
-// ../../packages/lib/src/utils/nanoid.utils.ts
-init_modules_watch_stub();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
-init_performance2();
-
-// ../../packages/lib/node_modules/nanoid/index.browser.js
-init_modules_watch_stub();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
-init_performance2();
-var random = /* @__PURE__ */ __name((bytes) => crypto.getRandomValues(new Uint8Array(bytes)), "random");
-var customRandom = /* @__PURE__ */ __name((alphabet, defaultSize, getRandom) => {
-  let mask = (2 << Math.log2(alphabet.length - 1)) - 1;
-  let step = -~(1.6 * mask * defaultSize / alphabet.length);
-  return (size = defaultSize) => {
-    let id = "";
-    while (true) {
-      let bytes = getRandom(step);
-      let j = step | 0;
-      while (j--) {
-        id += alphabet[bytes[j] & mask] || "";
-        if (id.length >= size) return id;
-      }
-    }
-  };
-}, "customRandom");
-var customAlphabet = /* @__PURE__ */ __name((alphabet, size = 21) => customRandom(alphabet, size | 0, random), "customAlphabet");
-
-// ../../packages/lib/src/utils/nanoid.utils.ts
-var generateNanoid = /* @__PURE__ */ __name((length) => {
-  const alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
-  return customAlphabet(alphabet, length)();
-}, "generateNanoid");
-
-// ../../packages/lib/src/utils/slug.utils.ts
-init_modules_watch_stub();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
-init_performance2();
-var import_slugify = __toESM(require_slugify());
-var createUrlSlug = /* @__PURE__ */ __name((string, year) => {
-  return (0, import_slugify.default)(string.toLowerCase());
-}, "createUrlSlug");
-
-// ../../packages/drizzle/src/schema/lists.schema.ts
-var lists = sqliteTable("lists", {
-  listId: integer().primaryKey(),
-  readId: text({ length: 12 }).unique().notNull().$defaultFn(() => generateNanoid(12)),
-  editId: text({ length: 22 }).unique().notNull().$defaultFn(() => generateNanoid(22)),
-  title: text().notNull(),
-  description: text().notNull().default(""),
-  locked: integer({ mode: "boolean" }).notNull().default(false),
-  owner: text().notNull(),
-  createdAt: integer({ mode: "timestamp" }).notNull().$defaultFn(() => /* @__PURE__ */ new Date()),
-  updatedAt: integer({ mode: "timestamp" }).notNull().$onUpdate(() => /* @__PURE__ */ new Date()).$defaultFn(() => /* @__PURE__ */ new Date()),
-  lastUpdate: integer({ mode: "timestamp" }).notNull().$onUpdate(() => /* @__PURE__ */ new Date()).$defaultFn(() => /* @__PURE__ */ new Date())
-});
-var listRelations = relations(lists, ({ many }) => ({
-  listMovies: many(listMovies)
-}));
-
-// ../../packages/drizzle/src/schema/movies.schema.ts
-init_modules_watch_stub();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
-init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
-init_performance2();
-var movies = sqliteTable("movies", {
-  movieId: integer().primaryKey(),
-  tmdbId: integer().notNull().unique(),
-  title: text().notNull(),
-  posterPath: text().notNull(),
-  releaseDate: text().notNull(),
-  slug: text().notNull().unique(),
-  createdAt: integer({ mode: "timestamp" }).notNull().$defaultFn(() => /* @__PURE__ */ new Date())
-});
-var moviesRelations = relations(movies, ({ many }) => ({
-  listMovies: many(listMovies)
-}));
-
-// ../../packages/drizzle/src/schema/list-movies.schema.ts
-var listMovies = sqliteTable("list_movies", {
-  listId: integer().notNull().references(() => lists.listId),
-  movieId: integer().notNull().references(() => movies.movieId),
-  order: integer().notNull(),
-  createdAt: integer({ mode: "timestamp" }).notNull().$defaultFn(() => /* @__PURE__ */ new Date())
-});
-var listMoviesRelations = relations(listMovies, ({ one }) => ({
-  list: one(lists, { fields: [listMovies.listId], references: [lists.listId] }),
-  movie: one(movies, { fields: [listMovies.movieId], references: [movies.movieId] })
-}));
-
-// ../../packages/drizzle/src/index.ts
-var initDrizzleDatabase = /* @__PURE__ */ __name((binding2) => {
-  return drizzle(binding2, {
-    schema: {
-      listMovies,
-      listMoviesRelations,
-      lists,
-      listRelations,
-      movies,
-      moviesRelations
-    }
-  });
-}, "initDrizzleDatabase");
-
-// src/lib/trpc.ts
-var t = initTRPC.context().create({
-  transformer: SuperJSON
-});
-var procedure = t.procedure;
-var router = t.router;
-var mergeRouters2 = t.mergeRouters;
-var middlewareAuth = t.middleware(({ ctx, next }) => {
-  const user = { id: 1, username: "username" };
-  return next({
-    ctx: { ...ctx, user }
-  });
-});
-var middlewareDatabase = t.middleware(({ ctx, next }) => {
-  let db = ctx.db;
-  if (!db) db = initDrizzleDatabase(ctx.env.DB);
-  return next({
-    ctx: { ...ctx, db }
-  });
-});
-
-// src/mutations/createListMovie.mutation.ts
+// ../../node_modules/drizzle-zod/index.mjs
 init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
@@ -18875,6 +18748,454 @@ var z = /* @__PURE__ */ Object.freeze({
   ZodError
 });
 
+// ../../node_modules/drizzle-zod/index.mjs
+var CONSTANTS = {
+  INT8_MIN: -128,
+  INT8_MAX: 127,
+  INT8_UNSIGNED_MAX: 255,
+  INT16_MIN: -32768,
+  INT16_MAX: 32767,
+  INT16_UNSIGNED_MAX: 65535,
+  INT24_MIN: -8388608,
+  INT24_MAX: 8388607,
+  INT24_UNSIGNED_MAX: 16777215,
+  INT32_MIN: -2147483648,
+  INT32_MAX: 2147483647,
+  INT32_UNSIGNED_MAX: 4294967295,
+  INT48_MIN: -140737488355328,
+  INT48_MAX: 140737488355327,
+  INT48_UNSIGNED_MAX: 281474976710655,
+  INT64_MIN: -9223372036854775808n,
+  INT64_MAX: 9223372036854775807n,
+  INT64_UNSIGNED_MAX: 18446744073709551615n
+};
+function isColumnType(column, columnTypes) {
+  return columnTypes.includes(column.columnType);
+}
+__name(isColumnType, "isColumnType");
+function isWithEnum(column) {
+  return "enumValues" in column && Array.isArray(column.enumValues) && column.enumValues.length > 0;
+}
+__name(isWithEnum, "isWithEnum");
+var isPgEnum2 = isWithEnum;
+var literalSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+var jsonSchema = z.union([literalSchema, z.record(z.any()), z.array(z.any())]);
+var bufferSchema = z.custom((v) => v instanceof Buffer);
+function columnToSchema(column, factory) {
+  const z$1 = factory?.zodInstance ?? z;
+  const coerce2 = factory?.coerce ?? {};
+  let schema;
+  if (isWithEnum(column)) {
+    schema = column.enumValues.length ? z$1.enum(column.enumValues) : z$1.string();
+  }
+  if (!schema) {
+    if (isColumnType(column, ["PgGeometry", "PgPointTuple"])) {
+      schema = z$1.tuple([z$1.number(), z$1.number()]);
+    } else if (isColumnType(column, ["PgGeometryObject", "PgPointObject"])) {
+      schema = z$1.object({ x: z$1.number(), y: z$1.number() });
+    } else if (isColumnType(column, ["PgHalfVector", "PgVector"])) {
+      schema = z$1.array(z$1.number());
+      schema = column.dimensions ? schema.length(column.dimensions) : schema;
+    } else if (isColumnType(column, ["PgLine"])) {
+      schema = z$1.tuple([z$1.number(), z$1.number(), z$1.number()]);
+    } else if (isColumnType(column, ["PgLineABC"])) {
+      schema = z$1.object({
+        a: z$1.number(),
+        b: z$1.number(),
+        c: z$1.number()
+      });
+    } else if (isColumnType(column, ["PgArray"])) {
+      schema = z$1.array(columnToSchema(column.baseColumn, z$1));
+      schema = column.size ? schema.length(column.size) : schema;
+    } else if (column.dataType === "array") {
+      schema = z$1.array(z$1.any());
+    } else if (column.dataType === "number") {
+      schema = numberColumnToSchema(column, z$1, coerce2);
+    } else if (column.dataType === "bigint") {
+      schema = bigintColumnToSchema(column, z$1, coerce2);
+    } else if (column.dataType === "boolean") {
+      schema = coerce2 === true || coerce2.boolean ? z$1.coerce.boolean() : z$1.boolean();
+    } else if (column.dataType === "date") {
+      schema = coerce2 === true || coerce2.date ? z$1.coerce.date() : z$1.date();
+    } else if (column.dataType === "string") {
+      schema = stringColumnToSchema(column, z$1, coerce2);
+    } else if (column.dataType === "json") {
+      schema = jsonSchema;
+    } else if (column.dataType === "custom") {
+      schema = z$1.any();
+    } else if (column.dataType === "buffer") {
+      schema = bufferSchema;
+    }
+  }
+  if (!schema) {
+    schema = z$1.any();
+  }
+  return schema;
+}
+__name(columnToSchema, "columnToSchema");
+function numberColumnToSchema(column, z2, coerce2) {
+  let unsigned = column.getSQLType().includes("unsigned");
+  let min;
+  let max;
+  let integer2 = false;
+  if (isColumnType(column, ["MySqlTinyInt", "SingleStoreTinyInt"])) {
+    min = unsigned ? 0 : CONSTANTS.INT8_MIN;
+    max = unsigned ? CONSTANTS.INT8_UNSIGNED_MAX : CONSTANTS.INT8_MAX;
+    integer2 = true;
+  } else if (isColumnType(column, [
+    "PgSmallInt",
+    "PgSmallSerial",
+    "MySqlSmallInt",
+    "SingleStoreSmallInt"
+  ])) {
+    min = unsigned ? 0 : CONSTANTS.INT16_MIN;
+    max = unsigned ? CONSTANTS.INT16_UNSIGNED_MAX : CONSTANTS.INT16_MAX;
+    integer2 = true;
+  } else if (isColumnType(column, [
+    "PgReal",
+    "MySqlFloat",
+    "MySqlMediumInt",
+    "SingleStoreMediumInt",
+    "SingleStoreFloat"
+  ])) {
+    min = unsigned ? 0 : CONSTANTS.INT24_MIN;
+    max = unsigned ? CONSTANTS.INT24_UNSIGNED_MAX : CONSTANTS.INT24_MAX;
+    integer2 = isColumnType(column, ["MySqlMediumInt", "SingleStoreMediumInt"]);
+  } else if (isColumnType(column, [
+    "PgInteger",
+    "PgSerial",
+    "MySqlInt",
+    "SingleStoreInt"
+  ])) {
+    min = unsigned ? 0 : CONSTANTS.INT32_MIN;
+    max = unsigned ? CONSTANTS.INT32_UNSIGNED_MAX : CONSTANTS.INT32_MAX;
+    integer2 = true;
+  } else if (isColumnType(column, [
+    "PgDoublePrecision",
+    "MySqlReal",
+    "MySqlDouble",
+    "SingleStoreReal",
+    "SingleStoreDouble",
+    "SQLiteReal"
+  ])) {
+    min = unsigned ? 0 : CONSTANTS.INT48_MIN;
+    max = unsigned ? CONSTANTS.INT48_UNSIGNED_MAX : CONSTANTS.INT48_MAX;
+  } else if (isColumnType(column, [
+    "PgBigInt53",
+    "PgBigSerial53",
+    "MySqlBigInt53",
+    "MySqlSerial",
+    "SingleStoreBigInt53",
+    "SingleStoreSerial",
+    "SQLiteInteger"
+  ])) {
+    unsigned = unsigned || isColumnType(column, ["MySqlSerial", "SingleStoreSerial"]);
+    min = unsigned ? 0 : Number.MIN_SAFE_INTEGER;
+    max = Number.MAX_SAFE_INTEGER;
+    integer2 = true;
+  } else if (isColumnType(column, ["MySqlYear", "SingleStoreYear"])) {
+    min = 1901;
+    max = 2155;
+    integer2 = true;
+  } else {
+    min = Number.MIN_SAFE_INTEGER;
+    max = Number.MAX_SAFE_INTEGER;
+  }
+  let schema = coerce2 === true || coerce2?.number ? z2.coerce.number() : z2.number();
+  schema = schema.min(min).max(max);
+  return integer2 ? schema.int() : schema;
+}
+__name(numberColumnToSchema, "numberColumnToSchema");
+function bigintColumnToSchema(column, z2, coerce2) {
+  const unsigned = column.getSQLType().includes("unsigned");
+  const min = unsigned ? 0n : CONSTANTS.INT64_MIN;
+  const max = unsigned ? CONSTANTS.INT64_UNSIGNED_MAX : CONSTANTS.INT64_MAX;
+  const schema = coerce2 === true || coerce2?.bigint ? z2.coerce.bigint() : z2.bigint();
+  return schema.min(min).max(max);
+}
+__name(bigintColumnToSchema, "bigintColumnToSchema");
+function stringColumnToSchema(column, z2, coerce2) {
+  if (isColumnType(column, ["PgUUID"])) {
+    return z2.string().uuid();
+  }
+  let max;
+  let regex;
+  let fixed = false;
+  if (isColumnType(column, ["PgVarchar", "SQLiteText"])) {
+    max = column.length;
+  } else if (isColumnType(column, ["MySqlVarChar", "SingleStoreVarChar"])) {
+    max = column.length ?? CONSTANTS.INT16_UNSIGNED_MAX;
+  } else if (isColumnType(column, ["MySqlText", "SingleStoreText"])) {
+    if (column.textType === "longtext") {
+      max = CONSTANTS.INT32_UNSIGNED_MAX;
+    } else if (column.textType === "mediumtext") {
+      max = CONSTANTS.INT24_UNSIGNED_MAX;
+    } else if (column.textType === "text") {
+      max = CONSTANTS.INT16_UNSIGNED_MAX;
+    } else {
+      max = CONSTANTS.INT8_UNSIGNED_MAX;
+    }
+  }
+  if (isColumnType(column, [
+    "PgChar",
+    "MySqlChar",
+    "SingleStoreChar"
+  ])) {
+    max = column.length;
+    fixed = true;
+  }
+  if (isColumnType(column, ["PgBinaryVector"])) {
+    regex = /^[01]+$/;
+    max = column.dimensions;
+  }
+  let schema = coerce2 === true || coerce2?.string ? z2.coerce.string() : z2.string();
+  schema = regex ? schema.regex(regex) : schema;
+  return max && fixed ? schema.length(max) : max ? schema.max(max) : schema;
+}
+__name(stringColumnToSchema, "stringColumnToSchema");
+function getColumns(tableLike) {
+  return isTable(tableLike) ? getTableColumns(tableLike) : getViewSelectedFields(tableLike);
+}
+__name(getColumns, "getColumns");
+function handleColumns(columns, refinements, conditions, factory) {
+  const columnSchemas = {};
+  for (const [key, selected] of Object.entries(columns)) {
+    if (!is(selected, Column) && !is(selected, SQL) && !is(selected, SQL.Aliased) && typeof selected === "object") {
+      const columns2 = isTable(selected) || isView(selected) ? getColumns(selected) : selected;
+      columnSchemas[key] = handleColumns(columns2, refinements[key] ?? {}, conditions, factory);
+      continue;
+    }
+    const refinement = refinements[key];
+    if (refinement !== void 0 && typeof refinement !== "function") {
+      columnSchemas[key] = refinement;
+      continue;
+    }
+    const column = is(selected, Column) ? selected : void 0;
+    const schema = column ? columnToSchema(column, factory) : z.any();
+    const refined = typeof refinement === "function" ? refinement(schema) : schema;
+    if (conditions.never(column)) {
+      continue;
+    } else {
+      columnSchemas[key] = refined;
+    }
+    if (column) {
+      if (conditions.nullable(column)) {
+        columnSchemas[key] = columnSchemas[key].nullable();
+      }
+      if (conditions.optional(column)) {
+        columnSchemas[key] = columnSchemas[key].optional();
+      }
+    }
+  }
+  return z.object(columnSchemas);
+}
+__name(handleColumns, "handleColumns");
+function handleEnum(enum_, factory) {
+  const zod = factory?.zodInstance ?? z;
+  return zod.enum(enum_.enumValues);
+}
+__name(handleEnum, "handleEnum");
+var selectConditions = {
+  never: /* @__PURE__ */ __name(() => false, "never"),
+  optional: /* @__PURE__ */ __name(() => false, "optional"),
+  nullable: /* @__PURE__ */ __name((column) => !column.notNull, "nullable")
+};
+var insertConditions = {
+  never: /* @__PURE__ */ __name((column) => column?.generated?.type === "always" || column?.generatedIdentity?.type === "always", "never"),
+  optional: /* @__PURE__ */ __name((column) => !column.notNull || column.notNull && column.hasDefault, "optional"),
+  nullable: /* @__PURE__ */ __name((column) => !column.notNull, "nullable")
+};
+var createSelectSchema = /* @__PURE__ */ __name((entity, refine) => {
+  if (isPgEnum2(entity)) {
+    return handleEnum(entity);
+  }
+  const columns = getColumns(entity);
+  return handleColumns(columns, refine ?? {}, selectConditions);
+}, "createSelectSchema");
+var createInsertSchema = /* @__PURE__ */ __name((entity, refine) => {
+  const columns = getColumns(entity);
+  return handleColumns(columns, refine ?? {}, insertConditions);
+}, "createInsertSchema");
+
+// ../../packages/drizzle/src/schema/lists.schema.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../packages/lib/src/utils/index.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../packages/lib/src/utils/nanoid.utils.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../packages/lib/node_modules/nanoid/index.browser.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var random = /* @__PURE__ */ __name((bytes) => crypto.getRandomValues(new Uint8Array(bytes)), "random");
+var customRandom = /* @__PURE__ */ __name((alphabet, defaultSize, getRandom) => {
+  let mask = (2 << Math.log2(alphabet.length - 1)) - 1;
+  let step = -~(1.6 * mask * defaultSize / alphabet.length);
+  return (size = defaultSize) => {
+    let id = "";
+    while (true) {
+      let bytes = getRandom(step);
+      let j = step | 0;
+      while (j--) {
+        id += alphabet[bytes[j] & mask] || "";
+        if (id.length >= size) return id;
+      }
+    }
+  };
+}, "customRandom");
+var customAlphabet = /* @__PURE__ */ __name((alphabet, size = 21) => customRandom(alphabet, size | 0, random), "customAlphabet");
+
+// ../../packages/lib/src/utils/nanoid.utils.ts
+var generateNanoid = /* @__PURE__ */ __name((length) => {
+  const alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
+  return customAlphabet(alphabet, length)();
+}, "generateNanoid");
+
+// ../../packages/lib/src/utils/slug.utils.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var import_slugify = __toESM(require_slugify());
+
+// ../../packages/drizzle/src/schema/lists.schema.ts
+var lists = sqliteTable("lists", {
+  listId: integer().primaryKey(),
+  readId: text({ length: 12 }).unique().notNull().$defaultFn(() => generateNanoid(12)),
+  editId: text({ length: 22 }).unique().notNull().$defaultFn(() => generateNanoid(22)),
+  title: text().notNull(),
+  description: text().notNull().default(""),
+  locked: integer({ mode: "boolean" }).notNull().default(false),
+  owner: text().notNull(),
+  createdAt: integer({ mode: "timestamp" }).notNull().$defaultFn(() => /* @__PURE__ */ new Date()),
+  updatedAt: integer({ mode: "timestamp" }).notNull().$onUpdate(() => /* @__PURE__ */ new Date()).$defaultFn(() => /* @__PURE__ */ new Date()),
+  lastUpdate: integer({ mode: "timestamp" }).notNull().$onUpdate(() => /* @__PURE__ */ new Date()).$defaultFn(() => /* @__PURE__ */ new Date())
+});
+var listRelations = relations(lists, ({ many }) => ({
+  listMovies: many(listMovies)
+}));
+var listSelectSchema = createSelectSchema(lists);
+var listInsertSchema = createInsertSchema(lists);
+
+// ../../packages/drizzle/src/schema/movies.schema.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var movies = sqliteTable("movies", {
+  movieId: integer().primaryKey(),
+  // Same as tmdbId
+  tmdbId: integer().unique().notNull(),
+  title: text().notNull(),
+  posterPath: text().notNull(),
+  releaseDate: text().notNull(),
+  createdAt: integer({ mode: "timestamp" }).notNull().$defaultFn(() => /* @__PURE__ */ new Date())
+});
+var moviesRelations = relations(movies, ({ many }) => ({
+  listMovies: many(listMovies)
+}));
+var movieSelectSchema = createSelectSchema(movies);
+var movieInsertSchema = createInsertSchema(movies);
+
+// ../../packages/drizzle/src/schema/list-movies.schema.ts
+var listMovies = sqliteTable("list_movies", {
+  listId: integer().notNull().references(() => lists.listId),
+  movieId: integer().notNull().references(() => movies.movieId),
+  order: integer().notNull(),
+  createdAt: integer({ mode: "timestamp" }).notNull().$defaultFn(() => /* @__PURE__ */ new Date())
+});
+var listMoviesRelations = relations(listMovies, ({ one }) => ({
+  list: one(lists, { fields: [listMovies.listId], references: [lists.listId] }),
+  movie: one(movies, { fields: [listMovies.movieId], references: [movies.movieId] })
+}));
+var listMovieSelectSchema = createSelectSchema(listMovies);
+var listMovieInsertSchema = createInsertSchema(listMovies).omit({ createdAt: true }).required();
+var listMovieDeleteSchema = listMovieInsertSchema.omit({ order: true }).required();
+
+// ../../packages/drizzle/src/index.ts
+var initDrizzleDatabase = /* @__PURE__ */ __name((binding2) => {
+  return drizzle(binding2, {
+    schema: {
+      listMovies,
+      listMoviesRelations,
+      lists,
+      listRelations,
+      movies,
+      moviesRelations
+    }
+  });
+}, "initDrizzleDatabase");
+
+// src/lib/trpc.ts
+var t = initTRPC.context().create({
+  transformer: SuperJSON
+});
+var procedure = t.procedure;
+var router = t.router;
+var mergeRouters2 = t.mergeRouters;
+var middlewareAuth = t.middleware(({ ctx, next }) => {
+  const user = { id: 1, username: "username" };
+  return next({
+    ctx: { ...ctx, user }
+  });
+});
+var middlewareDatabase = t.middleware(({ ctx, next }) => {
+  let db = ctx.db;
+  if (!db) db = initDrizzleDatabase(ctx.env.DB);
+  return next({
+    ctx: { ...ctx, db }
+  });
+});
+
+// src/mutations/createListMovie.mutation.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+
+// ../../node_modules/hono/dist/http-exception.js
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var HTTPException = class extends Error {
+  static {
+    __name(this, "HTTPException");
+  }
+  res;
+  status;
+  constructor(status = 500, options) {
+    super(options?.message, { cause: options?.cause });
+    this.res = options?.res;
+    this.status = status;
+  }
+  getResponse() {
+    if (this.res) {
+      const newResponse = new Response(this.res.body, {
+        status: this.status,
+        headers: this.res.headers
+      });
+      return newResponse;
+    }
+    return new Response(this.message, {
+      status: this.status
+    });
+  }
+};
+
 // ../../packages/tmdb/src/index.ts
 init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
@@ -19350,43 +19671,40 @@ var client = createClient({
 });
 
 // src/mutations/createListMovie.mutation.ts
-var createListMovie = procedure.use(middlewareDatabase).input(
-  z.object({
-    editId: z.string(),
-    tmdbId: z.number()
-  })
-).mutation(async ({ input, ctx }) => {
-  const movie = await client_exports.client.GET("/3/movie/{movie_id}", {
-    params: {
-      path: {
-        movie_id: input.tmdbId
-      }
-    }
-  });
-  if (!movie || !movie.data) {
-    throw new Error("Movie not found");
-  }
-  const [{ movieId }] = await ctx.db.insert(movies).values({
-    tmdbId: movie.data.id,
-    title: movie.data.title,
-    overview: movie.data.overview,
-    posterPath: movie.data.poster_path,
-    backdropPath: movie.data.backdrop_path,
-    releaseDate: movie.data.release_date,
-    slug: createUrlSlug(movie.data.title)
-  }).returning({ movieId: movies.movieId });
-  const list = await ctx.db.query.lists.findFirst({
-    where: /* @__PURE__ */ __name((list2) => eq(list2.editId, input.editId), "where")
-  });
-  if (!list) {
-    throw new Error("List not found");
-  }
+var createListMovie = procedure.use(middlewareDatabase).input(listMovieInsertSchema).mutation(async ({ input, ctx }) => {
+  await createMovie(input.movieId, ctx.db);
   await ctx.db.insert(listMovies).values({
-    listId: list.listId,
-    movieId,
-    order: 1
+    movieId: input.movieId,
+    listId: input.listId,
+    order: input.order
   });
 });
+var createMovie = /* @__PURE__ */ __name(async (movieId, db) => {
+  const exists3 = await db.query.movies.findFirst({
+    where: /* @__PURE__ */ __name((movie) => eq(movie.tmdbId, movieId), "where")
+  });
+  if (!exists3) {
+    const movie = await client_exports.client.GET("/3/movie/{movie_id}", {
+      params: {
+        path: {
+          movie_id: movieId
+        }
+      }
+    });
+    if (!movie || !movie.data) {
+      throw new HTTPException(400, { message: "Movie not found" });
+    }
+    await db.insert(movies).values({
+      movieId: movie.data.id,
+      tmdbId: movie.data.id,
+      title: movie.data.title,
+      overview: movie.data.overview,
+      posterPath: movie.data.poster_path,
+      backdropPath: movie.data.backdrop_path,
+      releaseDate: movie.data.release_date
+    });
+  }
+}, "createMovie");
 
 // src/mutations/initializeList.mutation.ts
 init_modules_watch_stub();
@@ -19399,6 +19717,15 @@ var initializeList = procedure.use(middlewareDatabase).mutation(async ({ ctx }) 
     title: `Untitled #${count3 + 1}`,
     owner: "test"
   });
+});
+
+// src/mutations/removeListMovie.mutation.ts
+init_modules_watch_stub();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
+init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
+init_performance2();
+var removeListMovie = procedure.use(middlewareDatabase).input(listMovieDeleteSchema).mutation(async ({ input, ctx }) => {
+  await ctx.db.delete(listMovies).where(and(eq(listMovies.listId, input.listId), eq(listMovies.movieId, input.movieId)));
 });
 
 // src/queries/loadList.query.ts
@@ -19482,7 +19809,8 @@ var appRouter = router({
   list: {
     initialize: initializeList,
     load: loadList,
-    add: createListMovie
+    add: createListMovie,
+    remove: removeListMovie
   }
 });
 
@@ -19541,7 +19869,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env2, _ctx, middlewareCtx
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// .wrangler/tmp/bundle-Khev9P/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-tRxs6o/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -19577,7 +19905,7 @@ function __facade_invoke__(request, env2, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-Khev9P/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-tRxs6o/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

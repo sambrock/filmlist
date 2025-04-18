@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { trpc } from '../lib/trpc';
+import { trpc } from '../lib/api/trpc';
 
 export const Route = createFileRoute('/')({
   component: Index,

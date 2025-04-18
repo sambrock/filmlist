@@ -1,56 +1,52 @@
 import { eq } from 'drizzle-orm';
-import z from 'zod';
+import { HTTPException } from 'hono/http-exception';
 
-import { listMovies, movies } from '@filmlist/drizzle';
-import { createUrlSlug } from '@filmlist/lib/utils';
-import { tmdb } from '@filmlist/tmdb';
+import { DrizzleDatabase, listMovieInsertSchema, listMovies, movies } from '@repo/drizzle';
+import { tmdb } from '@repo/tmdb';
 import { middlewareDatabase, procedure } from '../lib/trpc';
 
 export const createListMovie = procedure
   .use(middlewareDatabase)
-  .input(
-    z.object({
-      editId: z.string(),
-      tmdbId: z.number(),
-    })
-  )
+  .input(listMovieInsertSchema)
   .mutation(async ({ input, ctx }) => {
+    await createMovie(input.movieId, ctx.db);
+
+    await ctx.db.insert(listMovies).values({
+      movieId: input.movieId,
+      listId: input.listId,
+      order: input.order,
+    });
+  });
+
+const createMovie = async (movieId: number, db: DrizzleDatabase) => {
+  const exists = await db.query.movies.findFirst({
+    where: (movie) => eq(movie.tmdbId, movieId),
+  });
+
+  if (!exists) {
     const movie = await tmdb.client.GET('/3/movie/{movie_id}', {
       params: {
         path: {
-          movie_id: input.tmdbId,
+          movie_id: movieId,
         },
       },
     });
 
     if (!movie || !movie.data) {
-      throw new Error('Movie not found');
+      throw new HTTPException(400, { message: 'Movie not found' });
     }
 
-    const [{ movieId }] = await ctx.db
+    await db
       .insert(movies)
+      // @ts-ignore TODO: Fix this
       .values({
+        movieId: movie.data.id,
         tmdbId: movie.data.id,
         title: movie.data.title!,
         overview: movie.data.overview!,
         posterPath: movie.data.poster_path!,
         backdropPath: movie.data.backdrop_path!,
         releaseDate: movie.data.release_date!,
-        slug: createUrlSlug(movie.data.title!),
-      })
-      .returning({ movieId: movies.movieId });
-
-    const list = await ctx.db.query.lists.findFirst({
-      where: (list) => eq(list.editId, input.editId),
-    });
-
-    if (!list) {
-      throw new Error('List not found');
-    }
-
-    await ctx.db.insert(listMovies).values({
-      listId: list.listId,
-      movieId: movieId,
-      order: 1,
-    });
-  });
+      });
+  }
+};

@@ -1,11 +1,9 @@
 import { relations } from 'drizzle-orm';
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
-import { generateNanoid } from '@filmlist/lib/utils';
+import { generateNanoid } from '@repo/lib/utils';
 import { listMovies } from './list-movies.schema';
-
-export type List = typeof lists.$inferSelect;
-export type ListInsert = typeof lists.$inferInsert;
 
 export const lists = sqliteTable('lists', {
   listId: integer().primaryKey(),
@@ -37,3 +35,9 @@ export const lists = sqliteTable('lists', {
 export const listRelations = relations(lists, ({ many }) => ({
   listMovies: many(listMovies),
 }));
+
+export type List = typeof lists.$inferSelect;
+export type ListInsert = typeof lists.$inferInsert;
+
+export const listSelectSchema = createSelectSchema(lists);
+export const listInsertSchema = createInsertSchema(lists);

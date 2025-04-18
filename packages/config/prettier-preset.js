@@ -17,7 +17,7 @@ module.exports = {
     '^next.*$',
     '<THIRD_PARTY_MODULES>',
     '',
-    '^@filmlist.*$',
+    '^@repo.*$',
     '^@/actions.*$',
     '^@/app.*$',
     '^@/lib.*$',

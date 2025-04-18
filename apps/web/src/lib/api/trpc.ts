@@ -1,7 +1,7 @@
 import { createTRPCClient, httpLink } from '@trpc/client';
 import superjson from 'superjson';
 
-import type { AppRouter } from '@filmlist/api';
+import type { AppRouter } from '@repo/api';
 
 export const trpc = createTRPCClient<AppRouter>({
   links: [

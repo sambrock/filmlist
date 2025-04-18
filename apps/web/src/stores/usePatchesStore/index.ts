@@ -1,1 +1,1 @@
-export { usePatchesStore, createPatches, undo, redo } from './usePatchesStore.store';
+export { usePatchesStore, pushPatches, undo, redo } from './usePatchesStore.store';

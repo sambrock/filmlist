@@ -1,4 +1,4 @@
-import { lists } from '@filmlist/drizzle';
+import { lists } from '@repo/drizzle';
 import { middlewareDatabase, procedure } from '../lib/trpc';
 
 export const initializeList = procedure.use(middlewareDatabase).mutation(async ({ ctx }) => {

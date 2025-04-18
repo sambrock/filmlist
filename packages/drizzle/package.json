@@ -1,5 +1,5 @@
 {
-  "name": "@filmlist/drizzle",
+  "name": "@repo/drizzle",
   "private": true,
   "version": "0.0.0",
   "main": "./src/index.ts",
@@ -11,14 +11,14 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@filmlist/lib": "*",
+    "@repo/lib": "*",
     "better-sqlite3": "^11.9.1",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.39.3",
     "drizzle-zod": "^0.7.1"
   },
   "devDependencies": {
-    "@filmlist/tsconfig": "*",
+    "@repo/tsconfig": "*",
     "drizzle-kit": "^0.30.4"
   }
 }

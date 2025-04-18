@@ -1,6 +1,7 @@
-import { applyPatches, enableMapSet, enablePatches, Patch, produce, produceWithPatches } from 'immer';
+import { type Patch, applyPatches, enableMapSet, enablePatches, produce } from 'immer';
 import { create } from 'zustand';
 
+import { saveListPatches } from '../../lib/api/savePatches';
 import { useListStore } from '../useListStore';
 
 enableMapSet();
@@ -16,7 +17,7 @@ export type PatchesStoreState = {
 export type PatchesStoreActions = {
   undo: () => void;
   redo: () => void;
-  createPatches: (store: Store, prevState: unknown, newState: unknown) => void;
+  pushPatches: (store: Store, patches: Patch[], inversePatches: Patch[]) => void;
 };
 
 export type PatchesStore = PatchesStoreState & { actions: PatchesStoreActions };
@@ -26,15 +27,20 @@ export const usePatchesStore = create<PatchesStore>((set) => ({
   pointer: -1,
 
   actions: {
-    createPatches: (store, prevState, nextState) => {
-      set((state) =>
-        produce(state, (draft) => {
-          const [, patches, inversePatches] = produceWithPatches(prevState, (d) => (d = nextState));
+    pushPatches: (store, patches, inversePatches) => {
+      set((state) => {
+        const newState = produce(state, (draft) => {
           draft.patches.length = state.pointer + 1;
-          draft.patches = [...draft.patches, [store, patches, inversePatches]];
+          draft.patches.push([store, patches, inversePatches]);
           draft.pointer = state.pointer + 1;
-        })
-      );
+        });
+
+        if (store === 'list_store') {
+          saveListPatches(useListStore.getState(), patches);
+        }
+
+        return newState;
+      });
     },
 
     undo: () => {
@@ -44,6 +50,7 @@ export const usePatchesStore = create<PatchesStore>((set) => ({
 
         if (store === 'list_store') {
           useListStore.setState((s) => applyPatches(s, inversePatches));
+          saveListPatches(useListStore.getState(), inversePatches);
         }
 
         return produce(state, (draft) => {
@@ -60,6 +67,7 @@ export const usePatchesStore = create<PatchesStore>((set) => ({
 
         if (store === 'list_store') {
           useListStore.setState((s) => applyPatches(s, patches));
+          saveListPatches(useListStore.getState(), patches);
         }
 
         return produce(state, (draft) => {
@@ -70,6 +78,4 @@ export const usePatchesStore = create<PatchesStore>((set) => ({
   },
 }));
 
-export const { createPatches, undo, redo } = usePatchesStore.getState().actions;
-
-usePatchesStore.subscribe((state) => console.log('patches-store', state.patches, state.pointer));
+export const { pushPatches, undo, redo } = usePatchesStore.getState().actions;

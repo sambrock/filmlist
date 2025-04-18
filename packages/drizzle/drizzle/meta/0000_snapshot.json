@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ffb1ec74-a24b-402f-97a3-38b6e40e501a",
+  "id": "7a11c1f8-ca98-42cc-9392-e797f8818043",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "list_movies": {
@@ -204,13 +204,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "slug": {
-          "name": "slug",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "createdAt": {
           "name": "createdAt",
           "type": "integer",
@@ -224,13 +217,6 @@
           "name": "movies_tmdbId_unique",
           "columns": [
             "tmdbId"
-          ],
-          "isUnique": true
-        },
-        "movies_slug_unique": {
-          "name": "movies_slug_unique",
-          "columns": [
-            "slug"
           ],
           "isUnique": true
         }

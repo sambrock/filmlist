@@ -1,5 +1,5 @@
 {
-  "name": "@filmlist/api",
+  "name": "@repo/api",
   "version": "0.0.1",
   "private": true,
   "types": "./src/app.types.ts",
@@ -10,9 +10,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@filmlist/drizzle": "*",
-    "@filmlist/lib": "*",
-    "@filmlist/tmdb": "*",
+    "@repo/drizzle": "*",
+    "@repo/lib": "*",
+    "@repo/tmdb": "*",
     "@hono/trpc-server": "^0.3.4",
     "@trpc/server": "^11.0.4",
     "dotenv": "^16.4.7",

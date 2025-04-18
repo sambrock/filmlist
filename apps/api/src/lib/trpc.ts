@@ -1,7 +1,7 @@
 import { initTRPC } from '@trpc/server';
 import superjson from 'superjson';
 
-import { DrizzleDatabase, initDrizzleDatabase } from '@filmlist/drizzle';
+import { DrizzleDatabase, initDrizzleDatabase } from '@repo/drizzle';
 
 export interface Context {
   env: {

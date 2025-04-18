@@ -28,9 +28,7 @@ CREATE TABLE `movies` (
 	`title` text NOT NULL,
 	`posterPath` text NOT NULL,
 	`releaseDate` text NOT NULL,
-	`slug` text NOT NULL,
 	`createdAt` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `movies_tmdbId_unique` ON `movies` (`tmdbId`);--> statement-breakpoint
-CREATE UNIQUE INDEX `movies_slug_unique` ON `movies` (`slug`);
+CREATE UNIQUE INDEX `movies_tmdbId_unique` ON `movies` (`tmdbId`);

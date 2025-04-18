@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { List } from '../components/list/List';
 import { MovieSearch } from '../components/search/MovieSearch';
-import { trpc } from '../lib/trpc';
+import { trpc } from '../lib/api/trpc';
 import { useListStore } from '../stores/useListStore';
 
 const { dispatch } = useListStore.getState().actions;
@@ -11,6 +11,7 @@ export const Route = createFileRoute('/list/$id')({
   component: ListPage,
   loader: async ({ params }) => {
     const data = await trpc.list.load.query(params.id);
+    console.log('INITIALIZE LIST');
     dispatch({
       type: 'INITIALIZE_LIST',
       payload: {
