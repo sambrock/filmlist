@@ -7,15 +7,5 @@ export const Route = createFileRoute('/')({
 });
 
 function Index() {
-  return (
-    <div className="p-8">
-      <button
-        onClick={() => {
-          trpc.list.initialize.mutate();
-        }}
-      >
-        INITIALIZE LIST
-      </button>
-    </div>
-  );
+  return <div className="p-8"></div>;
 }

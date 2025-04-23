@@ -14,5 +14,6 @@ export const RootLayout = (props: React.PropsWithChildren) => {
       return undo();
     }
   });
-  return <div className="p-6">{props.children}</div>;
+
+  return props.children;
 };

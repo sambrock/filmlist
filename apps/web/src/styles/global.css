@@ -1,12 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'Noto Sans Tamil', sans-serif;
+  --font-sans: 'Albert Sans', sans-serif;
 
-  --color-bg-default: #0e1216;
+  /* --color-bg-default: #0b0b0b;
+  --color-bg-secondary: #151515;
+  --color-bg-hover: #1c2226;
+  --color-text-default: #f5f5f5;
+  --color-text-secondary: #979797; */
+
+  /* --color-theme-neutral-100: oklch(98.5% 0 0);
+  --color-theme-neutral-200: oklch(97% 0 0);
+  --color-theme-neutral-300: oklch(92.2% 0 0);
+  --color-theme-neutral-400: oklch(87% 0 0);
+  --color-theme-neutral-500: oklch(55.6% 0 0);
+  --color-theme-neutral-600: oklch(43.9% 0 0);
+  --color-theme-neutral-700: oklch(37.1% 0 0);
+  --color-theme-neutral-800: oklch(26.9% 0 0);
+  --color-theme-neutral-900: oklch(20.5% 0 0);
+  --color-theme-neutral-950: oklch(15% 0 0); */
+
+  /* --height-input-sm: 2rem;
+  --height-input-md: 2.25rem;
+  --height-input-lg: 2.5rem; */
+
+  /* --size-icon: 1.4rem; */
 }
 
 body {
-  @apply bg-bg-default font-sans text-neutral-100;
+  @apply bg-neutral-950 font-sans text-neutral-100 antialiased;
+}
+
+.debug {
+  @apply border border-red-500;
 }
