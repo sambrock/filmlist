@@ -4,23 +4,25 @@ import { TooltipContent, TooltipProvider, TooltipRoot, TooltipTrigger } from '..
 
 export const ListViewToolbar = () => {
   return (
-    <div className="flex items-center justify-end gap-1 p-2">
-      <TooltipProvider>
-        <ButtonIcon icon={<IconLike />} variant="transparent" />
+    <div className="flex items-center gap-1 p-2">
+      <div className="ml-auto flex items-center gap-1">
+        <TooltipProvider>
+          <ButtonIcon icon={<IconLike />} variant="transparent" />
 
-        <TooltipRoot>
-          <TooltipTrigger asChild>
-            <ButtonIcon icon={<IconLockOpen />} variant="transparent" />
-          </TooltipTrigger>
-          <TooltipContent>
-            <span>Lock</span>
-          </TooltipContent>
-        </TooltipRoot>
+          <TooltipRoot>
+            <TooltipTrigger asChild>
+              <ButtonIcon icon={<IconLockOpen />} variant="transparent" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <span>Lock</span>
+            </TooltipContent>
+          </TooltipRoot>
 
-        <ButtonIcon icon={<IconLink />} variant="transparent" />
-        <ButtonIcon icon={<IconExport />} variant="transparent" />
-        <ButtonIcon icon={<IconOptionsHorizontal />} variant="transparent" />
-      </TooltipProvider>
+          <ButtonIcon icon={<IconLink />} variant="transparent" />
+          <ButtonIcon icon={<IconExport />} variant="transparent" />
+          <ButtonIcon icon={<IconOptionsHorizontal />} variant="transparent" />
+        </TooltipProvider>
+      </div>
     </div>
   );
 };

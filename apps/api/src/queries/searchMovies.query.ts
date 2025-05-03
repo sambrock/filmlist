@@ -1,7 +1,10 @@
+import { type inferProcedureOutput } from '@trpc/server';
 import z from 'zod';
 
 import { tmdb } from '@repo/tmdb';
 import { procedure } from '../lib/trpc';
+
+export type SearchMovieResult = inferProcedureOutput<typeof searchMovies>[number];
 
 export const searchMovies = procedure
   .input(

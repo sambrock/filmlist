@@ -4,8 +4,10 @@ import { useFloating } from '@floating-ui/react';
 import { useQuerySearchMovies } from '../../hooks/api/useQuerySearchMovies';
 import { useListStore } from '../../stores/useListStore';
 import { IconPlus } from '../common/Icon';
+import { MovieSearchResults } from './MovieSearchResults';
+import { MovieSearchResultsItem } from './MovieSearchResultsItem';
 
-const { dispatch } = useListStore.getState().actions;
+// const { dispatch } = useListStore.getState().actions;
 
 export const MovieSearch = () => {
   const [query, setQuery] = useState('');
@@ -20,13 +22,9 @@ export const MovieSearch = () => {
 
   return (
     <Fragment>
-      <div
-        ref={floating.refs.setFloating}
-        className="rounded-md border border-neutral-800 bg-neutral-800 p-1 backdrop-blur shadow-md mb-8"
-        style={floating.floatingStyles}
-      >
-        {searchMoviesQuery.data?.map((m) => <div key={m.tmdbId}>{m.title}</div>)}
-      </div>
+      <MovieSearchResults ref={floating.refs.setFloating} style={floating.floatingStyles}>
+        {searchMoviesQuery.data?.map((m) => <MovieSearchResultsItem key={m.tmdbId} movie={m} />)}
+      </MovieSearchResults>
 
       <div
         ref={floating.refs.setReference}
@@ -35,7 +33,7 @@ export const MovieSearch = () => {
         <div className="flex w-full items-center">
           <IconPlus className="mr-1 ml-2 stroke-neutral-600" />
           <input
-            className="w-full px-2 text-base font-medium placeholder:text-neutral-600 focus:outline-none"
+            className="w-full px-2 text-sm font-medium placeholder:text-neutral-600 focus:outline-none"
             placeholder="Add film"
             onChange={(e) => {
               if (timeoutRef.current) {
