@@ -13,7 +13,7 @@ module.exports = {
   endOfLine: 'auto',
   plugins: ['@ianvs/prettier-plugin-sort-imports', 'prettier-plugin-tailwindcss'],
   importOrder: [
-    '^react$',
+    '^react.*$',
     '^next.*$',
     '^hono.*$',
     '^@hono.*$',
@@ -28,6 +28,7 @@ module.exports = {
     '^@/hooks.*$',
     '^@/styles.*$',
     '^@/components.*$',
+    '^@/routes.*$',
     '',
     '^[./]',
   ],
