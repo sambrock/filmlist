@@ -1,9 +1,12 @@
 {
   "name": "@repo/api",
+  "version": "0.1.0",
+  "license": "MIT",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "db:setup": "wrangler d1 execute prod-d1-filmlist --local --file=../../packages/drizzle/drizzle/schema.sql"
   },
   "dependencies": {
     "hono": "^4.7.8"

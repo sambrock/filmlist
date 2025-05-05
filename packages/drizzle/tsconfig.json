@@ -1,7 +1,0 @@
-{
-  "extends": "@repo/tsconfig/base.json",
-  "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "nodenext"
-  }
-}
