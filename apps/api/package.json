@@ -1,31 +1,14 @@
 {
   "name": "@repo/api",
-  "version": "0.0.1",
-  "private": true,
-  "types": "./src/app.types.ts",
   "scripts": {
     "dev": "wrangler dev",
-    "test": "vitest --run",
-    "db:setup": "wrangler d1 execute prod-d1-filmlist --local --file=../../packages/drizzle/drizzle/schema.sql"
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
-  "license": "MIT",
   "dependencies": {
-    "@repo/drizzle": "*",
-    "@repo/lib": "*",
-    "@repo/tmdb": "*",
-    "@hono/trpc-server": "^0.3.4",
-    "@trpc/server": "^11.0.4",
-    "dotenv": "^16.4.7",
-    "drizzle-orm": "^0.39.3",
-    "hono": "^4.6.20",
-    "hono-pino": "^0.7.2",
-    "http-status-codes": "1.4.0",
-    "zod": "^3.24.2"
+    "hono": "^4.7.8"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240405.0",
-    "tsx": "^4.19.3",
-    "vitest": "^1.5.0",
-    "wrangler": "^4.1.0"
+    "wrangler": "^4.4.0"
   }
 }

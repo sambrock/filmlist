@@ -1,13 +1,14 @@
 {
-  "extends": "@repo/tsconfig/base.json",
   "compilerOptions": {
-    "composite": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "strict": true,
-    "moduleResolution": "nodenext",
-    "esModuleInterop": true,
-    "target": "esnext",
-    "module": "NodeNext"
+    "skipLibCheck": true,
+    "lib": [
+      "ESNext"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx"
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
 }
