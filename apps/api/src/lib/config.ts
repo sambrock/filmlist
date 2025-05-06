@@ -1,5 +1,4 @@
 import { cors } from 'hono/cors';
-import { logger } from 'hono/logger';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { Scalar } from '@scalar/hono-api-reference';
 
@@ -11,6 +10,10 @@ export interface AppBindings {
   Bindings: {
     DB: {}; // Cloudflare D1
     db: DrizzleDatabase; // Drizzle database
+    JWT_SECRET: string;
+  };
+  Variables: {
+    clientId: string;
   };
 }
 
@@ -18,36 +21,33 @@ export const createRouter = () => {
   return new OpenAPIHono<AppBindings>();
 };
 
-export const createApp = () => {
-  const app = new OpenAPIHono<AppBindings>({});
+export const createApp = (): OpenAPIHono<AppBindings> => {
+  const app = new OpenAPIHono<AppBindings>().basePath('/v1');
 
-  // app.use(logger());
   app.use(cors({ origin: 'http://localhost:3000' }));
 
-  app.basePath('/api/v1');
-
-  app.onError((err, c) => {
-    return c.json(
-      {
-        message: 'Internal Server Error',
-        error: err,
-        stack: err.stack,
-      },
-      500
-    );
-  });
-
-  app.notFound((c) => {
-    console.log('Not Found', c.req.path);
-    return c.json({
-      message: `Not Found - ${c.req.path}`,
+  app
+    .onError((err, c) => {
+      console.log('Error:', err);
+      return c.json(
+        {
+          message: 'Internal Server Error',
+          error: err,
+          stack: err.stack,
+        },
+        500
+      );
+    })
+    .notFound((c) => {
+      return c.json({
+        message: `Not Found - ${c.req.path}`,
+      });
     });
-  });
 
   return app;
 };
 
-export const openApiDocs = (app: OpenAPIHono<AppBindings>) => {
+export const enableOpenApiDocs = (app: OpenAPIHono<AppBindings>) => {
   app.doc(API_DOCS_JSON_PATH, {
     openapi: '3.0.0',
     info: {
@@ -59,7 +59,7 @@ export const openApiDocs = (app: OpenAPIHono<AppBindings>) => {
   app.get(
     API_DOCS_PATH,
     Scalar({
-      url: API_DOCS_JSON_PATH,
+      url: '/v1' + API_DOCS_JSON_PATH,
       layout: 'classic',
       defaultHttpClient: {
         targetKey: 'node',

@@ -39,5 +39,5 @@ export const listRelations = relations(lists, ({ many }) => ({
 export type List = typeof lists.$inferSelect;
 export type ListInsert = typeof lists.$inferInsert;
 
-export const listSelectSchema = createSelectSchema(lists);
-export const listInsertSchema = createInsertSchema(lists);
+export const ListSchema = createSelectSchema(lists);
+export const ListInsertSchema = createInsertSchema(lists);

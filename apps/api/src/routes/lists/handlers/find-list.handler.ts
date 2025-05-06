@@ -1,12 +1,12 @@
 import { AppRouteHandler } from '@/lib/openapi';
 
-import { ListRoute } from '../lists.routes';
+import { FindListRoute } from '../lists.routes';
 
-export const findList: AppRouteHandler<ListRoute> = async (c) => {
+export const findList: AppRouteHandler<FindListRoute> = async (c) => {
   const { db } = c.env;
 
   const data = await db.query.lists.findFirst({
-    where: (lists, { eq }) => eq(lists.editId, c.req.param('id')),
+    where: (lists, { eq }) => eq(lists.editId, c.req.param('listId')),
   });
 
   if (!data) {

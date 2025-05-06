@@ -23,6 +23,7 @@ module.exports = {
     '^@/actions.*$',
     '^@/app.*$',
     '^@/lib.*$',
+    '^@/middleware.*$',
     '^@/store.*$',
     '^@/providers.*$',
     '^@/hooks.*$',

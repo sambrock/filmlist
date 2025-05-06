@@ -1,0 +1,1 @@
+export const TOKEN_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz';
