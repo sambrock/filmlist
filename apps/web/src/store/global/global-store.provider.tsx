@@ -23,12 +23,12 @@ export const GlobalStoreInitializer = ({
   initialData,
   ...props
 }: React.PropsWithChildren<{ initialData: Partial<GlobalStoreState> }>) => {
-  const initializeGlobalStore = useGlobalStore((s) => s.initialize);
+  const updateGlobalStore = useGlobalStore((s) => s.update);
 
   const isInitialized = useRef(false);
 
   if (!isInitialized.current) {
-    initializeGlobalStore(initialData);
+    updateGlobalStore(initialData);
 
     isInitialized.current = true;
   }

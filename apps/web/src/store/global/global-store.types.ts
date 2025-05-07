@@ -1,9 +1,13 @@
 export type GlobalStoreState = {
   clientId: string | null;
+
+  initialListId: string | null;
+
+  isInitialized: boolean;
 };
 
 export type GlobalStoreActions = {
-  initialize: (state: Partial<GlobalStoreState>) => void;
+  update: (state: Partial<GlobalStoreState>) => void;
 };
 
 export type GlobalStore = GlobalStoreState & GlobalStoreActions;
