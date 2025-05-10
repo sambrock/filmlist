@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import 'tailwindcss';
 
 @theme {
@@ -10,4 +9,9 @@ body {
 
   background: var(--color-neutral-950);
   color: var(--color-neutral-200);
+  
+}
+
+.debug {
+  border: 1px red solid;
 }

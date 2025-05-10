@@ -1,8 +1,5 @@
 import { enableMapSet, enablePatches, Patch } from 'immer';
 
-enableMapSet();
-enablePatches();
-
 type StateSetter = (state: any) => void;
 
 export type PatchesStoreState = {

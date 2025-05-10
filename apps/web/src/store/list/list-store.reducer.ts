@@ -50,9 +50,10 @@ export const reducer = (
     case 'ADD_MOVIE': {
       return produceWithPatches(state, (draft) => {
         const order = draft.movies.size + 1;
+        console.log()
 
         draft.movies.set(action.payload.movieId, {
-          listId: draft.list!.listId,
+          listId: draft.list?.listId || 1,
           movieId: action.payload.movieId,
           createdAt: new Date(),
           order,

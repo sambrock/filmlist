@@ -30,7 +30,6 @@ module.exports = {
     '^@/styles.*$',
     '^@/components.*$',
     '^@/routes.*$',
-    '',
     '^[./]',
   ],
   importOrderParserPlugins: ['typescript', 'jsx', 'decorators-legacy'],

@@ -17,14 +17,21 @@ export const searchMovies: AppRouteHandler<SearchMoviesRoute> = async (c) => {
     },
   });
 
-  const results = data?.results?.slice(0, 5);
-  if (!results) {
+  const filteredResults = data?.results
+    ?.filter((movie) => {
+      if (!movie.poster_path) return false;
+      if (movie.popularity < 2) return false;
+
+      return true;
+    })
+    .slice(0, 5);
+  if (!filteredResults) {
     throw new Error('');
   }
 
   // TODO: This is a bit of a hack, but it works for now
   const withDirectors = await Promise.all(
-    results.map(async (m) => {
+    filteredResults.map(async (m) => {
       const { data } = await tmdb.client.GET('/3/movie/{movie_id}/credits', {
         params: {
           path: { movie_id: m.id },
@@ -38,12 +45,13 @@ export const searchMovies: AppRouteHandler<SearchMoviesRoute> = async (c) => {
     })
   );
 
-  return c.json(
-    withDirectors.map((movie) => ({
-      tmdbId: movie.id as number,
-      title: movie.title as string,
-      posterPath: movie.poster_path as string,
-      directors: movie.directors as string[],
-    }))
-  );
+  const formatted = withDirectors.map((movie) => ({
+    tmdbId: movie.id as number,
+    title: movie.title as string,
+    posterPath: movie.poster_path as string,
+    directors: movie.directors as string[],
+    releaseDate: new Date(movie.release_date!),
+  }));
+
+  return c.json(formatted);
 };

@@ -162,6 +162,7 @@ export interface paths {
                             tmdbId: number;
                             posterPath: string;
                             directors: string[];
+                            releaseDate: string;
                         }[];
                     };
                 };

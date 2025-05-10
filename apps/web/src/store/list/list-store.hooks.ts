@@ -2,6 +2,7 @@
 
 import { useContext } from 'react';
 import { useStore } from 'zustand';
+import { useShallow } from 'zustand/shallow';
 
 import { ListStoreContext } from './list-store.provider';
 import { ListStore } from './list-store.types';
@@ -13,5 +14,5 @@ export const useListStore = <T>(selector: (store: ListStore) => T): T => {
     throw new Error(`useListStore must be used within ListStoreProvider`);
   }
 
-  return useStore(context, selector);
+  return useStore(context, useShallow(selector));
 };

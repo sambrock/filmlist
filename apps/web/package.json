@@ -10,11 +10,15 @@
     "generate": "openapi-typescript http://localhost:8787/v1/docs.json --output ./src/lib/api/api-v1.d.ts"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.8",
+    "class-variance-authority": "^0.7.1",
     "immer": "^10.1.1",
+    "lucide-react": "^0.509.0",
     "next": "15.3.1",
     "openapi-fetch": "^0.13.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "swr": "^2.3.3",
     "usehooks-ts": "^3.1.1",
     "zustand": "^5.0.4"
   },

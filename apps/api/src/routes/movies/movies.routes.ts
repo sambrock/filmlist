@@ -21,6 +21,7 @@ export const searchMovies = createRoute({
           tmdbId: z.number(),
           posterPath: z.string(),
           directors: z.string().array(),
+          releaseDate: z.date()
         })
         .array()
     ),

@@ -5,7 +5,18 @@ import { reducer } from './list-store.reducer';
 import { ListStore, ListStoreState } from './list-store.types';
 
 export const defaultInitState: ListStoreState = {
-  list: null,
+  list: {
+    listId: -1,
+    editId: '',
+    readId: '',
+    title: 'Untitled',
+    description: '',
+    locked: false,
+    owner: '',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    lastUpdate: new Date(),
+  },
   movies: new Map(),
 };
 

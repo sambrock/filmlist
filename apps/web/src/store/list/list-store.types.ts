@@ -3,7 +3,7 @@ import type { List, ListMovie, Movie } from '@repo/drizzle';
 import { ListStoreAction } from './list-store.reducer';
 
 export type ListStoreState = {
-  list: List | null;
+  list: List;
   movies: Map<number, ListMovie & { movie: Movie }>;
 };
 
