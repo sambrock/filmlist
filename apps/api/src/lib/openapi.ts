@@ -15,3 +15,14 @@ export const jsonResponse = <Schema = ZodSchema>(schema: Schema, description = '
     },
   };
 };
+
+export const jsonBody = <Schema = ZodSchema>(schema: Schema, description = '') => {
+  return {
+    description,
+    content: {
+      'application/json': {
+        schema,
+      },
+    },
+  };
+};

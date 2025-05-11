@@ -1,7 +1,6 @@
-import { Patch, produce, produceWithPatches } from 'immer';
+import { Patch, produceWithPatches } from 'immer';
 
 import { List, ListMovie, Movie } from '@repo/drizzle';
-
 import { ListStoreState } from './list-store.types';
 
 export type ListStoreAction =
@@ -32,14 +31,14 @@ export const reducer = (
   action: ListStoreAction
 ): [ListStoreState] | readonly [ListStoreState, Patch[], Patch[]] => {
   switch (action.type) {
-    case 'INITIALIZE_LIST': {
-      return [
-        produce(state, (draft) => {
-          draft.list = action.payload.list;
-          draft.movies = action.payload.movies;
-        }),
-      ];
-    }
+    // case 'INITIALIZE_LIST': {
+    //   return [
+    //     produce(state, (draft) => {
+    //       draft.list = action.payload.list;
+    //       draft.movies = action.payload.movies;
+    //     }),
+    //   ];
+    // }
 
     case 'SET_TITLE': {
       return produceWithPatches(state, (draft) => {
@@ -49,10 +48,8 @@ export const reducer = (
 
     case 'ADD_MOVIE': {
       return produceWithPatches(state, (draft) => {
-        const order = draft.movies.size + 1;
-        console.log()
-
-        draft.movies.set(action.payload.movieId, {
+        const order = draft.movies.length + 1;
+        draft.movies.push({
           listId: draft.list?.listId || 1,
           movieId: action.payload.movieId,
           createdAt: new Date(),

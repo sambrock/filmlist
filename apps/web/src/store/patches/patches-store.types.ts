@@ -1,10 +1,11 @@
-import { enableMapSet, enablePatches, Patch } from 'immer';
+import type { Patch } from 'immer';
 
 type StateSetter = (state: any) => void;
 
 export type PatchesStoreState = {
   patches: [Patch[], Patch[], StateSetter][]; // [patches, inverse]
   pointer: number;
+  buffer: Patch[][];
 };
 
 export type PatchesStoreActions = {

@@ -10,13 +10,15 @@ export const createPatchesStore = () => {
   return createStore<PatchesStore>()((set) => ({
     patches: [],
     pointer: -1,
+    buffer: [],
 
-    pushPatches: (store, patches, inversePatches) => {
+    pushPatches: (patches, inversePatches, setStore) => {
       set((state) => {
         const newState = produce(state, (draft) => {
           draft.patches.length = state.pointer + 1;
-          draft.patches.push([store, patches, inversePatches]);
+          draft.patches.push([patches, inversePatches, setStore]);
           draft.pointer = state.pointer + 1;
+          draft.buffer.push(patches);
         });
 
         return newState;
@@ -26,12 +28,13 @@ export const createPatchesStore = () => {
     undo: () => {
       set((state) => {
         if (state.pointer < 0) return state;
-        const [, inversePatches, set] = state.patches[state.pointer];
+        const [, inversePatches, setStore] = state.patches[state.pointer];
 
-        set((state: any) => applyPatches(state, inversePatches));
+        setStore((state: any) => applyPatches(state, inversePatches));
 
         return produce(state, (draft) => {
           draft.pointer = draft.pointer - 1;
+          draft.buffer.push(inversePatches);
         });
       });
     },
@@ -40,12 +43,13 @@ export const createPatchesStore = () => {
       set((state) => {
         if (state.pointer === state.patches.length - 1) return state;
         const pointer = state.pointer + 1;
-        const [patches, , set] = state.patches[pointer];
+        const [patches, , setStore] = state.patches[pointer];
 
-        set((state: any) => applyPatches(state, patches));
+        setStore((state: any) => applyPatches(state, patches));
 
         return produce(state, (draft) => {
           draft.pointer = pointer;
+          draft.buffer.push(patches);
         });
       });
     },

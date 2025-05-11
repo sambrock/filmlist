@@ -1,4 +1,5 @@
 import { createStore } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 import { PatchesStoreActions } from '../patches/patches-store.types';
 import { reducer } from './list-store.reducer';
@@ -17,26 +18,34 @@ export const defaultInitState: ListStoreState = {
     updatedAt: new Date(),
     lastUpdate: new Date(),
   },
-  movies: new Map(),
+  movies: [],
 };
 
 export const createListStore = (
   pushPatches: PatchesStoreActions['pushPatches'],
   initState: ListStoreState = defaultInitState
 ) => {
-  return createStore<ListStore>()((set) => ({
-    ...initState,
+  return createStore<ListStore>()(
+    persist(
+      (set) => ({
+        ...initState,
 
-    dispatch: (action) => {
-      set((state) => {
-        const [newState, patches, inversePatches] = reducer(state, action);
+        dispatch: (action) => {
+          set((state) => {
+            const [newState, patches, inversePatches] = reducer(state, action);
 
-        if (typeof patches !== 'undefined' && typeof inversePatches !== 'undefined') {
-          pushPatches(patches, inversePatches, set);
-        }
+            if (typeof patches !== 'undefined' && typeof inversePatches !== 'undefined') {
+              pushPatches(patches, inversePatches, set);
+            }
 
-        return newState;
-      });
-    },
-  }));
+            return newState;
+          });
+        },
+      }),
+      {
+        name: 'list',
+        // storage: createJSONStorage(() => localStorage),
+      }
+    )
+  );
 };
