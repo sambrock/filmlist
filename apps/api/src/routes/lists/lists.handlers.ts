@@ -1,2 +1,2 @@
-export { findList } from './handlers/find-list.handler';
-export { initializeList } from './handlers/initialize-list.handler';
+export { findList } from './handlers/findList.handler';
+export { initializeList } from './handlers/initializeList.handler';

@@ -5,12 +5,12 @@ import { MovieGrid } from '@/components/MovieGrid/MovieGrid';
 import { MovieItem } from '@/components/MovieItem/MovieItem';
 
 export const ListViewMovies = () => {
-  const keys = useListStore((store) => store.movies);
+  const listMovies = useListStore((store) => [...store.listMovies.values()]);
 
   return (
     <MovieGrid className="mx-auto max-w-[1100px]">
-      {keys.map((_, index) => (
-        <MovieItem key={index} index={index} />
+      {listMovies.map((listMovie, index) => (
+        <MovieItem key={index} movieId={listMovie.movieId} />
       ))}
     </MovieGrid>
   );

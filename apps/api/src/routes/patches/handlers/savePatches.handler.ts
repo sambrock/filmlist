@@ -7,8 +7,7 @@ export const savePatches: AppRouteHandler<SavePatchesRoute> = async (c) => {
   for (const patches of body) {
     for (const patch of patches) {
       const { op, path, value } = patch;
-      // const [table, ]
-
+      console.log([op, path, value]);
     }
   }
 

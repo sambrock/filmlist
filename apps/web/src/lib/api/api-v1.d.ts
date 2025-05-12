@@ -4,42 +4,6 @@
  */
 
 export interface paths {
-    "/v1/auth/initializeClient": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            clientId: string;
-                        };
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/v1/lists/findList/{listId}": {
         parameters: {
             query?: never;
@@ -195,8 +159,9 @@ export interface paths {
             requestBody?: {
                 content: {
                     "application/json": {
-                        op: string;
-                        path: (string | number)[];
+                        /** @enum {string} */
+                        op: "add" | "remove" | "replace";
+                        path: unknown[];
                         value?: unknown;
                     }[][];
                 };

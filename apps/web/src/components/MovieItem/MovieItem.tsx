@@ -4,12 +4,12 @@ import { Movie } from '@repo/drizzle';
 import { useListStore } from '@/store/list';
 
 type Props = {
-  index: number;
+  movieId: number;
   initialMovie?: Movie;
 };
 
-export const MovieItem = ({ index }: Props) => {
-  const { movie } = useListStore((store) => store.movies[index]);
+export const MovieItem = ({ movieId }: Props) => {
+  const movie = useListStore((store) => store.movies.get(movieId)!);
 
   return (
     <div className="flex flex-col">

@@ -1,7 +1,7 @@
 import { applyPatches, enableMapSet, enablePatches, produce } from 'immer';
 import { createStore } from 'zustand';
 
-import { PatchesStore } from './patches-store.types';
+import { PatchesStore } from './patchesStore.types';
 
 enableMapSet();
 enablePatches();
@@ -10,7 +10,7 @@ export const createPatchesStore = () => {
   return createStore<PatchesStore>()((set) => ({
     patches: [],
     pointer: -1,
-    buffer: [],
+    queue: [],
 
     pushPatches: (patches, inversePatches, setStore) => {
       set((state) => {
@@ -18,7 +18,7 @@ export const createPatchesStore = () => {
           draft.patches.length = state.pointer + 1;
           draft.patches.push([patches, inversePatches, setStore]);
           draft.pointer = state.pointer + 1;
-          draft.buffer.push(patches);
+          draft.queue.push(patches);
         });
 
         return newState;
@@ -34,7 +34,7 @@ export const createPatchesStore = () => {
 
         return produce(state, (draft) => {
           draft.pointer = draft.pointer - 1;
-          draft.buffer.push(inversePatches);
+          draft.queue.push(inversePatches);
         });
       });
     },
@@ -49,9 +49,17 @@ export const createPatchesStore = () => {
 
         return produce(state, (draft) => {
           draft.pointer = pointer;
-          draft.buffer.push(patches);
+          draft.queue.push(patches);
         });
       });
+    },
+
+    clearQueue: () => {
+      set((state) =>
+        produce(state, (draft) => {
+          draft.queue = [];
+        })
+      );
     },
   }));
 };

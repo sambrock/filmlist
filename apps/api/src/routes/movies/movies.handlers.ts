@@ -1,1 +1,1 @@
-export { searchMovies } from './handlers/search-movies.handler';
+export { searchMovies } from './handlers/searchMovies.handler';

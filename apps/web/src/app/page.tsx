@@ -1,6 +1,6 @@
 import { GlobalStoreInitializer } from '@/store/global';
 import { ListStoreProvider } from '@/store/list';
-import { PatchesStoreProvider } from '@/store/patches';
+import { PatchesStoreProvider, PatchesStoreQueueManager } from '@/store/patches';
 import { ListView } from '@/components/views/ListView/ListView';
 
 export default async function HomePage() {
@@ -10,6 +10,7 @@ export default async function HomePage() {
         <ListStoreProvider>
           <ListView />
         </ListStoreProvider>
+        <PatchesStoreQueueManager />
       </PatchesStoreProvider>
     </GlobalStoreInitializer>
   );

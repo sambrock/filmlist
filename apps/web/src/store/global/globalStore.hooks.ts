@@ -3,8 +3,8 @@
 import { useContext } from 'react';
 import { useStore } from 'zustand';
 
-import { GlobalStoreContext } from './global-store.provider';
-import { GlobalStore } from './global-store.types';
+import { GlobalStoreContext } from './globalStore.provider';
+import { GlobalStore } from './globalStore.types';
 
 export const useGlobalStore = <T>(selector: (store: GlobalStore) => T): T => {
   const context = useContext(GlobalStoreContext);

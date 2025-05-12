@@ -1,13 +1,16 @@
 import type { List, ListMovie, Movie } from '@repo/drizzle';
-import { ListStoreAction } from './list-store.reducer';
+import { ListStoreAction } from './listStore.reducer';
 
 export type ListStoreState = {
   list: List;
-  // movies: Map<number, ListMovie & { movie: Movie }>;
-  movies: (ListMovie & { movie: Movie })[];
+  listMovies: Set<ListMovie>;
+  movies: Map<number, Movie>;
+
+  _isInitialized: boolean;
 };
 
 export type ListStoreActions = {
+  initializeList: () => Promise<void>;
   dispatch: (action: ListStoreAction) => void;
 };
 

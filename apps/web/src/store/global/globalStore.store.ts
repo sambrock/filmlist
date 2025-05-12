@@ -1,6 +1,6 @@
 import { createStore } from 'zustand';
 
-import { GlobalStore, GlobalStoreState } from './global-store.types';
+import { GlobalStore, GlobalStoreState } from './globalStore.types';
 
 export const defaultInitState: GlobalStoreState = {
   clientId: null,

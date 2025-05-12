@@ -4,7 +4,7 @@ import { ListSchema } from '@repo/drizzle';
 import { STATUS_CODE } from '@/lib/constants';
 import { jsonResponse } from '@/lib/openapi';
 import { dbMiddleware } from '@/middleware/db.middleware';
-import { initializeClientMiddleware } from '@/middleware/initialize-client.middleware';
+import { initializeClientMiddleware } from '@/middleware/initializeClient.middleware';
 
 export const findList = createRoute({
   path: '/findList/{listId}',

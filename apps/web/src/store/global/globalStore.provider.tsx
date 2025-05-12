@@ -2,9 +2,9 @@
 
 import { createContext, Fragment, useRef } from 'react';
 
-import { useGlobalStore } from './global-store.hooks';
-import { createGlobalStore } from './global-store.store';
-import { GlobalStoreState } from './global-store.types';
+import { useGlobalStore } from './globalStore.hooks';
+import { createGlobalStore } from './globalStore.store';
+import { GlobalStoreState } from './globalStore.types';
 
 export type GlobalStoreApi = ReturnType<typeof createGlobalStore>;
 
