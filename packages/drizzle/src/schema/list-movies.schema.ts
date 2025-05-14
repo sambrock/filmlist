@@ -26,6 +26,5 @@ export const listMoviesRelations = relations(listMovies, ({ one }) => ({
 export type ListMovie = typeof listMovies.$inferSelect;
 export type ListMovieInsert = typeof listMovies.$inferInsert;
 
-export const listMovieSelectSchema = createSelectSchema(listMovies);
-export const listMovieInsertSchema = createInsertSchema(listMovies).omit({ createdAt: true }).required();
-export const listMovieDeleteSchema = listMovieInsertSchema.omit({ order: true }).required();
+export const ListMovieSchema = createSelectSchema(listMovies);
+export const ListMovieInsertSchema = createInsertSchema(listMovies).omit({ createdAt: true }).required();

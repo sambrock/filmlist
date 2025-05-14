@@ -1,2 +1,2 @@
 export { usePatchesStore } from './patchesStore.hooks';
-export { PatchesStoreProvider, PatchesStoreQueueManager } from './patchesStore.provider';
+export { PatchesStoreProvider, PatchesStorePersister } from './patchesStore.provider';

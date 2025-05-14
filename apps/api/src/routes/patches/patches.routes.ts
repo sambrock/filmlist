@@ -2,6 +2,7 @@ import { createRoute, z } from '@hono/zod-openapi';
 
 import { STATUS_CODE } from '@/lib/constants';
 import { jsonResponse } from '@/lib/openapi';
+import { dbMiddleware } from '@/middleware/db.middleware';
 
 export const savePatches = createRoute({
   path: '/savePatches',
@@ -13,7 +14,7 @@ export const savePatches = createRoute({
           schema: z
             .object({
               op: z.enum(['add', 'remove', 'replace']),
-              path: z.tuple([z.any(), z.any()]),
+              path: z.tuple([z.enum(['list', 'movies', 'listMovies']), z.any()]),
               value: z.any(),
             })
             .array()
@@ -25,6 +26,7 @@ export const savePatches = createRoute({
   responses: {
     [STATUS_CODE.OK]: jsonResponse(z.object({})),
   },
+  middleware: [dbMiddleware],
 });
 
 export type SavePatchesRoute = typeof savePatches;

@@ -1,2 +1,2 @@
-export { useListStore } from './listStore.index';
+export { useListStore } from './listStore.hooks';
 export { ListStoreProvider } from './listStore.provider';

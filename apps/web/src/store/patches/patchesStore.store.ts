@@ -7,21 +7,19 @@ enableMapSet();
 enablePatches();
 
 export const createPatchesStore = () => {
-  return createStore<PatchesStore>()((set) => ({
+  return createStore<PatchesStore>()((set, get) => ({
     patches: [],
     pointer: -1,
     queue: [],
 
     pushPatches: (patches, inversePatches, setStore) => {
       set((state) => {
-        const newState = produce(state, (draft) => {
+        return produce(state, (draft) => {
           draft.patches.length = state.pointer + 1;
           draft.patches.push([patches, inversePatches, setStore]);
           draft.pointer = state.pointer + 1;
           draft.queue.push(patches);
         });
-
-        return newState;
       });
     },
 
@@ -55,11 +53,11 @@ export const createPatchesStore = () => {
     },
 
     clearQueue: () => {
-      set((state) =>
-        produce(state, (draft) => {
+      set((state) => {
+        return produce(state, (draft) => {
           draft.queue = [];
-        })
-      );
+        });
+      });
     },
   }));
 };

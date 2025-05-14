@@ -96,6 +96,67 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/lists/getListInitialData": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            list: {
+                                listId: number;
+                                readId: string;
+                                editId: string;
+                                title: string;
+                                description: string;
+                                locked: boolean;
+                                owner: string;
+                                createdAt: string;
+                                updatedAt: string;
+                                lastUpdate: string;
+                            };
+                            listMovies: {
+                                listId: number;
+                                movieId: number;
+                                order: number;
+                                createdAt: string;
+                            }[];
+                            movies: {
+                                movieId: number;
+                                tmdbId: number;
+                                title: string;
+                                posterPath: string;
+                                releaseDate: string;
+                                createdAt: string;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/movies/search": {
         parameters: {
             query?: never;
@@ -161,7 +222,7 @@ export interface paths {
                     "application/json": {
                         /** @enum {string} */
                         op: "add" | "remove" | "replace";
-                        path: unknown[];
+                        path: (("list" | "movies" | "listMovies") | unknown)[];
                         value?: unknown;
                     }[][];
                 };

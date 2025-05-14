@@ -1,20 +1,20 @@
 import { getCookie, setCookie } from 'hono/cookie';
 import { createMiddleware } from 'hono/factory';
-import { decode, sign } from 'hono/jwt';
+import { decode, sign, verify } from 'hono/jwt';
 
 import { AppBindings } from '@/lib/config';
 import { generateNanoid } from '@/lib/utils';
 
 export const initializeClientMiddleware = createMiddleware<AppBindings>(async (c, next) => {
-  const accessToken = getCookie(c, 'access-token');
+  const clientToken = getCookie(c, 'client-token');
 
-  if (accessToken) {
-    const decoded = decode(accessToken);
-    if (!decoded) {
+  if (clientToken) {
+    const { clientId } = await verify(clientToken, c.env.JWT_SECRET);
+    if (!clientId) {
       return c.json({}, 401);
     }
 
-    c.set('clientId', decoded.payload.clientId as string);
+    c.set('clientId', clientId as string);
 
     return next();
   }
@@ -23,8 +23,8 @@ export const initializeClientMiddleware = createMiddleware<AppBindings>(async (c
   const signedToken = await sign({ clientId }, c.env.JWT_SECRET);
 
   c.res.headers.set('Access-Control-Allow-Credentials', 'true');
-  c.res.headers.set('access-token', signedToken);
-  setCookie(c, 'access-token', signedToken, {
+  c.res.headers.set('client-token', signedToken);
+  setCookie(c, 'client-token', signedToken, {
     path: '/',
     secure: true,
     httpOnly: true,

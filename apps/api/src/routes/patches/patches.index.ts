@@ -1,5 +1,4 @@
 import { createRouter } from '@/lib/config';
-
 import * as handlers from './patches.handlers';
 import * as routes from './patches.routes';
 

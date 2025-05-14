@@ -4,31 +4,45 @@ import { createStore } from 'zustand';
 import { api } from '@/lib/api';
 import { PatchesStoreActions } from '../patches/patchesStore.types';
 import { reducer } from './listStore.reducer';
-import { ListStore } from './listStore.types';
+import { ListStore, ListStoreInitialData } from './listStore.types';
 
-const DEFAULT_LIST = {
-  listId: -1,
-  editId: '',
-  readId: '',
-  title: 'Untitled',
-  description: '',
-  locked: false,
-  owner: '',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  lastUpdate: new Date(),
-};
-
-export const createListStore = (pushPatches: PatchesStoreActions['pushPatches']) => {
+export const createListStore = (
+  pushPatches: PatchesStoreActions['pushPatches'],
+  initialData?: ListStoreInitialData
+) => {
   return createStore<ListStore>()((set, get) => ({
-    list: DEFAULT_LIST,
-    listMovies: new Set(),
-    movies: new Map(),
+    list: initialData
+      ? {
+          ...initialData.list,
+          createdAt: new Date(initialData.list.createdAt),
+          updatedAt: new Date(initialData.list.updatedAt),
+          lastUpdate: new Date(initialData.list.lastUpdate),
+        }
+      : null,
+    movies: initialData
+      ? new Map(
+          initialData.movies.map((movie) => [
+            movie.movieId,
+            {
+              ...movie,
+              createdAt: new Date(movie.createdAt),
+            },
+          ])
+        )
+      : new Map(),
+    listMovies: initialData
+      ? new Set(
+          initialData.listMovies.map((listMovie) => ({
+            ...listMovie,
+            createdAt: new Date(listMovie.createdAt),
+          }))
+        )
+      : new Set(),
 
-    _isInitialized: false,
+    _isInitialized: initialData ? true : false,
 
     initializeList: async () => {
-      const { data } = await api.POST('/v1/lists/initializeList');
+      const { data } = await api.POST('/v1/lists/initializeList', { credentials: 'include' });
       if (!data) return;
 
       set((state) =>

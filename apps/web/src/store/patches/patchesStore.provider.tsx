@@ -22,7 +22,7 @@ export const PatchesStoreProvider = (props: React.PropsWithChildren) => {
   );
 };
 
-export const PatchesStoreQueueManager = () => {
+export const PatchesStorePersister = () => {
   const store = usePatchesContext();
 
   const isInitializedRef = useRef(false);
@@ -30,9 +30,7 @@ export const PatchesStoreQueueManager = () => {
 
   if (!isInitializedRef.current) {
     store.subscribe((state) => {
-      if (state.queue.length === 0) {
-        return;
-      }
+      if (state.queue.length === 0) return;
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -41,7 +39,7 @@ export const PatchesStoreQueueManager = () => {
           body: state.queue,
         });
         state.clearQueue();
-      }, 1000);
+      }, 500);
     });
   }
 
