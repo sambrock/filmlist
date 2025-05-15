@@ -1,6 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
-import { ListMovieSchema, ListSchema, MovieSelectSchema } from '@repo/drizzle';
+import { ListMovieSchema, ListSchema, MovieSchema } from '@repo/drizzle';
 import { STATUS_CODE } from '@/lib/constants';
 import { jsonResponse } from '@/lib/openapi';
 import { dbMiddleware } from '@/middleware/db.middleware';
@@ -21,15 +21,15 @@ export const findList = createRoute({
   middleware: [dbMiddleware],
 });
 
-export const getListInitialData = createRoute({
-  path: '/getListInitialData',
+export const getInitialData = createRoute({
+  path: '/getInitialData',
   method: 'get',
   responses: {
     [STATUS_CODE.OK]: jsonResponse(
       z.object({
         list: ListSchema,
         listMovies: ListMovieSchema.array(),
-        movies: MovieSelectSchema.array(),
+        movies: MovieSchema.array(),
       })
     ),
   },
@@ -46,5 +46,5 @@ export const initializeList = createRoute({
 });
 
 export type FindListRoute = typeof findList;
-export type GetListInitialDataRoute = typeof getListInitialData;
+export type GetInitialDataRoute = typeof getInitialData;
 export type InitializeListRoute = typeof initializeList;

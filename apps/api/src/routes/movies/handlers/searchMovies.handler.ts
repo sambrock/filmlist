@@ -1,6 +1,5 @@
 import { tmdb } from '@repo/tmdb';
 import { AppRouteHandler } from '@/lib/openapi';
-
 import { SearchMoviesRoute } from '../movies.routes';
 
 export const searchMovies: AppRouteHandler<SearchMoviesRoute> = async (c) => {
@@ -46,10 +45,12 @@ export const searchMovies: AppRouteHandler<SearchMoviesRoute> = async (c) => {
   );
 
   const formatted = withDirectors.map((movie) => ({
+    movieId: movie.id as number,
     tmdbId: movie.id as number,
     title: movie.title as string,
     posterPath: movie.poster_path as string,
     directors: movie.directors as string[],
+    createdAt: new Date(), // TODO: don't need this
     releaseDate: new Date(movie.release_date!),
   }));
 

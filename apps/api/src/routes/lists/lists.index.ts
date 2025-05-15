@@ -5,4 +5,4 @@ import * as routes from './lists.routes';
 export const router = createRouter()
   .openapi(routes.findList, handlers.findList)
   .openapi(routes.initializeList, handlers.initializeList)
-  .openapi(routes.getListInitialData, handlers.getListInitialData);
+  .openapi(routes.getInitialData, handlers.getInitialData);

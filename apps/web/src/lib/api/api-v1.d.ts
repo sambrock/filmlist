@@ -96,7 +96,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/lists/getListInitialData": {
+    "/v1/lists/getInitialData": {
         parameters: {
             query?: never;
             header?: never;
@@ -183,11 +183,13 @@ export interface paths {
                     };
                     content: {
                         "application/json": {
-                            title: string;
+                            movieId: number;
                             tmdbId: number;
+                            title: string;
                             posterPath: string;
-                            directors: string[];
                             releaseDate: string;
+                            createdAt: string;
+                            directors: string[];
                         }[];
                     };
                 };

@@ -1,7 +1,6 @@
 import { lists } from '@repo/drizzle';
 import { STATUS_CODE } from '@/lib/constants';
 import { AppRouteHandler } from '@/lib/openapi';
-
 import { InitializeListRoute } from '../lists.routes';
 
 export const initializeList: AppRouteHandler<InitializeListRoute> = async (c) => {

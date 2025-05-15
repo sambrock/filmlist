@@ -1,5 +1,4 @@
 import { AppRouteHandler } from '@/lib/openapi';
-
 import { FindListRoute } from '../lists.routes';
 
 export const findList: AppRouteHandler<FindListRoute> = async (c) => {

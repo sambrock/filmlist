@@ -7,11 +7,10 @@ import { PatchesStorePersister, PatchesStoreProvider } from '@/store/patches';
 import { ListView } from '@/components/views/ListView/ListView';
 
 export default async function HomePage() {
-  const c = await cookies();
-  const clientToken = c.get('client-token')?.value;
+  const cookie = await cookies();
+  const clientToken = cookie.get('client-token')?.value;
 
-  const { data } = await api.GET('/v1/lists/getListInitialData', {
-    credentials: 'include',
+  const { data } = await api.GET('/v1/lists/getInitialData', {
     headers: { 'client-token': clientToken },
   });
 

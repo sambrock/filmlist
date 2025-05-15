@@ -22,5 +22,5 @@ export const moviesRelations = relations(movies, ({ many }) => ({
 export type Movie = typeof movies.$inferSelect;
 export type MovieInsert = typeof movies.$inferInsert;
 
-export const MovieSelectSchema = createSelectSchema(movies);
+export const MovieSchema = createSelectSchema(movies);
 export const MovieInsertSchema = createInsertSchema(movies);

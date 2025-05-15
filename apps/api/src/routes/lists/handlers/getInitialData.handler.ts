@@ -1,9 +1,9 @@
 import { AppRouteHandler } from '@/lib/openapi';
-import { GetListInitialDataRoute } from '../lists.routes';
+import { GetInitialDataRoute } from '../lists.routes';
 
-export const getListInitialData: AppRouteHandler<GetListInitialDataRoute> = async (c) => {
+export const getInitialData: AppRouteHandler<GetInitialDataRoute> = async (c) => {
   const { db } = c.env;
-  const clientId = c.get('clientId');
+  const { clientId } = c.var;
 
   const data = await db.query.lists.findFirst({
     where: (lists, { eq }) => eq(lists.owner, clientId),
