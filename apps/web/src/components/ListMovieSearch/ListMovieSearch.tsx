@@ -4,21 +4,21 @@ import { useState } from 'react';
 import { FloatingFocusManager } from '@floating-ui/react';
 import { useDebounceValue } from 'usehooks-ts';
 
-import type { Movie } from '@repo/drizzle';
-import { cn } from '@/lib/utils';
 import { useCombobox } from '@/hooks/useCombobox';
+import { cn } from '@/lib/utils';
+import { useListStore } from '@/store/list';
 import { IconAdd } from '../common/Icon';
-import { MovieSearchInput } from './MovieSearchInput';
-import { MovieSearchResult } from './MovieSearchResult';
-import { MovieSearchResults } from './MovieSearchResults';
+import { ListMovieSearchInput } from './ListMovieSearchInput';
+import { ListMovieSearchResult } from './ListMovieSearchResult';
+import { ListMovieSearchResults } from './ListMovieSearchResults';
 import { useSearchQuery } from './hooks/useSearchQuery';
 
-type Props = {
-  onSelect?: (movie: Movie) => void;
-};
+type Props = React.ComponentProps<'div'>;
 
-export const MovieSearch = ({ onSelect }: Props) => {
+export const ListMovieSearch = ({ className, ...props }: Props) => {
   const [q, setQuery] = useState('');
+
+  const dispatch = useListStore((state) => state.dispatch);
 
   const [debounced] = useDebounceValue(q, 200);
 
@@ -27,31 +27,40 @@ export const MovieSearch = ({ onSelect }: Props) => {
   const { open, activeIndex, floating, getInputProps, getMenuProps, getItemProps } = useCombobox({
     items: data?.data,
     onSelect: (movie) => {
-      onSelect?.({
-        tmdbId: movie.tmdbId,
-        title: movie.title,
-        releaseDate: movie.releaseDate,
-        posterPath: movie.posterPath,
-        movieId: movie.tmdbId,
-        createdAt: new Date(),
+      dispatch({
+        type: 'ADD_MOVIE',
+        payload: {
+          tmdbId: movie.tmdbId,
+          title: movie.title,
+          releaseDate: movie.releaseDate,
+          posterPath: movie.posterPath,
+          movieId: movie.tmdbId,
+          createdAt: new Date(),
+        },
       });
     },
   });
 
   return (
-    <div className="flex flex-col rounded-xl border border-neutral-800 bg-neutral-900/80 backdrop-blur-md">
+    <div
+      className={cn(
+        'flex flex-col rounded-xl border border-neutral-800 bg-neutral-900/80 backdrop-blur-md',
+        className
+      )}
+      {...props}
+    >
       {open && (
         <FloatingFocusManager context={floating.context} initialFocus={-1}>
-          <MovieSearchResults className={cn(!open && 'hidden')} {...getMenuProps()}>
+          <ListMovieSearchResults className={cn(!open && 'hidden')} {...getMenuProps()}>
             {data?.data?.map((movie, index) => (
-              <MovieSearchResult
+              <ListMovieSearchResult
                 key={movie.tmdbId}
                 movie={movie}
                 active={activeIndex === index}
                 {...getItemProps(index)}
               />
             ))}
-          </MovieSearchResults>
+          </ListMovieSearchResults>
         </FloatingFocusManager>
       )}
 
@@ -62,7 +71,7 @@ export const MovieSearch = ({ onSelect }: Props) => {
         )}
       >
         <IconAdd className="ml-4 stroke-neutral-600" />
-        <MovieSearchInput
+        <ListMovieSearchInput
           className="absolute left-0 ml-8"
           placeholder="Add a film"
           {...getInputProps({

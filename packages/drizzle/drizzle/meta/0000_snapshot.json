@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7a11c1f8-ca98-42cc-9392-e797f8818043",
+  "id": "2d44fa72-2d5c-46da-a91a-550f94a6c5c3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "list_movies": {
@@ -28,11 +28,18 @@
           "notNull": true,
           "autoincrement": false
         },
+        "userPosterPath": {
+          "name": "userPosterPath",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },
@@ -79,6 +86,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "editId": {
+          "name": "editId",
+          "type": "text(24)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "readId": {
           "name": "readId",
           "type": "text(12)",
@@ -86,23 +100,23 @@
           "notNull": true,
           "autoincrement": false
         },
-        "editId": {
-          "name": "editId",
-          "type": "text(22)",
+        "clientId": {
+          "name": "clientId",
+          "type": "text(32)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "title": {
           "name": "title",
-          "type": "text",
+          "type": "text(100)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "description": {
           "name": "description",
-          "type": "text",
+          "type": "text(500)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
@@ -116,9 +130,9 @@
           "autoincrement": false,
           "default": false
         },
-        "owner": {
-          "name": "owner",
-          "type": "text",
+        "lastUpdate": {
+          "name": "lastUpdate",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -136,27 +150,20 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
-        },
-        "lastUpdate": {
-          "name": "lastUpdate",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
         }
       },
       "indexes": {
-        "lists_readId_unique": {
-          "name": "lists_readId_unique",
-          "columns": [
-            "readId"
-          ],
-          "isUnique": true
-        },
         "lists_editId_unique": {
           "name": "lists_editId_unique",
           "columns": [
             "editId"
+          ],
+          "isUnique": true
+        },
+        "lists_readId_unique": {
+          "name": "lists_readId_unique",
+          "columns": [
+            "readId"
           ],
           "isUnique": true
         }
@@ -208,7 +215,7 @@
           "name": "createdAt",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },

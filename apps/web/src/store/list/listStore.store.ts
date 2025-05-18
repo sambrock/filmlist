@@ -1,7 +1,7 @@
 import { produce } from 'immer';
 import { createStore } from 'zustand';
 
-import { api } from '@/lib/api';
+import { api } from '@/lib/api/client';
 import { PatchesStoreActions } from '../patches/patchesStore.types';
 import { reducer } from './listStore.reducer';
 import { ListStore, ListStoreInitialData } from './listStore.types';

@@ -1,4 +1,5 @@
 import { lists } from '@repo/drizzle';
+import { generateEditReadIds } from '@repo/lib/utils/list';
 import { STATUS_CODE } from '@/lib/constants';
 import { AppRouteHandler } from '@/lib/openapi';
 import { InitializeListRoute } from '../lists.routes';
@@ -7,11 +8,17 @@ export const initializeList: AppRouteHandler<InitializeListRoute> = async (c) =>
   const { db } = c.env;
   const { clientId } = c.var;
 
+  const { editId, readId } = generateEditReadIds();
+
   const [data] = await db
     .insert(lists)
     .values({
-      title: 'Untitled',
-      owner: clientId,
+      editId,
+      readId,
+      clientId,
+      title: '',
+      description: '',
+      locked: false,
     })
     .returning({
       title: lists.title,
@@ -22,7 +29,7 @@ export const initializeList: AppRouteHandler<InitializeListRoute> = async (c) =>
       listId: lists.listId,
       readId: lists.readId,
       locked: lists.locked,
-      owner: lists.owner,
+      clientId: lists.clientId,
       updatedAt: lists.updatedAt,
     });
 

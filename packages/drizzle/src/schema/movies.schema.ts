@@ -5,14 +5,12 @@ import { createSelectSchema, createInsertSchema } from 'drizzle-zod';
 import { listMovies } from './list-movies.schema';
 
 export const movies = sqliteTable('movies', {
-  movieId: integer().primaryKey(), // Same as tmdbId
+  movieId: integer().primaryKey(),
   tmdbId: integer().unique().notNull(),
   title: text().notNull(),
   posterPath: text().notNull(),
   releaseDate: text().notNull(),
-  createdAt: integer({ mode: 'timestamp' })
-    .notNull()
-    .$defaultFn(() => new Date()),
+  createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()),
 });
 
 export const moviesRelations = relations(movies, ({ many }) => ({

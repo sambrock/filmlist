@@ -2,7 +2,7 @@
 
 import { createContext, useRef } from 'react';
 
-import { api } from '@/lib/api';
+import { api } from '@/lib/api/client';
 import { usePatchesContext } from './patchesStore.hooks';
 import { createPatchesStore } from './patchesStore.store';
 

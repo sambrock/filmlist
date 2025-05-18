@@ -9,9 +9,10 @@
     "db:setup": "wrangler d1 execute prod-d1-filmlist --local --file=../../packages/drizzle/drizzle/schema.sql"
   },
   "dependencies": {
-    "@hono/zod-openapi": "^0.19.6",
     "@repo/drizzle": "*",
+    "@repo/lib": "*",
     "@repo/tmdb": "*",
+    "@hono/zod-openapi": "^0.19.6",
     "@scalar/hono-api-reference": "^0.8.8",
     "drizzle-orm": "^0.43.1",
     "hono": "^4.7.8",

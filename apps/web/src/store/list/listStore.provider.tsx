@@ -4,13 +4,14 @@ import { createContext, useRef } from 'react';
 
 import { usePatchesStore } from '../patches';
 import { createListStore } from './listStore.store';
+import { ListStoreInitialData } from './listStore.types';
 
 export type ListStoreApi = ReturnType<typeof createListStore>;
 
 export const ListStoreContext = createContext<ListStoreApi | undefined>(undefined);
 
 type Props = {
-  initialData?: any;
+  initialData?: ListStoreInitialData;
 };
 
 export const ListStoreProvider = ({ initialData, ...props }: React.PropsWithChildren<Props>) => {

@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 
-import { api } from '@/lib/api';
+import { api } from '@/lib/api/client';
 
 export const useSearchQuery = (q: string, year?: string | number, director?: string) => {
   return useSWR(

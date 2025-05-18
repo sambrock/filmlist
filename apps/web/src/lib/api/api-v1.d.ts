@@ -29,15 +29,15 @@ export interface paths {
                     content: {
                         "application/json": {
                             listId: number;
-                            readId: string;
                             editId: string;
+                            readId: string;
+                            clientId: string;
                             title: string;
                             description: string;
                             locked: boolean;
-                            owner: string;
+                            lastUpdate: string;
                             createdAt: string;
                             updatedAt: string;
-                            lastUpdate: string;
                         };
                     };
                 };
@@ -76,15 +76,15 @@ export interface paths {
                     content: {
                         "application/json": {
                             listId: number;
-                            readId: string;
                             editId: string;
+                            readId: string;
+                            clientId: string;
                             title: string;
                             description: string;
                             locked: boolean;
-                            owner: string;
+                            lastUpdate: string;
                             createdAt: string;
                             updatedAt: string;
-                            lastUpdate: string;
                         };
                     };
                 };
@@ -105,7 +105,10 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    readId?: string;
+                    editId?: string;
+                };
                 header?: never;
                 path?: never;
                 cookie?: never;
@@ -120,20 +123,21 @@ export interface paths {
                         "application/json": {
                             list: {
                                 listId: number;
-                                readId: string;
                                 editId: string;
+                                readId: string;
+                                clientId: string;
                                 title: string;
                                 description: string;
                                 locked: boolean;
-                                owner: string;
+                                lastUpdate: string;
                                 createdAt: string;
                                 updatedAt: string;
-                                lastUpdate: string;
-                            };
+                            } | unknown | unknown;
                             listMovies: {
                                 listId: number;
                                 movieId: number;
                                 order: number;
+                                userPosterPath: string;
                                 createdAt: string;
                             }[];
                             movies: {

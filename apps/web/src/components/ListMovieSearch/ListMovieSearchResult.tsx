@@ -1,14 +1,14 @@
 import { forwardRef, useId } from 'react';
 
-import { cn } from '@/lib/utils';
 import { Poster } from '@/components/common/Poster';
+import { cn } from '@/lib/utils';
 
 type Props = React.ComponentProps<'div'> & {
   active: boolean;
   movie: { title: string; posterPath: string; directors: string[]; releaseDate: string };
 };
 
-export const MovieSearchResult = forwardRef<HTMLDivElement, Props>(
+export const ListMovieSearchResult = forwardRef<HTMLDivElement, Props>(
   ({ active, movie, className, ...props }, ref) => {
     const id = useId();
     return (
@@ -38,3 +38,5 @@ export const MovieSearchResult = forwardRef<HTMLDivElement, Props>(
     );
   }
 );
+
+ListMovieSearchResult.displayName = 'ListMovieSearchResult';

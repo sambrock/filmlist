@@ -20,6 +20,7 @@ module.exports = {
     '<THIRD_PARTY_MODULES>',
     '',
     '^@repo.*$',
+    '^@/.*$',
     '^@/actions.*$',
     '^@/app.*$',
     '^@/lib.*$',

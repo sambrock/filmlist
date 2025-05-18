@@ -4,10 +4,16 @@
   "private": true,
   "license": "MIT",
   "exports": {
-    "./utils": "./src/utils/index.ts"
+    "./constants": "./src/constants.ts",
+    "./utils/list": "./src/utils/list.utils.ts",
+    "./utils/nanoid": "./src/utils/nanoid.utils.ts",
+    "./utils/client": "./src/utils/client.utils.ts"
   },
   "dependencies": {
-    "nanoid": "^5.1.5",
-    "slugify": "^1.6.6"
+    "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.1.5"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.9"
   }
 }

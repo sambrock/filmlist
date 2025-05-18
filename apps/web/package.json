@@ -10,6 +10,7 @@
     "generate": "openapi-typescript http://localhost:8787/v1/docs.json --output ./src/lib/api/api-v1.d.ts"
   },
   "dependencies": {
+    "@repo/lib": "*",
     "@floating-ui/react": "^0.27.8",
     "class-variance-authority": "^0.7.1",
     "immer": "^10.1.1",

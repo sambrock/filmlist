@@ -45,10 +45,11 @@ export const reducer = (
       return produceWithPatches(state, (draft) => {
         draft.movies.set(action.payload.movieId, action.payload);
         draft.listMovies.add({
-          listId: draft.list.listId,
+          listId: draft.list!.listId,
           movieId: action.payload.movieId,
           createdAt: new Date(),
           order: draft.listMovies.size + 1,
+          userPosterPath: action.payload.posterPath,
         });
       });
     }

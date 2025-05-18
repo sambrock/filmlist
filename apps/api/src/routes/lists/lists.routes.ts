@@ -4,8 +4,8 @@ import { ListMovieSchema, ListSchema, MovieSchema } from '@repo/drizzle';
 import { STATUS_CODE } from '@/lib/constants';
 import { jsonResponse } from '@/lib/openapi';
 import { dbMiddleware } from '@/middleware/db.middleware';
-import { initializeClientMiddleware } from '@/middleware/initializeClient.middleware';
-import { readClientId } from '@/middleware/readClientId.middleware';
+import { initializeClientMiddleware } from '@/middleware/initializeClientToken.middleware';
+import { readClientToken } from '@/middleware/readClientToken.middleware';
 
 export const findList = createRoute({
   path: '/findList/{listId}',
@@ -24,6 +24,12 @@ export const findList = createRoute({
 export const getInitialData = createRoute({
   path: '/getInitialData',
   method: 'get',
+  request: {
+    query: z.object({
+      readId: z.string().optional(),
+      editId: z.string().optional(),
+    }),
+  },
   responses: {
     [STATUS_CODE.OK]: jsonResponse(
       z.object({
@@ -32,8 +38,9 @@ export const getInitialData = createRoute({
         movies: MovieSchema.array(),
       })
     ),
+    [STATUS_CODE.NOT_FOUND]: jsonResponse(z.object({})),
   },
-  middleware: [dbMiddleware, readClientId],
+  middleware: [dbMiddleware, readClientToken],
 });
 
 export const initializeList = createRoute({

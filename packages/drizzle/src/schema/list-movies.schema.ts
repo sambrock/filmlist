@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { integer, sqliteTable } from 'drizzle-orm/sqlite-core';
+import { integer, text, sqliteTable } from 'drizzle-orm/sqlite-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
 import { lists } from './lists.schema';
@@ -13,9 +13,8 @@ export const listMovies = sqliteTable('list_movies', {
     .notNull()
     .references(() => movies.movieId),
   order: integer().notNull(),
-  createdAt: integer({ mode: 'timestamp' })
-    .notNull()
-    .$defaultFn(() => new Date()),
+  userPosterPath: text(),
+  createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()),
 });
 
 export const listMoviesRelations = relations(listMovies, ({ one }) => ({
@@ -27,4 +26,4 @@ export type ListMovie = typeof listMovies.$inferSelect;
 export type ListMovieInsert = typeof listMovies.$inferInsert;
 
 export const ListMovieSchema = createSelectSchema(listMovies);
-export const ListMovieInsertSchema = createInsertSchema(listMovies).omit({ createdAt: true }).required();
+export const ListMovieInsertSchema = createInsertSchema(listMovies)
