@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 type Props = React.ComponentProps<'div'>;
 
-export const ListMovieSearchResults = forwardRef<HTMLDivElement, Props>(({ className, ...props }, ref) => {
+export const MovieSearchResults = forwardRef<HTMLDivElement, Props>(({ className, ...props }, ref) => {
   return (
     <div ref={ref} className={cn('flex flex-col p-2', className)} {...props}>
       {props.children}
@@ -12,4 +12,4 @@ export const ListMovieSearchResults = forwardRef<HTMLDivElement, Props>(({ class
   );
 });
 
-ListMovieSearchResults.displayName = 'ListMovieSearchResults';
+MovieSearchResults.displayName = 'MovieSearchResults';

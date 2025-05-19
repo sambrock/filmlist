@@ -8,7 +8,7 @@ type Props = React.ComponentProps<'div'> & {
   movie: { title: string; posterPath: string; directors: string[]; releaseDate: string };
 };
 
-export const ListMovieSearchResult = forwardRef<HTMLDivElement, Props>(
+export const MovieSearchResult = forwardRef<HTMLDivElement, Props>(
   ({ active, movie, className, ...props }, ref) => {
     const id = useId();
     return (
@@ -39,4 +39,4 @@ export const ListMovieSearchResult = forwardRef<HTMLDivElement, Props>(
   }
 );
 
-ListMovieSearchResult.displayName = 'ListMovieSearchResult';
+MovieSearchResult.displayName = 'MovieSearchResult';

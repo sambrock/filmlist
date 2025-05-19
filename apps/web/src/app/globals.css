@@ -2,14 +2,11 @@
 
 @theme {
   --font-sans: 'Inter', 'sans-serif';
+  --height-input-md: 2rem;
 }
 
 body {
   font-family: var(--font-sans), Helvetica, sans-serif;
-
-  background: var(--color-neutral-950);
-  color: var(--color-neutral-200);
-  
 }
 
 .debug {
