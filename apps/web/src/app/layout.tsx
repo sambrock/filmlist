@@ -22,7 +22,9 @@ export default function RootLayout(props: React.PropsWithChildren) {
         <body className={cn('bg-[#1A1A1A] text-neutral-200', fontSans.className)}>
           <div className="overflow-y-none grid h-screen grid-cols-[240px_1fr]">
             <SideNav className="min-h-[700px] w-[240px]" />
-            <main className="shadow-md bg-[#1E1E1E]">{props.children}</main>
+            <div className="h-screen p-0">
+              <main className="h-full bg-[#1E1E1E]">{props.children}</main>
+            </div>
           </div>
         </body>
       </GlobalStoreProvider>

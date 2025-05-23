@@ -19,7 +19,7 @@ export const searchMovies: AppRouteHandler<SearchMoviesRoute> = async (c) => {
   const filteredResults = data?.results
     ?.filter((movie) => {
       if (!movie.poster_path) return false;
-      if (movie.popularity < 2) return false;
+      if (movie.popularity < 1) return false;
 
       return true;
     })
