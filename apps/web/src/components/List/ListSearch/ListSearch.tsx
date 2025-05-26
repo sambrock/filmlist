@@ -44,7 +44,7 @@ export const ListSearch = ({ className, ...props }: Props) => {
 
         <Combobox.Menu asChild>
           {showMenu && (
-            <ListMovieSearchMenu>
+            <ListMovieSearchMenu isLoading={isLoading}>
               {hasResults ? (
                 data.data.map((movie, index) => (
                   <Combobox.MenuItem key={movie.tmdbId} index={index} asChild>

@@ -21,3 +21,26 @@ body {
 .debug {
   border: 1px red solid;
 }
+
+.gradient-border-animate {
+  background: linear-gradient(
+    90deg,
+    var(--color-border-1) 30%,
+    oklch(0.4585 0.0104 248.41) 50%,
+    var(--color-border-1) 60%
+  );
+  background-size: 200% 200%;
+  animation: gradient 1.2s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

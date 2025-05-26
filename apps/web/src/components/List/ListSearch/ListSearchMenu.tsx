@@ -1,10 +1,17 @@
-type Props = React.ComponentProps<'div'>;
+import { cn } from '@/lib/utils';
 
-export const ListMovieSearchMenu = (props: Props) => {
+type Props = React.ComponentProps<'div'> & {
+  isLoading: boolean;
+};
+
+export const ListMovieSearchMenu = ({ isLoading, ...props }: Props) => {
   return (
-    <div className="border-border-1 flex max-h-[430px] w-full flex-col gap-1 overflow-y-auto border-t p-2">
-      {props.children}
-      <div></div>
+    <div className="flex w-full flex-col">
+      <div className={cn('h-[1px]', isLoading ? 'gradient-border-animate' : 'bg-border-1')}></div>
+      <div className="flex max-h-[310px] w-full flex-col gap-1 overflow-y-auto p-2">
+        {props.children}
+        <div></div>
+      </div>
     </div>
   );
 };
