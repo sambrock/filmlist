@@ -17,8 +17,10 @@ export const ListViewEdit = async ({ editId }: Props) => {
   return (
     <PatchesStoreProvider>
       <ListStoreProvider initialData={data}>
-        <div className="flex flex-col">
+        <div className="pt-2 grid w-full grid-cols-[1fr_600px_1fr] items-center">
+          <div></div>
           <ListSearch />
+          <div></div>
         </div>
       </ListStoreProvider>
       <PatchesStorePersister />

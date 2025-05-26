@@ -1,8 +1,17 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'Inter', 'sans-serif';
+  --color-surface-0: oklch(0.1798 0.0104 248.41);
+  --color-surface-1: oklch(0.2185 0.0104 248.41);
+  --color-surface-2: oklch(0.3285 0.0104 248.41);
+  --color-surface-3: oklch(0.4085 0.0104 248.41);
+  --color-text-primary: oklch(0.9491 0 0);
+  --color-text-secondary: oklch(0.6931 0 0);
+  --color-border-0: oklch(0.2285 0.0104 248.41);
+  --color-border-1: oklch(0.2985 0.0104 248.41);
+
   --height-input-md: 2.5rem;
+  --size-icon-md: 1.5em;
 }
 
 body {

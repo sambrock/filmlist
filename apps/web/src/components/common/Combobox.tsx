@@ -13,8 +13,6 @@ import {
 } from '@floating-ui/react';
 import { Slot } from 'radix-ui';
 
-import { cn } from '@/lib/utils';
-
 type ComboboxContext = {
   floating: UseFloatingReturn;
   listRef: React.RefObject<HTMLElement[]>;
@@ -106,7 +104,8 @@ type ComboboxInputProps = React.ComponentProps<'input'> & {
 const ComboboxInput = ({ asChild, ...props }: ComboboxInputProps) => {
   const Comp = asChild ? Slot.Root : 'input';
 
-  const { floating, activeIndex,listRef, setActiveIndex, getReferenceProps, onItemSelect } = useComboboxContext();
+  const { floating, activeIndex, listRef, setActiveIndex, getReferenceProps, onItemSelect } =
+    useComboboxContext();
 
   return (
     <Comp
@@ -131,33 +130,39 @@ const ComboboxInput = ({ asChild, ...props }: ComboboxInputProps) => {
   );
 };
 
-type ComboboxMenuProps = React.ComponentProps<'div'>;
+type ComboboxMenuProps = React.ComponentProps<'div'> & {
+  asChild?: boolean;
+};
 
-const ComboboxMenu = (props: ComboboxMenuProps) => {
+const ComboboxMenu = ({ asChild, ...props }: ComboboxMenuProps) => {
+  const Comp = asChild ? Slot.Root : 'div';
+
   const { floating, getFloatingProps } = useComboboxContext();
 
   return (
     <FloatingFocusManager context={floating.context} initialFocus={-1}>
-      <div ref={floating.refs.setFloating} {...getFloatingProps(props)}>
+      <Comp ref={floating.refs.setFloating} {...getFloatingProps(props)}>
         {props.children}
-      </div>
+      </Comp>
     </FloatingFocusManager>
   );
 };
 
-type ComboboxMenuItem = React.ComponentProps<'div'> & { index: number };
+type ComboboxMenuItem = React.ComponentProps<'div'> & { index: number; asChild?: boolean };
 
-const ComboboxMenuItem = ({ index, className, ...props }: ComboboxMenuItem) => {
+const ComboboxMenuItem = ({ index, asChild, ...props }: ComboboxMenuItem) => {
+  const Comp = asChild ? Slot.Root : 'div';
+
   const { listRef, activeIndex, setActiveIndex, getItemProps, onItemSelect } = useComboboxContext();
 
   return (
-    <div
+    <Comp
       ref={(node) => {
         if (node) {
           listRef.current[index] = node;
         }
       }}
-      className={cn(className, activeIndex === index && 'bg-neutral-500')}
+      data-active={activeIndex === index}
       {...getItemProps({
         ...props,
         onClick: () => {
@@ -171,7 +176,7 @@ const ComboboxMenuItem = ({ index, className, ...props }: ComboboxMenuItem) => {
       })}
     >
       {props.children}
-    </div>
+    </Comp>
   );
 };
 
