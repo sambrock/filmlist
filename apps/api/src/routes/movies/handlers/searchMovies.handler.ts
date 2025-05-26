@@ -1,128 +1,116 @@
-import { tmdb, type TMDBOperations } from '@repo/tmdb';
+import { MIN_TMDB_POPULARITY } from '@repo/lib/constants';
+import { tmdb, type TMDBMovie } from '@repo/tmdb';
 import { AppRouteHandler } from '@/lib/openapi';
 import { SearchMoviesRoute } from '../movies.routes';
-
-type Movie = TMDBOperations['movie-details']['responses']['200']['content']['application/json'];
-// type SearchMovieResultsWithDirector = (SearchMovieResults[number] & { directors: (string | undefined)[] })[];
-// // type MovieCredits = NonNullable<
-// //   TMDBOperations['movie-credits']['responses']['200']['content']['application/json']
-// // >;
-
-type MovieResult = {
-  id: number;
-  title: string;
-  releaseDate: string;
-  posterPath: string;
-  directors: (string | undefined)[];
-};
 
 export const searchMovies: AppRouteHandler<SearchMoviesRoute> = async (c) => {
   const query = c.req.query();
 
-  let movies: MovieResult[] = [];
-
+  let searchBy: 'query' | 'director' = 'query';
   if (query.director) {
-    movies = await searchMoviesByDirector(query.director);
+    searchBy = 'director';
   }
 
-  if (!query.director) {
-    movies = await searchMoviesByQuery(query.q, query.year);
-  }
-
-  return c.json(
-    movies.map((m) => ({
-      ...m,
-      tmdbId: m.id,
-      movieId: m.id,
-      id: m.id,
-    }))
-  );
-};
-
-const searchMoviesByQuery = async (query: string, year: string): Promise<MovieResult[]> => {
-  const { data } = await tmdb.client.GET('/3/search/movie', {
-    params: {
-      query: {
-        query,
-        year,
-        primary_release_year: year,
-      },
-    },
-  });
-
-  if (!data?.results) {
-    throw new Error('');
-  }
-
-  const withDirectors = await Promise.all(
-    filterResults(data.results as Movie[]).map(async (movie) => {
-      const { data } = await tmdb.client.GET('/3/movie/{movie_id}/credits', {
+  switch (searchBy) {
+    default:
+    case 'query': {
+      const searchMoviesQuery = await tmdb.client.GET('/3/search/movie', {
         params: {
-          path: { movie_id: movie.id },
+          query: {
+            query: query.q,
+            year: query.year,
+            primary_release_year: query.year,
+          },
         },
       });
 
-      return {
-        ...movie,
-        directors:
-          data?.crew?.filter((person) => person.job === 'Director').map((person) => person.name) || [],
-      };
-    })
-  );
+      if (!searchMoviesQuery.data || !searchMoviesQuery.data?.results) {
+        throw Error('');
+      }
 
-  return withDirectors.map((movie) => ({
-    id: movie.id,
-    title: movie.title as string,
-    posterPath: movie.poster_path as string,
-    releaseDate: movie.release_date as string,
-    directors: movie.directors,
-  }));
+      const filtered = filterTMDbMovies(searchMoviesQuery.data.results as TMDBMovie[]);
+
+      const movieCredits = await Promise.all(
+        filtered.map(async (movie) => {
+          const creditsQuery = await tmdb.client.GET('/3/movie/{movie_id}/credits', {
+            params: {
+              path: { movie_id: movie.id },
+            },
+          });
+
+          return creditsQuery.data;
+        })
+      );
+
+      const formatted = filtered.map((movie) => ({
+        movieId: movie.id,
+        tmdbId: movie.id,
+        title: movie.title!,
+        posterPath: movie.poster_path!,
+        releaseDate: new Date(movie.release_date!),
+        createdAt: new Date(),
+        directors: movieCredits
+          .filter((credits) => credits?.id === movie.id)
+          .map(
+            (credits) => credits?.crew?.find((person) => person.job?.toLowerCase() === 'director')?.name || ''
+          ),
+      }));
+
+      return c.json(formatted);
+    }
+
+    case 'director': {
+      const searchPersonsQuery = await tmdb.client.GET('/3/search/person', {
+        params: {
+          query: {
+            query: query.director,
+          },
+        },
+      });
+
+      if (!searchPersonsQuery.data || !searchPersonsQuery.data.results) {
+        throw new Error('');
+      }
+
+      const person = searchPersonsQuery.data.results[0];
+
+      const moviesCredits = await tmdb.client.GET('/3/person/{person_id}/movie_credits', {
+        params: {
+          path: { person_id: person.id },
+        },
+      });
+
+      const directed = moviesCredits.data?.crew?.filter((movie) => movie.job?.toLowerCase() === 'director');
+
+      const filtered = filterTMDbMovies(directed as TMDBMovie[]);
+
+      const formatted = filtered.map((movie) => ({
+        movieId: movie.id,
+        tmdbId: movie.id,
+        title: movie.title!,
+        posterPath: movie.poster_path!,
+        releaseDate: new Date(movie.release_date!),
+        createdAt: new Date(),
+        directors: [person.name!],
+      }));
+
+      return c.json(formatted);
+    }
+  }
 };
 
-const searchMoviesByDirector = async (query: string): Promise<MovieResult[]> => {
-  const directorQuery = await tmdb.client.GET('/3/search/person', {
-    params: {
-      query: {
-        query,
-      },
-    },
-  });
-
-  if (!directorQuery.data?.results) {
-    throw new Error('');
-  }
-
-  const director = directorQuery.data.results[0];
-
-  const moviesQuery = await tmdb.client.GET('/3/person/{person_id}/movie_credits', {
-    params: {
-      path: {
-        person_id: director.id,
-      },
-    },
-  });
-
-  if (!moviesQuery.data?.crew) {
-    throw new Error('');
-  }
-
-  const unique = [...new Set(moviesQuery.data.crew.map((m) => m.id))];
-
-  return filterResults(unique.map((id) => moviesQuery.data.crew?.find((m) => m.id === id)) as Movie[]).map(
-    (movie) => ({
-      id: movie.id,
-      title: movie.title as string,
-      posterPath: movie.poster_path as string,
-      releaseDate: movie.release_date as string,
-      directors: [director.name],
-    })
-  );
-};
-
-const filterResults = (results: Movie[]) => {
-  return results.filter((movie) => {
-    if (!movie.poster_path) return false;
-    if (movie.popularity < 1) return false;
+export const filterTMDbMovies = (movies: TMDBMovie[]) => {
+  return movies.filter((movie) => {
+    if (
+      movie.adult ||
+      !movie.title ||
+      !movie.release_date ||
+      !movie.poster_path ||
+      !movie.backdrop_path ||
+      movie.popularity < MIN_TMDB_POPULARITY
+    ) {
+      return false;
+    }
 
     return true;
   });

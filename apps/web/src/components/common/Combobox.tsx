@@ -164,27 +164,15 @@ type ComboboxMenuItem = React.ComponentProps<'div'> & { index: number; asChild?:
 const ComboboxMenuItem = ({ index, asChild, ...props }: ComboboxMenuItem) => {
   const Comp = asChild ? Slot.Root : 'div';
 
-  const ref = useRef<HTMLDivElement>(null);
-
   const { listRef, activeIndex, setActiveIndex, getItemProps, onItemSelect } = useComboboxContext();
-
-  // useEffect(() => {
-  //   if (activeIndex === index) {
-  //     console.log('SCROLL TO');
-  //     ref.current?.scrollIntoView({ behavior: 'instant', block: 'nearest' });
-  //   }
-  // }, [activeIndex]);
 
   return (
     <Comp
       ref={(node) => {
         if (node) {
           listRef.current[index] = node;
-          ref.current = node;
         }
       }}
-      // tabIndex={activeIndex === index ? 0 : -1}
-      data-active={activeIndex === index}
       {...getItemProps({
         ...props,
         onClick: () => {
@@ -196,6 +184,7 @@ const ComboboxMenuItem = ({ index, asChild, ...props }: ComboboxMenuItem) => {
           }
         },
       })}
+      data-active={activeIndex === index}
     >
       {props.children}
     </Comp>
