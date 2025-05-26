@@ -120,8 +120,19 @@ const ComboboxInput = ({ asChild, ...props }: ComboboxInputProps) => {
           if (e.key === 'ArrowDown' && activeIndex === 0 && listRef.current.length > 1) {
             setActiveIndex(1);
           }
+          // if (e.key === 'ArrowUp' && activeIndex === 0 && listRef.current.length > 1) {
+          //   setActiveIndex(listRef.current.length - 1);
+          // }
           if (e.key === 'Enter') {
             onItemSelect?.(activeIndex);
+          }
+          if (e.key === 'ArrowDown') {
+            const nextIndex = activeIndex === listRef.current.length - 1 ? 0 : activeIndex + 1;
+            listRef.current[nextIndex].scrollIntoView({ block: 'nearest' });
+          }
+          if (e.key === 'ArrowUp') {
+            const nextIndex = activeIndex <= 0 ? listRef.current.length - 1 : activeIndex - 1;
+            listRef.current[nextIndex].scrollIntoView({ block: 'nearest' });
           }
         },
       })}
@@ -153,15 +164,26 @@ type ComboboxMenuItem = React.ComponentProps<'div'> & { index: number; asChild?:
 const ComboboxMenuItem = ({ index, asChild, ...props }: ComboboxMenuItem) => {
   const Comp = asChild ? Slot.Root : 'div';
 
+  const ref = useRef<HTMLDivElement>(null);
+
   const { listRef, activeIndex, setActiveIndex, getItemProps, onItemSelect } = useComboboxContext();
+
+  // useEffect(() => {
+  //   if (activeIndex === index) {
+  //     console.log('SCROLL TO');
+  //     ref.current?.scrollIntoView({ behavior: 'instant', block: 'nearest' });
+  //   }
+  // }, [activeIndex]);
 
   return (
     <Comp
       ref={(node) => {
         if (node) {
           listRef.current[index] = node;
+          ref.current = node;
         }
       }}
+      // tabIndex={activeIndex === index ? 0 : -1}
       data-active={activeIndex === index}
       {...getItemProps({
         ...props,

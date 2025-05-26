@@ -1,7 +1,7 @@
 import { api } from '@/lib/api/client';
 import { ListStoreProvider } from '@/store/list';
 import { PatchesStorePersister, PatchesStoreProvider } from '@/store/patches';
-import { ListSearch } from '../List/ListSearch';
+import { ListSearch } from '../List/ListSearch/ListSearch';
 
 type Props = {
   editId?: string;
