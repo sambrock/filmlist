@@ -7,19 +7,30 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "db:dev": "convex dev",
     "generate-types": "openapi-typescript https://developer.themoviedb.org/openapi/64542913e1f86100738e227f --output ./src/lib/tmdb/tmdb-api-v3.d.ts"
   },
   "dependencies": {
+    "@convex-dev/react-query": "^0.0.0-alpha.8",
+    "@tanstack/react-query": "^5.80.2",
+    "@trpc/client": "^11.2.0",
+    "@trpc/next": "^11.2.0",
+    "@trpc/react-query": "^11.2.0",
+    "@trpc/server": "^11.2.0",
+    "@trpc/tanstack-react-query": "^11.2.0",
+    "client-only": "^0.0.1",
     "convex": "^1.24.6",
     "next": "15.3.3",
     "openai": "^5.0.2",
     "openapi-fetch": "^0.14.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "server-only": "^0.0.1",
     "zod": "^3.25.49"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -28,6 +39,7 @@
     "eslint-config-next": "15.3.3",
     "openapi-typescript": "^7.8.0",
     "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.12",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

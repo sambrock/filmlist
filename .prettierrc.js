@@ -18,6 +18,7 @@ module.exports = {
     '<BUILTIN_MODULES>',
     '<THIRD_PARTY_MODULES>',
     '',
+    '^@/convex.*$',
     '^@/actions.*$',
     '^@/app.*$',
     '^@/lib.*$',
