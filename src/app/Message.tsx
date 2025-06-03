@@ -1,5 +1,8 @@
 'use client';
 
+import { useQuery } from 'convex/react';
+
+import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { trpc } from '@/lib/trpc/provider';
 
@@ -10,14 +13,9 @@ type Props = {
 export const Message = ({ threadId }: Props) => {
   const chatMutation = trpc.chat.useMutation();
 
-  const threadMessages = trpc.messages.useQuery(
-    {
-      threadId: threadId as string,
-    },
-    {
-      // refetchInterval: 5000, // Refetch every 5 seconds
-    }
-  );
+  const threadMessages = useQuery(api.messages.getThreadMessages, {
+    threadId,
+  });
 
   return (
     <div>
@@ -35,7 +33,7 @@ export const Message = ({ threadId }: Props) => {
       />
 
       <div>
-        {threadMessages?.data?.map((message) => (
+        {threadMessages?.map((message) => (
           <div key={message._id}>
             <strong>{message.role}:</strong> {message.content}
           </div>

@@ -4,7 +4,9 @@ import { openai } from './api';
 
 export const getModelCompletion = async (message: string) => {
   const response = await openai.chat.completions.create({
-    model: 'meta-llama/llama-3.3-8b-instruct:free',
+    // model: 'meta-llama/llama-3.3-8b-instruct:free',
+    // model: 'deepseek/deepseek-r1-0528:free',
+    model: 'microsoft/mai-ds-r1:free',
     messages: [
       {
         role: 'user',

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { getModelCompletion } from '@/lib/openai/query';
+import { parseCompletionToMovies } from '@/lib/utils/parse-completion';
 import { baseProcedure, createTRPCRouter } from '../init';
 
 export const appRouter = createTRPCRouter({
@@ -39,19 +40,25 @@ export const appRouter = createTRPCRouter({
       })
     )
     .mutation(async (opts) => {
-      await fetchMutation(api.messages.createUserMessage, {
-        threadId: opts.input.threadId as Id<'threads'>,
-        content: opts.input.content,
-      });
+      try {
+        await fetchMutation(api.messages.createUserMessage, {
+          threadId: opts.input.threadId as Id<'threads'>,
+          content: opts.input.content,
+        });
 
-      const completion = await getModelCompletion(opts.input.content);
+        const completion = await getModelCompletion(opts.input.content);
 
-      await fetchMutation(api.messages.createAssistantMessage, {
-        threadId: opts.input.threadId as Id<'threads'>,
-        content: completion || 'No response from model',
-      });
+        console.log(parseCompletionToMovies(completion || ''));
 
-      return {};
+        await fetchMutation(api.messages.createAssistantMessage, {
+          threadId: opts.input.threadId as Id<'threads'>,
+          content: completion || 'No response from model',
+        });
+
+        return {};
+      } catch (err) {
+        console.log(err);
+      }
     }),
 
   messages: baseProcedure
