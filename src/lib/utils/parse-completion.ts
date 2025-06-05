@@ -1,9 +1,11 @@
 import { z } from 'zod';
 
-const completionMovieSchema = z.object({
-  title: z.string(),
-  release_year: z.number(),
-});
+const completionMovieSchema = z
+  .object({
+    title: z.string(),
+    release_year: z.number(),
+  })
+  .array();
 
 // example completion:
 // Here are 5 movie recommendations inspired by Kendrick Lamar: ``` [ { "title": "Training Day", "release_year": 2001 }, { "title": "8 Mile", "release_year": 2002 }, { "title": "Selma", "release_year": 2014 }, { "title": "Straight Outta Compton", "release_year": 2015 }, { "title": "BlacKkKlansman", "release_year": 2018 } ] ``` These movies touch on themes of social justice, identity, and the struggles of growing up in underserved communities, all of which are common threads in Kendrick Lamar's music.
@@ -36,7 +38,7 @@ const completionMovieSchema = z.object({
 export const parseCompletionToMovies = (completion: string) => {
   console.log('parseCompletionToMovies', completion);
 
-  let movieJson: string = '{}';
+  let movieJson: string = '';
 
   if (completion.includes('```json')) {
     const start = completion.indexOf('```json') + 7;

@@ -1,7 +1,6 @@
+import { Thread } from '../types';
 
-
-// Group by today, last 7 days, last 30 days, month, year
-export const groupThreadsByTime = (threads: DataModel['threads']['document'][]) => {
+export const groupThreadsByTime = (threads: Thread[]) => {
   const now = new Date();
 
   const today = new Date(now.setHours(0, 0, 0, 0)).getTime();
@@ -9,10 +8,10 @@ export const groupThreadsByTime = (threads: DataModel['threads']['document'][]) 
   const last30Days = new Date(now.setDate(now.getDate() - 30)).getTime();
   const year = new Date(now.setMonth(0, 1)).getTime();
 
-  const grouped: Map<string, DataModel['threads']['document'][]> = new Map();
+  const grouped: Map<string, Thread[]> = new Map();
 
   threads.forEach((thread) => {
-    const createdDate = new Date(thread._creationTime);
+    const createdDate = new Date(thread.createdAt);
 
     if (createdDate.getTime() >= today) {
       grouped.set('Today', [...(grouped.get('Today') || []), thread]);

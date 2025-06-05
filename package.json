@@ -15,7 +15,10 @@
     "generate-tmdb": "openapi-typescript https://developer.themoviedb.org/openapi/64542913e1f86100738e227f --output ./src/lib/tmdb/tmdb-api-v3.d.ts"
   },
   "dependencies": {
+    "@tanstack/query-persist-client-core": "^5.80.6",
+    "@tanstack/query-sync-storage-persister": "^5.80.6",
     "@tanstack/react-query": "^5.80.2",
+    "@tanstack/react-query-persist-client": "^5.80.6",
     "@trpc/client": "^11.2.0",
     "@trpc/next": "^11.2.0",
     "@trpc/server": "^11.2.0",
@@ -32,6 +35,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "usehooks-ts": "^3.1.1",
+    "uuid": "^11.1.0",
     "zod": "^3.25.49",
     "zustand": "^5.0.5"
   },

@@ -6,36 +6,35 @@ export const users = pgTable('users', {
   userId: uuid('userId').primaryKey(),
   anon: boolean('anon').default(true),
   createdAt: date('createdAt').defaultNow(),
-  updatedAt: date('updatedAt').defaultNow(),
+  updatedAt: date('updatedAt').notNull().defaultNow(),
 });
 
 export const threads = pgTable('threads', {
   threadId: uuid('threadId').primaryKey(),
   ownerId: uuid('ownerId').references(() => users.userId),
-  title: text('title'),
-  createdAt: date('createdAt').defaultNow(),
-  updatedAt: date('updatedAt').defaultNow(),
+  title: text('title').notNull().default(''),
+  createdAt: date('createdAt').notNull().defaultNow(),
+  updatedAt: date('updatedAt').notNull().notNull().defaultNow(),
 });
 
 export const messages = pgTable('messages', {
   messageId: uuid('messageId').primaryKey(),
   threadId: uuid('threadId').references(() => threads.threadId),
-  content: text('content'),
-  model: text('model'),
-  role: text({ enum: ['user', 'assistant'] }),
-  success: boolean('success').default(true),
-  createdAt: date('createdAt').defaultNow(),
-  updatedAt: date('updatedAt').defaultNow(),
+  content: text('content').notNull(),
+  model: text('model').notNull(),
+  role: text({ enum: ['user', 'assistant'] }).notNull(),
+  createdAt: date('createdAt').notNull().defaultNow(),
+  updatedAt: date('updatedAt').notNull().defaultNow(),
 });
 
 export const movies = pgTable('movies', {
   movieId: uuid('movieId').primaryKey(),
   tmdbId: integer('tmdbId').notNull().unique(),
-  title: text('title'),
+  title: text('title').notNull(),
   releaseDate: date('releaseDate'),
   posterPath: text('posterPath'),
   backdropPath: text('backdropPath'),
-  createdAt: date('createdAt').defaultNow(),
+  createdAt: date('createdAt').notNull().defaultNow(),
 });
 
 export const usersMovies = pgTable(
@@ -50,8 +49,8 @@ export const usersMovies = pgTable(
     watched: boolean('watched').default(false),
     watchlist: boolean('watchlist').default(false),
     ignore: boolean('ignore').default(false),
-    createdAt: date('createdAt').defaultNow(),
-    updatedAt: date('updatedAt').defaultNow(),
+    createdAt: date('createdAt').notNull().defaultNow(),
+    updatedAt: date('updatedAt').notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.movieId] })]
 );
@@ -65,7 +64,7 @@ export const messagesMovies = pgTable(
     movieId: uuid('movieId')
       .notNull()
       .references(() => movies.movieId),
-    createdAt: date('createdAt').defaultNow(),
+    createdAt: date('createdAt').notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.messageId, t.movieId] })]
 );

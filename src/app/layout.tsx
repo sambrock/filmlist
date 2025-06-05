@@ -27,7 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn('bg-surface-0 text-text-primary', fontSans.className)}>
         <QueryClientProvider>
-          <UserProvider userId="j575fwxmyt948vvpf9ppwd6dkx7h7se8" anon={true}>
+          <UserProvider userId="37d387ec-32fd-45f7-af31-0df25936b241" anon={true}>
             <div className="grid h-screen grid-cols-[260px_1fr]">
               <NavView />
               <main className="bg-surface-0 w-full">{children}</main>
