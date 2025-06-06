@@ -4,3 +4,5 @@ export type User = typeof users.$inferSelect;
 export type Thread = typeof threads.$inferSelect;
 export type Message = typeof messages.$inferSelect;
 export type Movie = typeof movies.$inferSelect;
+
+export type InsertMessage = typeof messages.$inferInsert;

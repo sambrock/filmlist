@@ -1,5 +1,6 @@
 import { baseProcedure, createTRPCRouter } from '../init';
 import { chatRouter } from './chat.router';
+import { messagesRouter } from './messages.router';
 import { threadsRouter } from './threads.router';
 
 export type AppRouter = typeof appRouter;
@@ -9,4 +10,5 @@ export const appRouter = createTRPCRouter({
 
   chat: chatRouter,
   threads: threadsRouter,
+  messages: messagesRouter,
 });

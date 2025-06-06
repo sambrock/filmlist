@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
+  --color-primary: oklch(0.6152 0.2108 256.1);
   --color-surface-0: oklch(0.1798 0.0104 248.41);
   --color-surface-1: oklch(0.2185 0.0104 248.41);
   --color-surface-2: oklch(0.3285 0.0104 248.41);
@@ -10,11 +11,7 @@
   --color-border-0: oklch(0.2285 0.0104 248.41);
   --color-border-1: oklch(0.2985 0.0104 248.41);
 
-  /* --height-input-sm: 2rem;
-  --height-input-md: 2.25rem;
-  --height-input-lg: 2.5rem; */
-
-  --size-icon-md: 1.5em;
+  --width-default: 48rem;
 }
 
 body {

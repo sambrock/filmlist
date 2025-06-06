@@ -30,4 +30,17 @@ export const threadsRouter = createTRPCRouter({
         where: (thread, { eq }) => eq(thread.ownerId, opts.input.userId),
       });
     }),
+
+  getThreadMessages: baseProcedure
+    .input(
+      z.object({
+        threadId: z.string(),
+      })
+    )
+    .query(async (opts) => {
+      // Placeholder for actual message retrieval logic
+      return db.query.threads.findFirst({
+        where: (thread, { eq }) => eq(thread.threadId, opts.input.threadId),
+      });
+    }),
 });

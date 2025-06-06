@@ -11,7 +11,7 @@ export const users = pgTable('users', {
 
 export const threads = pgTable('threads', {
   threadId: uuid('threadId').primaryKey(),
-  ownerId: uuid('ownerId').references(() => users.userId),
+  ownerId: uuid('ownerId').notNull().references(() => users.userId),
   title: text('title').notNull().default(''),
   createdAt: date('createdAt').notNull().defaultNow(),
   updatedAt: date('updatedAt').notNull().notNull().defaultNow(),
@@ -19,7 +19,7 @@ export const threads = pgTable('threads', {
 
 export const messages = pgTable('messages', {
   messageId: uuid('messageId').primaryKey(),
-  threadId: uuid('threadId').references(() => threads.threadId),
+  threadId: uuid('threadId').notNull().references(() => threads.threadId),
   content: text('content').notNull(),
   model: text('model').notNull(),
   role: text({ enum: ['user', 'assistant'] }).notNull(),

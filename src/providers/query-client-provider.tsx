@@ -2,11 +2,21 @@
 
 import { QueryClientProvider as Provider, QueryClient } from '@tanstack/react-query';
 
-const queryClient = new QueryClient({});
+export const queryClient = new QueryClient({});
 
 export const QueryClientProvider = (props: React.PropsWithChildren) => {
   return <Provider client={queryClient}>{props.children}</Provider>;
 };
+
+// type HydrateClientProps = {
+//   dehydratedState: unknown;
+// };
+
+// export const HydrateQueryClient = ({ dehydratedState }: HydrateClientProps) => {
+//   hydrate(queryClient, dehydratedState);
+
+//   return null;
+// };
 
 // function makeQueryClient() {
 //   return new QueryClient({

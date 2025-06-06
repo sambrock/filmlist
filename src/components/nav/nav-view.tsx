@@ -1,7 +1,7 @@
 import { Button } from '@/components/common/button';
 import { NavThreadsList } from './nav-threads/nav-threads-list';
 
-export const NavView = () => {
+export const NavView = async () => {
   return (
     <div className="bg-surface-0 border-border-0 flex h-screen flex-col border-r-2">
       <div className="p-4">

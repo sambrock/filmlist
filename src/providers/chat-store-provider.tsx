@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useRef } from 'react';
 import { useStore } from 'zustand';
+import { useShallow } from 'zustand/shallow';
 
 import { createChatStore, type ChatStore } from '@/stores/chat-store';
 
@@ -10,7 +11,7 @@ export type ChatStoreApi = ReturnType<typeof createChatStore>;
 export const ChatStoreContext = createContext<ChatStoreApi | undefined>(undefined);
 
 type Props = {
-  threadId: string | null;
+  threadId: string;
 };
 
 export const ChatStoreProvider = ({ threadId, ...props }: React.PropsWithChildren<Props>) => {
@@ -31,5 +32,5 @@ export const useChatStore = <T,>(selector: (store: ChatStore) => T): T => {
     throw new Error(`useChatStore must be used within ChatStoreProvider`);
   }
 
-  return useStore(context, selector);
+  return useStore(context, useShallow(selector));
 };

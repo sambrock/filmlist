@@ -1,31 +1,32 @@
 import { cva, VariantProps } from 'class-variance-authority';
 import { Slot } from 'radix-ui';
 
-const variants = cva('cursor-pointer rounded-md font-medium', {
+const variants = cva('flex cursor-pointer items-center font-medium', {
   variants: {
     variant: {
-      solid: 'bg-surface-1 hover:bg-primary/90 text-text-primary',
-      transparent: 'hover:bg-surface-1 text-text-primary bg-transparent',
+      default: 'bg-surface-2 hover:bg-surface-3 text-text-primary',
+      transparent: 'hover:bg-surface-2 text-text-primary bg-transparent',
     },
     size: {
-      sm: 'px-2 py-1 text-sm',
-      md: 'px-3 py-2 text-sm',
-      lg: 'px-4 py-3 text-base',
+      default: 'h-9 rounded-md px-4 py-2',
+      sm: 'h-8 gap-1.5 rounded-md px-3',
+      lg: 'h-10 rounded-md px-6',
+      icon: 'size-9 justify-center rounded-md',
     },
   },
   defaultVariants: {
-    variant: 'transparent',
-    size: 'md',
+    variant: 'default',
+    size: 'default',
   },
 });
 
 type Props = React.ComponentProps<'button'> & VariantProps<typeof variants> & { asChild?: boolean };
 
-export const Button = ({ asChild, variant, className, ...props }: Props) => {
+export const Button = ({ asChild, variant, size, className, ...props }: Props) => {
   const Comp = asChild ? Slot.Root : 'button';
 
   return (
-    <Comp className={variants({ variant, className })} {...props}>
+    <Comp className={variants({ variant, size, className })} {...props}>
       {props.children}
     </Comp>
   );

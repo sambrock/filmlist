@@ -2,28 +2,28 @@ import { produce } from 'immer';
 import { createStore } from 'zustand/vanilla';
 
 export type ChatState = {
-  threadId: string | null;
-  messageValue: string;
+  threadId: string;
+  inputValue: string;
   model: string;
 };
 
 export type ChatActions = {
-  setMessageValue: (value: string) => void;
+  setInputValue: (value: string) => void;
   setModel: (model: string) => void;
 };
 
 export type ChatStore = ChatState & ChatActions;
 
-export const createChatStore = (initState: { threadId: string | null }) => {
+export const createChatStore = (initState: { threadId: string }) => {
   return createStore<ChatStore>()((set) => ({
     threadId: initState.threadId,
-    messageValue: '',
+    inputValue: '',
     model: 'microsoft/mai-ds-r1:free',
 
-    setMessageValue: (value: string) =>
+    setInputValue: (value: string) =>
       set((state) =>
         produce(state, (draft) => {
-          draft.messageValue = value;
+          draft.inputValue = value;
         })
       ),
 
