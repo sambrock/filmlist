@@ -1,39 +1,38 @@
-// 'use client';
+'use client';
 
-// import { useMutationState } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
-// import { Message } from '@/lib/types';
-// import { useChatStore } from '@/providers/chat-store-provider';
-// import { useThreadMessages } from '@/hooks/api/useThreadMessages';
-// import { AssistantMessage } from './messages/assistant-message';
-// import { UserMessage } from './messages/user-message';
+import { trpc } from '@/lib/trpc';
+import { cn } from '@/lib/utils/cn';
 
-// export const ChatMessages = () => {
-//   const threadId = useChatStore((state) => state.threadId);
-//   const messagesQuery = useThreadMessages(threadId);
-//   const pending = useMutationState({
-//     filters: { mutationKey: ['sendMessage'] },
-//   });
-//   const variables = useMutationState<Message>({
-//     filters: { mutationKey: ['sendMessage'], status: 'pending' },
-//     select: (mutation) => mutation.state.variables as Message,
-//   });
+type Props = React.ComponentProps<'div'>;
 
-//   console.log(pending, variables);
-//   const messages = [...messagesQuery.data, ...variables];
-//   console.log('ChatMessages messages:', messages);
+export const ChatMessages = ({ className, ...props }: Props) => {
+  // const threadId = useChatStore((state) => state.threadId);
 
-//   // console.log('ChatMessages variables:', variables);
+  // const messagesQuery = useThreadMessagesQuery(threadId);
 
-//   return (
-//     <div className="space-y-6 pb-40">
-//       {messages.map((message) =>
-//         message.role === 'user' ? (
-//           <UserMessage key={message.messageId} message={message} />
-//         ) : (
-//           <AssistantMessage key={message.messageId} message={message} />
-//         )
-//       )}
-//     </div>
-//   );
-// };
+  const [time, setTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    trpc.chat.timeStream.subscribe(
+      {
+        intervalMs: 1000,
+      },
+      {
+        onData: (data) => setTime(data),
+      }
+    );
+  }, []);
+
+  return (
+    <div className={cn('space-y-2 pb-40', className)} {...props}>
+      {time}
+      {/* {messagesQuery.data.map((message) => (
+        <div key={message.messageId}>
+          {message.role}: {message.content}
+        </div>
+      ))} */}
+    </div>
+  );
+};

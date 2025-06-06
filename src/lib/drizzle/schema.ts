@@ -13,6 +13,7 @@ export const threads = pgTable('threads', {
   threadId: uuid('threadId').primaryKey(),
   ownerId: uuid('ownerId').notNull().references(() => users.userId),
   title: text('title').notNull().default(''),
+  model: text('model').notNull().default(''),
   createdAt: date('createdAt').notNull().defaultNow(),
   updatedAt: date('updatedAt').notNull().notNull().defaultNow(),
 });

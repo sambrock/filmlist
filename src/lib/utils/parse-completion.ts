@@ -1,11 +1,11 @@
-import { z } from 'zod';
+// import { z } from 'zod';
 
-const completionMovieSchema = z
-  .object({
-    title: z.string(),
-    release_year: z.number(),
-  })
-  .array();
+// const completionMovieSchema = z
+//   .object({
+//     title: z.string(),
+//     release_year: z.number(),
+//   })
+//   .array();
 
 // example completion:
 // Here are 5 movie recommendations inspired by Kendrick Lamar: ``` [ { "title": "Training Day", "release_year": 2001 }, { "title": "8 Mile", "release_year": 2002 }, { "title": "Selma", "release_year": 2014 }, { "title": "Straight Outta Compton", "release_year": 2015 }, { "title": "BlacKkKlansman", "release_year": 2018 } ] ``` These movies touch on themes of social justice, identity, and the struggles of growing up in underserved communities, all of which are common threads in Kendrick Lamar's music.
@@ -35,27 +35,42 @@ const completionMovieSchema = z
 // ]
 // ```
 
-export const parseCompletionToMovies = (completion: string) => {
-  console.log('parseCompletionToMovies', completion);
+// export const parseCompletionToMovies = (completion: string) => {
+//   console.log('parseCompletionToMovies', completion);
 
-  let movieJson: string = '';
+//   let movieJson: string = '';
 
-  if (completion.includes('```json')) {
-    const start = completion.indexOf('```json') + 7;
-    const end = completion.indexOf('```', start);
-    movieJson = completion.substring(start, end).trim();
-  } else if (completion.includes('```')) {
-    const start = completion.indexOf('```') + 3;
-    const end = completion.indexOf('```', start);
-    movieJson = completion.substring(start, end).trim();
+//   if (completion.includes('```json')) {
+//     const start = completion.indexOf('```json') + 7;
+//     const end = completion.indexOf('```', start);
+//     movieJson = completion.substring(start, end).trim();
+//   } else if (completion.includes('```')) {
+//     const start = completion.indexOf('```') + 3;
+//     const end = completion.indexOf('```', start);
+//     movieJson = completion.substring(start, end).trim();
+//   }
+
+//   console.log('movieJson', movieJson);
+//   console.log(JSON.parse(movieJson));
+
+//   const parsed = completionMovieSchema.safeParse(JSON.parse(movieJson));
+//   if (!parsed.success) {
+//     return [];
+//   }
+//   return parsed.data;
+// };
+
+// Movies can be found like this "title": "<TITLE>", "release_year": <YEAR>
+export const findMoviesFromCompletionString = (completion: string) => {
+  const movieRegex = /"title":\s*"([^"]+)",\s*"release_year":\s*(\d{4})/g;
+  const movies: { title: string; release_year: number }[] = [];
+  let match;
+
+  while ((match = movieRegex.exec(completion)) !== null) {
+    const title = match[1];
+    const releaseYear = parseInt(match[2], 10);
+    movies.push({ title, release_year: releaseYear });
   }
 
-  console.log('movieJson', movieJson);
-  console.log(JSON.parse(movieJson));
-
-  const parsed = completionMovieSchema.safeParse(JSON.parse(movieJson));
-  if (!parsed.success) {
-    return [];
-  }
-  return parsed.data;
+  return movies;
 };
