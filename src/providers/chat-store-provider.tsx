@@ -12,13 +12,15 @@ export const ChatStoreContext = createContext<ChatStoreApi | undefined>(undefine
 
 type Props = {
   threadId: string;
+  threadExists?: boolean;
 };
 
-export const ChatStoreProvider = ({ threadId, ...props }: React.PropsWithChildren<Props>) => {
+export const ChatStoreProvider = ({ threadId, threadExists, ...props }: React.PropsWithChildren<Props>) => {
   const storeRef = useRef<ChatStoreApi | null>(null);
   if (storeRef.current === null) {
     storeRef.current = createChatStore({
       threadId,
+      threadExists,
     });
   }
 

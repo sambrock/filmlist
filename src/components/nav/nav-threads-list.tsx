@@ -1,16 +1,13 @@
 'use client';
 
 import { groupThreadsByTime } from '@/lib/utils/group-threads';
-import { useUser } from '@/providers/user-provider';
-import { useUserThreads } from '@/hooks/api/useUserThreads';
-
+import { useUserInfoQuery } from '@/hooks/api/useUserInfoQuery';
 import { NavThreadsListItem } from './nav-threads-list-item';
 
 export const NavThreadsList = () => {
-  const { userId } = useUser();
-  const userThreadsQuery = useUserThreads(userId);
+  const userInfoQuery = useUserInfoQuery('37d387ec-32fd-45f7-af31-0df25936b241');
 
-  const grouped = groupThreadsByTime(userThreadsQuery.data);
+  const grouped = groupThreadsByTime(userInfoQuery.data?.threads || []);
 
   return (
     <div className="flex flex-col gap-4">

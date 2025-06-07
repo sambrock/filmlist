@@ -11,23 +11,26 @@ import { ChatInputSelectModel } from './chat-input-select-model';
 type Props = React.ComponentProps<'div'>;
 
 export const ChatInput = ({ className, ...props }: Props) => {
-  const [threadId, value, model, setValue] = useChatStore((state) => [
+  const [threadId, threadExists, value, model, setThreadExists, setValue] = useChatStore((state) => [
     state.threadId,
+    state.threadExists,
     state.inputValue,
     state.model,
+    state.setThreadExists,
     state.setInputValue,
   ]);
 
   const sendMessageMutation = useSendMessageMutation();
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     sendMessageMutation.mutate({
       messageId: generateUuid(),
       threadId,
       content: value,
       model,
-      role: 'user',
+      threadExists,
     });
+    setThreadExists(true);
   };
 
   return (
