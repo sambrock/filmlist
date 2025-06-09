@@ -2,8 +2,9 @@ import { Readable } from 'stream';
 import { z } from 'zod';
 
 import { db } from '@/lib/drizzle/db';
-import { messages, threads } from '@/lib/drizzle/schema';
+import { messages } from '@/lib/drizzle/schema';
 import { openai } from '@/lib/openai';
+import { ChatMessage } from '@/lib/types';
 import { generateUuid } from '@/lib/utils/uuid';
 import { baseProcedure } from '../init';
 
@@ -18,22 +19,23 @@ export const chatInput = z.object({
 });
 
 export const chatProcedure = baseProcedure.input(chatInput).subscription(async (opts) => {
-  const { messageId, threadId, content, model, threadExists } = opts.input;
+  const { messageId, threadId, content } = opts.input;
 
-  if (!threadExists) {
-    await db.insert(threads).values({
-      threadId,
-      ownerId: '37d387ec-32fd-45f7-af31-0df25936b241',
-      title: '',
-      model,
-    });
-  }
+  // if (!threadExists) {
+  //   await db.insert(threads).values({
+  //     threadId,
+  //     ownerId: '37d387ec-32fd-45f7-af31-0df25936b241',
+  //     title: '',
+  //     model,
+  //   });
+  //   console.log('THREAD CREATED', threadId);
+  // }
 
   await db.insert(messages).values({
     messageId,
     threadId,
     content,
-    model,
+    model: 'deepseek/deepseek-chat-v3-0324:free',
     role: 'user',
   });
 
@@ -52,24 +54,30 @@ export const chatProcedure = baseProcedure.input(chatInput).subscription(async (
     read() {},
   });
 
+  const assistantMessage: ChatMessage = {
+    messageId: generateUuid(),
+    threadId: opts.input.threadId,
+    content: '',
+    model: 'deepseek/deepseek-chat-v3-0324:free',
+    role: 'assistant',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    movies: [],
+  };
+
   completionStream.on('content', async (content) => {
-    console.log('content', content);
-    readableStream.push(content, 'utf-8');
+    console.log('content:', content);
+    assistantMessage.content += content;
+    readableStream.push(JSON.stringify(assistantMessage), 'utf-8');
   });
 
-  completionStream.on('end', () => {
+  completionStream.on('end', async () => {
     console.log('Stream ended');
-    readableStream.push(null);
-  });
 
-  completionStream.on('finalContent', async (content) => {
-    await db.insert(messages).values({
-      messageId: generateUuid(),
-      threadId: opts.input.threadId,
-      content,
-      model: opts.input.model,
-      role: 'assistant',
-    });
+    readableStream.push(null);
+    readableStream.destroy();
+
+    await db.insert(messages).values(assistantMessage);
   });
 
   return readableStream;

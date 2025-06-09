@@ -74,7 +74,7 @@ export const messagesMovies = pgTable(
   (t) => [primaryKey({ columns: [t.messageId, t.movieId] })]
 );
 
-export const usesRelations = relations(users, ({ many }) => ({
+export const userRelations = relations(users, ({ many }) => ({
   threads: many(threads),
   userMovies: many(usersMovies),
 }));

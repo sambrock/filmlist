@@ -6,3 +6,5 @@ export type Message = typeof messages.$inferSelect;
 export type Movie = typeof movies.$inferSelect;
 
 export type InsertMessage = typeof messages.$inferInsert;
+
+export type ChatMessage = Message & { movies: Movie[] };

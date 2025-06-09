@@ -20,12 +20,26 @@ export const getChatMessagesProcedure = baseProcedure.input(getChatMessagesInput
   const messages = await db.query.messages.findMany({
     where: (messages, { and, eq, lt }) =>
       and(eq(messages.threadId, threadId), lt(messages.createdAt, new Date(cursor))),
+    with: {
+      messageMovies: {
+        with: {
+          movie: true,
+        },
+      },
+    },
     orderBy: (messages, { desc }) => desc(messages.createdAt),
     limit,
   });
 
+  const messagesWithMovies = messages.map(({ messageMovies, ...message }) => ({
+    ...message,
+    movies: messageMovies.map((mm) => mm.movie),
+  }));
+
+  console.log(messagesWithMovies);
+
   return {
-    messages,
+    messages: messagesWithMovies,
     nextCursor: messages.length > 0 ? messages[messages.length - 1].createdAt.getTime() : null,
   };
 });
