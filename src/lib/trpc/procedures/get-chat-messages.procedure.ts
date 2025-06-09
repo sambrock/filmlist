@@ -36,8 +36,6 @@ export const getChatMessagesProcedure = baseProcedure.input(getChatMessagesInput
     movies: messageMovies.map((mm) => mm.movie),
   }));
 
-  console.log(messagesWithMovies);
-
   return {
     messages: messagesWithMovies,
     nextCursor: messages.length > 0 ? messages[messages.length - 1].createdAt.getTime() : null,

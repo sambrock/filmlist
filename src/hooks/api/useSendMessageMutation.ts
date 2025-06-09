@@ -16,7 +16,7 @@ export const useSendMessageMutation = () => {
       trpc.chat.subscribe(userMessage, {
         onData: (assistantMessage: string) => {
           const parsed = JSON.parse(assistantMessage) as ChatMessage;
-          console.log('Received assistant message:', assistantMessage);
+          console.log(assistantMessage);
           setMessage(parsed.messageId, parsed);
         },
         onComplete: () => {},

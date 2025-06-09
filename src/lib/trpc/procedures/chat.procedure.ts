@@ -60,23 +60,21 @@ export const chatProcedure = baseProcedure.input(chatInput).subscription(async (
     content: '',
     model: 'deepseek/deepseek-chat-v3-0324:free',
     role: 'assistant',
+    movies: [],
     createdAt: new Date(),
     updatedAt: new Date(),
-    movies: [],
   };
 
   completionStream.on('content', async (content) => {
-    console.log('content:', content);
     assistantMessage.content += content;
+    console.log('PUSH', JSON.stringify(assistantMessage));
     readableStream.push(JSON.stringify(assistantMessage), 'utf-8');
   });
 
-  completionStream.on('end', async () => {
-    console.log('Stream ended');
-
+  completionStream.on('finalContent', async (content) => {
+    assistantMessage.content += content;
+    readableStream.push(JSON.stringify(assistantMessage), 'utf-8');
     readableStream.push(null);
-    readableStream.destroy();
-
     await db.insert(messages).values(assistantMessage);
   });
 
