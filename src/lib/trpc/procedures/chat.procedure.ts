@@ -1,9 +1,12 @@
 import { Readable } from 'stream';
+import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
+import { ROLE_ASSISTANT, ROLE_USER } from '@/lib/constants';
 import { db } from '@/lib/drizzle/db';
-import { messages } from '@/lib/drizzle/schema';
-import { openai } from '@/lib/openai';
+import { messages, threads } from '@/lib/drizzle/schema';
+import { openaiClient } from '@/lib/openai/client';
+import { supportedModelsEnum } from '@/lib/openai/models';
 import { ChatMessage } from '@/lib/types';
 import { generateUuid } from '@/lib/utils/uuid';
 import { baseProcedure } from '../init';
@@ -14,7 +17,7 @@ export const chatInput = z.object({
   messageId: z.string(),
   threadId: z.string(),
   content: z.string(),
-  model: z.string().default('meta-llama/llama-3.3-8b-instruct:free'),
+  model: z.enum(supportedModelsEnum),
 });
 
 export const chatProcedure = baseProcedure.input(chatInput).subscription(async (opts) => {
@@ -25,14 +28,16 @@ export const chatProcedure = baseProcedure.input(chatInput).subscription(async (
     threadId,
     content,
     model,
-    role: 'user',
+    role: ROLE_USER,
   });
 
-  const completionStream = openai.chat.completions.stream({
+  await db.update(threads).set({ model }).where(eq(threads.threadId, threadId));
+
+  const completionStream = openaiClient.chat.completions.stream({
     model,
     messages: [
       {
-        role: 'user',
+        role: ROLE_USER,
         content: `You are a movie recommendation AI. Suggest 5 movies that are "${opts.input.content}". For each movie title and release year. Format the output as a JSON array of objects with 'title' and 'release_year' keys. Only suggest existing movies.`,
       },
     ],
@@ -45,10 +50,10 @@ export const chatProcedure = baseProcedure.input(chatInput).subscription(async (
 
   const assistantMessage: ChatMessage = {
     messageId: generateUuid(),
-    threadId: opts.input.threadId,
+    threadId,
     content: '',
-    model: 'deepseek/deepseek-chat-v3-0324:free',
-    role: 'assistant',
+    model,
+    role: ROLE_ASSISTANT,
     movies: [],
     createdAt: new Date(),
     updatedAt: new Date(),
