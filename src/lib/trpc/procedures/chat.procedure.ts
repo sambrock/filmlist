@@ -15,32 +15,21 @@ export const chatInput = z.object({
   threadId: z.string(),
   content: z.string(),
   model: z.string().default('meta-llama/llama-3.3-8b-instruct:free'),
-  threadExists: z.boolean().default(true).optional(),
 });
 
 export const chatProcedure = baseProcedure.input(chatInput).subscription(async (opts) => {
-  const { messageId, threadId, content } = opts.input;
-
-  // if (!threadExists) {
-  //   await db.insert(threads).values({
-  //     threadId,
-  //     ownerId: '37d387ec-32fd-45f7-af31-0df25936b241',
-  //     title: '',
-  //     model,
-  //   });
-  //   console.log('THREAD CREATED', threadId);
-  // }
+  const { messageId, threadId, content, model } = opts.input;
 
   await db.insert(messages).values({
     messageId,
     threadId,
     content,
-    model: 'deepseek/deepseek-chat-v3-0324:free',
+    model,
     role: 'user',
   });
 
   const completionStream = openai.chat.completions.stream({
-    model: opts.input.model,
+    model,
     messages: [
       {
         role: 'user',
@@ -67,15 +56,17 @@ export const chatProcedure = baseProcedure.input(chatInput).subscription(async (
 
   completionStream.on('content', async (content) => {
     assistantMessage.content += content;
-    console.log('PUSH', JSON.stringify(assistantMessage));
     readableStream.push(JSON.stringify(assistantMessage), 'utf-8');
   });
 
   completionStream.on('finalContent', async (content) => {
-    assistantMessage.content += content;
+    assistantMessage.content = content;
     readableStream.push(JSON.stringify(assistantMessage), 'utf-8');
-    readableStream.push(null);
     await db.insert(messages).values(assistantMessage);
+  });
+
+  completionStream.on('end', () => {
+    readableStream.push(null); // End stream
   });
 
   return readableStream;

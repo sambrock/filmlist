@@ -16,11 +16,9 @@ export const NavThreadsList = () => {
           <div className="text-text-secondary mb-1.5 text-sm font-medium">{label}</div>
           {grouped
             .get(label)
-            ?.map((thread) =>
-              thread.title ? (
-                <NavThreadsListItem key={thread.threadId} threadId={thread.threadId} title={thread.title} />
-              ) : null
-            )}
+            ?.map((thread) => (
+              <NavThreadsListItem key={thread.threadId} threadId={thread.threadId} title={thread.title} />
+            ))}
         </div>
       ))}
     </div>
