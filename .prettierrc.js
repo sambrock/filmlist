@@ -19,6 +19,7 @@ module.exports = {
     '<THIRD_PARTY_MODULES>',
     '',
     '^@/actions.*$',
+    '^@/server.*$',
     '^@/app.*$',
     '^@/lib.*$',
     '^@/middleware.*$',

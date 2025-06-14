@@ -1,6 +1,5 @@
 import { relations } from 'drizzle-orm';
 import { boolean, date, integer, pgTable, primaryKey, text, timestamp, uuid } from 'drizzle-orm/pg-core';
-import { createInsertSchema } from 'drizzle-zod';
 
 export const users = pgTable('users', {
   userId: uuid('userId').primaryKey(),
@@ -121,8 +120,3 @@ export const userMoviesRelations = relations(usersMovies, ({ one }) => ({
     references: [movies.movieId],
   }),
 }));
-
-export const insertUserSchema = createInsertSchema(users);
-export const insertThreadSchema = createInsertSchema(threads);
-export const insertMessageSchema = createInsertSchema(messages);
-export const insertMovieSchema = createInsertSchema(movies);

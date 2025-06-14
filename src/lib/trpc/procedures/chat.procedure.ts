@@ -7,7 +7,9 @@ import { db } from '@/lib/drizzle/db';
 import { messages, threads } from '@/lib/drizzle/schema';
 import { openaiClient } from '@/lib/openai/client';
 import { supportedModelsEnum } from '@/lib/openai/models';
+import { tmdbClient } from '@/lib/tmdb/client';
 import { ChatMessage } from '@/lib/types';
+import { findMoviesFromCompletionString } from '@/lib/utils/parse-completion';
 import { generateUuid } from '@/lib/utils/uuid';
 import { baseProcedure } from '../init';
 
@@ -59,6 +61,8 @@ export const chatProcedure = baseProcedure.input(chatInput).subscription(async (
     updatedAt: new Date(),
   };
 
+  const foundMovies: { title: string; release_year: number }[] = [];
+
   completionStream.on('content', async (content) => {
     assistantMessage.content += content;
     readableStream.push(JSON.stringify(assistantMessage), 'utf-8');
@@ -66,11 +70,63 @@ export const chatProcedure = baseProcedure.input(chatInput).subscription(async (
 
   completionStream.on('finalContent', async (content) => {
     assistantMessage.content = content;
+    console.log('FINAL CONTENT:', assistantMessage.content);
     readableStream.push(JSON.stringify(assistantMessage), 'utf-8');
-    await db.insert(messages).values(assistantMessage);
   });
 
-  completionStream.on('end', () => {
+  completionStream.on('end', async () => {
+    const parsedMovies = findMoviesFromCompletionString(assistantMessage.content);
+    console.log('PARSED MOVIES:', parsedMovies);
+
+    await Promise.all(
+      parsedMovies.map(async ({ title, release_year }) => {
+        if (foundMovies.some((movie) => movie.title === title && movie.release_year === release_year)) {
+          return; // Skip if movie already processed
+        } else {
+          foundMovies.push({ title, release_year }); // Add to found movies
+        }
+        if (
+          assistantMessage.movies.some(
+            (movie) => movie.title === title && new Date(movie.releaseDate).getFullYear() === release_year
+          )
+        ) {
+          return; // Skip if movie already exists
+        }
+
+        const { data } = await tmdbClient.GET('/3/search/movie', {
+          params: {
+            query: {
+              query: title,
+              year: release_year.toString(),
+              primary_release_year: release_year.toString(),
+            },
+          },
+        });
+
+        if (!data || !data.results || data.results.length === 0) {
+          return; // Skip if no results found
+        }
+        const movie = data.results[0];
+        if (!movie.id || !movie.title || !movie.backdrop_path || !movie.poster_path || !movie.release_date) {
+          return; // Skip if movie data is incomplete
+        }
+
+        assistantMessage.movies.push({
+          movieId: generateUuid(),
+          tmdbId: movie.id,
+          title: movie.title,
+          backdropPath: movie.backdrop_path,
+          posterPath: movie.poster_path,
+          releaseDate: new Date(movie.release_date),
+          createdAt: new Date(),
+        });
+      })
+    );
+
+    readableStream.push(JSON.stringify(assistantMessage), 'utf-8');
+
+    await db.insert(messages).values(assistantMessage);
+
     readableStream.push(null); // End stream
   });
 
