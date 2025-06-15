@@ -27,8 +27,7 @@ export interface paths {
                         messageId: string;
                         threadId: string;
                         content: string;
-                        /** @enum {string} */
-                        model: "deepseek/deepseek-chat-v3-0324:free" | "deepseek/deepseek-r1-0528:free" | "meta-llama/llama-3.3-8b-instruct:free" | "meta-llama/llama-4-maverick:free" | "meta-llama/llama-4-scout:free" | "microsoft/mai-ds-r1:free";
+                        model: string;
                     };
                 };
             };
@@ -59,7 +58,10 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: never;
+                query?: {
+                    limit?: number | null;
+                    cursor?: number | null;
+                };
                 header?: never;
                 path: {
                     threadId: string;
@@ -74,8 +76,27 @@ export interface paths {
                     };
                     content: {
                         "application/json": {
-                            messages: Record<string, never>[];
-                            nextCursor?: string | null;
+                            messages: {
+                                messageId: string;
+                                threadId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: date-time */
+                                updatedAt: string;
+                                movies: {
+                                    title: string;
+                                    /** Format: date-time */
+                                    createdAt: string;
+                                    /** Format: date-time */
+                                    releaseDate: string;
+                                    movieId: string;
+                                    tmdbId: number;
+                                    posterPath: string;
+                                    backdropPath?: string;
+                                }[];
+                            }[];
+                            nextCursor?: number | null;
                         };
                     };
                 };
@@ -89,7 +110,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/threads": {
+    "/api/user-threads/{userId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -98,11 +119,11 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
+                query?: never;
+                header?: never;
+                path: {
                     userId: string;
                 };
-                header?: never;
-                path?: never;
                 cookie?: never;
             };
             requestBody?: never;
@@ -112,7 +133,16 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": Record<string, never>;
+                        "application/json": {
+                            threadId: string;
+                            ownerId: string;
+                            title: string;
+                            model: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        }[];
                     };
                 };
             };

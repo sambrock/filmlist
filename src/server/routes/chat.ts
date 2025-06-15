@@ -7,7 +7,7 @@ import { ROLE_USER } from '@/lib/constants';
 import { db } from '@/lib/drizzle/db';
 import { messages } from '@/lib/drizzle/schema';
 import { openaiClient } from '@/lib/openai/client';
-import { supportedModelsEnum } from '@/lib/openai/models';
+import { ChatMessage, Movie } from '@/lib/types';
 import { baseMessage } from '@/lib/utils/chat';
 import { HttpStatusCodes, jsonContent } from '@/lib/utils/server';
 import { generateUuid } from '@/lib/utils/uuid';
@@ -16,13 +16,12 @@ const chatSchema = z.object({
   messageId: z.string(),
   threadId: z.string(),
   content: z.string(),
-  model: z.enum(supportedModelsEnum),
+  model: z.string(),
 });
 
 export const route = createRoute({
   path: '/chat',
   method: 'post',
-  tags: ['Chat'],
   description: 'Returns streaming chat responses',
   request: {
     body: {
@@ -43,6 +42,10 @@ export const route = createRoute({
   },
 });
 
+export type ContentData = { v: string };
+export type MovieData = { v: Movie };
+export type FinalContentData = { v: ChatMessage };
+
 export const handler: AppRouteHandler<typeof route> = async (c) => {
   const data = c.req.valid('json');
 
@@ -56,19 +59,14 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
 
   const completion = openaiClient.chat.completions.stream({
     model: data.model,
-    messages: [
-      {
-        role: ROLE_USER,
-        content: baseMessage(data.content),
-      },
-    ],
+    messages: [{ role: ROLE_USER, content: baseMessage(data.content) }],
   });
 
   return streamSSE(c, async (stream) => {
     completion.on('content', async (content) => {
       await stream.writeSSE({
         event: 'content',
-        data: content,
+        data: JSON.stringify({ v: content } satisfies ContentData),
       });
     });
 
@@ -85,9 +83,10 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
         .returning()
         .then((res) => res[0]);
 
+
       await stream.writeSSE({
         event: 'finalContent',
-        data: JSON.stringify(assistantMessage),
+        data: JSON.stringify({ v: { ...assistantMessage, movies: [] } } satisfies FinalContentData),
       });
 
       await stream.close();

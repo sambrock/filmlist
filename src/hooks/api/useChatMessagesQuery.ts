@@ -2,22 +2,23 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { api } from '@/lib/api/client';
 
-// import { trpc } from '@/lib/trpc';
-
 export const useChatMessagesQuery = (threadId: string) => {
   return useInfiniteQuery({
     queryKey: ['chat', threadId, 'messages'],
-    // queryFn: () => trpc.getChatMessages.query({ threadId, limit: 20 }),
-    queryFn: async () => {
+    queryFn: async ({ pageParam }) => {
       const { data } = await api.GET('/api/messages/{threadId}', {
         params: {
           path: { threadId },
+          query: {
+            limit: 20,
+            cursor: pageParam,
+          },
         },
       });
 
       return data;
     },
     initialPageParam: 0,
-    getNextPageParam: () => 2,
+    getNextPageParam: (lastPage) => lastPage?.nextCursor,
   });
 };
