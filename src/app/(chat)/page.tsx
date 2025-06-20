@@ -20,7 +20,9 @@ export default function ChatPage(props: Props) {
           <ChatMessagesSession />
         </div>
         <ChatScrollIntoView />
-        <ChatInput className="w-default fixed bottom-4 self-center" />
+        <div className="w-default bg-surface-1 fixed bottom-0 self-center rounded-t-xl pb-2">
+          <ChatInput className="mb-3" />
+        </div>
       </div>
     </ChatStoreProvider>
   );

@@ -24,7 +24,6 @@ export interface paths {
             requestBody?: {
                 content: {
                     "application/json": {
-                        messageId: string;
                         threadId: string;
                         content: string;
                         model: string;

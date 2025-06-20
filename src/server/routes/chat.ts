@@ -3,17 +3,17 @@ import { streamSSE } from 'hono/streaming';
 import { z } from 'zod';
 
 import { AppRouteHandler } from '@/server/types';
-import { ROLE_USER } from '@/lib/constants';
 import { db } from '@/lib/drizzle/db';
-import { messages } from '@/lib/drizzle/schema';
+import { messages, messagesMovies, movies } from '@/lib/drizzle/schema';
 import { openaiClient } from '@/lib/openai/client';
+import { tmdbClient } from '@/lib/tmdb/client';
 import { ChatMessage, Movie } from '@/lib/types';
 import { baseMessage } from '@/lib/utils/chat';
+import { findMoviesFromCompletionString } from '@/lib/utils/parse-completion';
 import { HttpStatusCodes, jsonContent } from '@/lib/utils/server';
 import { generateUuid } from '@/lib/utils/uuid';
 
 const chatSchema = z.object({
-  messageId: z.string(),
   threadId: z.string(),
   content: z.string(),
   model: z.string(),
@@ -42,52 +42,131 @@ export const route = createRoute({
   },
 });
 
-export type ContentData = { v: string };
-export type MovieData = { v: Movie };
-export type FinalContentData = { v: ChatMessage };
+export type EventStreamData =
+  | { type: 'message'; v: ChatMessage }
+  | { type: 'content'; id: string; v: string }
+  | { type: 'movie'; id: string; v: Movie }
+  | { type: 'end' };
 
 export const handler: AppRouteHandler<typeof route> = async (c) => {
   const data = c.req.valid('json');
 
-  await db.insert(messages).values({
-    messageId: data.messageId,
+  const userMessage: ChatMessage = {
+    messageId: generateUuid(),
     threadId: data.threadId,
+    parentId: null,
     content: data.content,
+    role: 'user',
     model: data.model,
-    role: ROLE_USER,
-  });
+    movies: [],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const assistantMessage: ChatMessage = {
+    messageId: generateUuid(),
+    threadId: data.threadId,
+    parentId: userMessage.messageId,
+    content: '',
+    role: 'assistant',
+    model: data.model,
+    movies: [],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
 
   const completion = openaiClient.chat.completions.stream({
     model: data.model,
-    messages: [{ role: ROLE_USER, content: baseMessage(data.content) }],
+    messages: [{ role: userMessage.role, content: baseMessage(userMessage.content) }],
   });
 
   return streamSSE(c, async (stream) => {
-    completion.on('content', async (content) => {
+    await stream.writeSSE({
+      event: 'delta',
+      data: JSON.stringify({ type: 'message', v: userMessage } satisfies EventStreamData),
+    });
+
+    completion.on('connect', async () => {
       await stream.writeSSE({
-        event: 'content',
-        data: JSON.stringify({ v: content } satisfies ContentData),
+        event: 'delta',
+        data: JSON.stringify({ type: 'message', v: assistantMessage } satisfies EventStreamData),
+      });
+    });
+
+    completion.on('content', async (content) => {
+      console.log('content', content);
+      await stream.writeSSE({
+        event: 'delta',
+        data: JSON.stringify({
+          type: 'content',
+          id: assistantMessage.messageId,
+          v: content,
+        } satisfies EventStreamData),
       });
     });
 
     completion.on('finalContent', async (finalContent) => {
-      const assistantMessage = await db
-        .insert(messages)
-        .values({
-          messageId: generateUuid(),
-          threadId: data.threadId,
-          content: finalContent,
-          model: data.model,
-          role: ROLE_USER,
-        })
-        .returning()
-        .then((res) => res[0]);
+      assistantMessage.content = finalContent;
+      assistantMessage.createdAt = new Date();
+      assistantMessage.updatedAt = new Date();
+    });
 
-
+    completion.on('end', async () => {
       await stream.writeSSE({
-        event: 'finalContent',
-        data: JSON.stringify({ v: { ...assistantMessage, movies: [] } } satisfies FinalContentData),
+        event: 'delta',
+        data: JSON.stringify({ type: 'end' } satisfies EventStreamData),
       });
+
+      await db.insert(messages).values(userMessage);
+      await db.insert(messages).values(assistantMessage);
+
+      const foundMovies = findMoviesFromCompletionString(assistantMessage.content);
+
+      await Promise.all(
+        foundMovies.map(async (found) => {
+          const { data } = await tmdbClient.GET('/3/search/movie', {
+            params: {
+              query: {
+                query: found.title,
+                year: found.release_year ? String(found.release_year) : undefined,
+                primary_release_year: found.release_year ? String(found.release_year) : undefined,
+              },
+            },
+          });
+
+          if (!data) return;
+          if (!data.results || data.results?.length === 0) return;
+
+          const [result] = data.results;
+
+          const movie: Movie = {
+            movieId: result.id,
+            tmdbId: result.id,
+            title: result.title!,
+            backdropPath: result.backdrop_path!,
+            posterPath: result.poster_path!,
+            releaseDate: new Date(result.release_date!),
+            createdAt: new Date(),
+          };
+
+          await stream.writeSSE({
+            event: 'delta',
+            data: JSON.stringify({
+              type: 'movie',
+              id: assistantMessage.messageId,
+              v: movie,
+            } satisfies EventStreamData),
+          });
+
+          await db.insert(movies).values(movie).onConflictDoNothing();
+
+          await db.insert(messagesMovies).values({
+            messageId: assistantMessage.messageId,
+            movieId: movie.movieId,
+            createdAt: new Date(),
+          });
+        })
+      );
 
       await stream.close();
     });

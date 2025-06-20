@@ -1,38 +1,43 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { ContentData, FinalContentData } from '@/server/routes/chat';
+import type { EventStreamData } from '@/server/routes/chat';
 import { api } from '@/lib/api/client';
-import { ChatMessage } from '@/lib/types';
 import { readEventStream } from '@/lib/utils/sse';
 import { useChatStore } from '@/providers/chat-store-provider';
 
 export const useSendMessageMutation = () => {
-  const setMessage = useChatStore((state) => state.setMessage);
+  const storeActions = useChatStore((state) => state.actions);
+  const threadId = useChatStore((state) => state.threadId);
+  const model = useChatStore((state) => state.model);
+  const content = useChatStore((state) => state.inputValue);
 
   return useMutation({
     mutationKey: ['sendMessage'],
-    mutationFn: async (userMessage: ChatMessage) => {
-      setMessage(userMessage.messageId, userMessage);
-
+    mutationFn: async () => {
       const { response } = await api.POST('/api/chat', {
         body: {
-          content: userMessage.content,
-          threadId: userMessage.threadId,
-          messageId: userMessage.messageId,
-          model: userMessage.model,
+          threadId,
+          content,
+          model,
         },
         parseAs: 'stream',
       });
 
-      await readEventStream(response, {
-        content: (data) => {
-          const parsed = JSON.parse(data) as ContentData;
-          console.log('content:', parsed);
-        },
-        finalContent: (data) => {
-          const parsed = JSON.parse(data) as FinalContentData;
-          console.log('finalContent:', parsed);
-        },
+      await readEventStream(response, (data) => {
+        const parsed = JSON.parse(data) as EventStreamData;
+
+        if (parsed.type === 'message') {
+          storeActions.setMessage(parsed.v.messageId, parsed.v);
+        }
+        if (parsed.type === 'content') {
+          storeActions.appendMessageContent(parsed.id, parsed.v);
+        }
+        if (parsed.type === 'movie') {
+          storeActions.addMessageMovies(parsed.id, parsed.v);
+        }
+        if (parsed.type === 'end') {
+          console.log('Stream ended');
+        }
       });
     },
     retry: false,

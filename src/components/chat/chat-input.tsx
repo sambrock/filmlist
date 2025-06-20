@@ -1,7 +1,6 @@
 'use client';
 
 import { cn } from '@/lib/utils/cn';
-import { generateUuid } from '@/lib/utils/uuid';
 import { useChatStore } from '@/providers/chat-store-provider';
 import { useSendMessageMutation } from '@/hooks/api/useSendMessageMutation';
 import { ChatInputButtonSend } from './chat-input-button-send';
@@ -11,36 +10,16 @@ import { ChatInputSelectModel } from './chat-input-select-model';
 type Props = React.ComponentProps<'div'>;
 
 export const ChatInput = ({ className, ...props }: Props) => {
-  const [threadId, value, model, setValue] = useChatStore((state) => [
-    state.threadId,
-    state.inputValue,
-    state.model,
-    state.setInputValue,
-  ]);
+  const [value, setValue] = useChatStore((state) => [state.inputValue, state.actions.setInputValue]);
 
   const sendMutation = useSendMessageMutation();
 
   const handleSendMessage = () => {
-    sendMutation.mutate({
-      messageId: generateUuid(),
-      threadId,
-      content: value,
-      model,
-      role: 'user',
-      movies: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+    sendMutation.mutate();
   };
 
   return (
-    <div
-      className={cn(
-        'bg-surface-3/30 border-border-1 rounded-2xl border px-3 py-3 backdrop-blur-md',
-        className
-      )}
-      {...props}
-    >
+    <div className={cn('bg-surface-2/95 backdrop-blur-md rounded-2xl px-3 py-3', className)} {...props}>
       <ChatInputControl
         className="placeholder:text-text-primary/50 rounded-lg bg-transparent px-3 py-2 pb-4 focus:outline-none"
         placeholder="Ask anything"

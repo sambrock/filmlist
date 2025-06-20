@@ -1,7 +1,4 @@
-export const readEventStream = async <T extends Record<string, (data: string) => void>>(
-  response: Response,
-  callback: T
-) => {
+export const readEventStream = async (response: Response, onData: (data: string) => void) => {
   const decoder = new TextDecoder();
   const reader = response.body!.getReader();
 
@@ -12,15 +9,13 @@ export const readEventStream = async <T extends Record<string, (data: string) =>
     const chunk = decoder.decode(value, { stream: true });
 
     const lines = chunk.split('\n');
-
-    const event = lines.shift()!.replace('event:', '').trim();
-    const data = lines.reduce((acc, line) => {
-      if (line.startsWith('data:')) {
-        return acc + line.replace('data:', '').trim();
+    for (const line of lines) {
+      if (line.trim() === '' || line.startsWith(':') || line.startsWith('event:')) {
+        continue;
       }
-      return acc;
-    }, '');
 
-    callback[event](data);
+      const data = line.replace(/^data:\s*/, '').trim();
+      onData(data);
+    }
   }
 };

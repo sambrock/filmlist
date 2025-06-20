@@ -3,8 +3,8 @@ import { boolean, date, integer, pgTable, primaryKey, text, timestamp, uuid } fr
 
 export const users = pgTable('users', {
   userId: uuid('userId').primaryKey(),
-  anon: boolean('anon').default(true),
-  createdAt: timestamp('createdAt').defaultNow(),
+  anon: boolean('anon').notNull().default(true),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 });
 
@@ -21,6 +21,7 @@ export const threads = pgTable('threads', {
 
 export const messages = pgTable('messages', {
   messageId: uuid('messageId').primaryKey(),
+  parentId: uuid('parentId'),
   threadId: uuid('threadId')
     .notNull()
     .references(() => threads.threadId),
@@ -32,7 +33,7 @@ export const messages = pgTable('messages', {
 });
 
 export const movies = pgTable('movies', {
-  movieId: uuid('movieId').primaryKey(),
+  movieId: integer('movieId').notNull().primaryKey(),
   tmdbId: integer('tmdbId').notNull().unique(),
   title: text('title').notNull(),
   releaseDate: date('releaseDate', { mode: 'date' }).notNull(),
@@ -47,7 +48,7 @@ export const usersMovies = pgTable(
     userId: uuid('userId')
       .notNull()
       .references(() => users.userId),
-    movieId: uuid('movieId')
+    movieId: integer('movieId')
       .notNull()
       .references(() => movies.movieId),
     watched: boolean('watched').default(false),
@@ -65,7 +66,7 @@ export const messagesMovies = pgTable(
     messageId: uuid('messageId')
       .notNull()
       .references(() => messages.messageId),
-    movieId: uuid('movieId')
+    movieId: integer('movieId')
       .notNull()
       .references(() => movies.movieId),
     createdAt: timestamp('createdAt').notNull().defaultNow(),
@@ -90,6 +91,10 @@ export const messageRelations = relations(messages, ({ one, many }) => ({
   thread: one(threads, {
     fields: [messages.threadId],
     references: [threads.threadId],
+  }),
+  parent: one(messages, {
+    fields: [messages.parentId],
+    references: [messages.messageId],
   }),
   messageMovies: many(messagesMovies),
 }));
