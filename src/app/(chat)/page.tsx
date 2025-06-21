@@ -14,16 +14,17 @@ export default function ChatPage(props: Props) {
 
   return (
     <ChatStoreProvider threadId={threadId} threadExists={props.threadId !== undefined}>
-      <div className="bg-surface-1 relative flex h-full flex-col items-center overflow-y-auto">
+      <main className="bg-surface-1 relative flex h-full flex-col items-center overflow-y-auto">
         <div className="w-default">
           <ChatMessagesStatic />
           <ChatMessagesSession />
         </div>
         <ChatScrollIntoView />
-        <div className="w-default bg-surface-1 fixed bottom-0 self-center rounded-t-xl pb-2">
-          <ChatInput className="mb-3" />
+
+        <div className="bg-surface-1 fixed bottom-0 pb-4">
+          <ChatInput className="-mt-4" />
         </div>
-      </div>
+      </main>
     </ChatStoreProvider>
   );
 }

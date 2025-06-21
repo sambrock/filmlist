@@ -8,7 +8,7 @@ type Props = React.ComponentProps<'button'>;
 
 export const ChatInputButtonSend = ({ className, ...props }: Props) => {
   return (
-    <Button className={cn(className, '')} size="icon" {...props}>
+    <Button className={cn(className, '')} variant="primary" size="icon" {...props}>
       <IconArrowUp className="size-5" />
     </Button>
   );

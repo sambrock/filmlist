@@ -5,7 +5,7 @@ import { useChatStore } from '@/providers/chat-store-provider';
 import { useSendMessageMutation } from '@/hooks/api/useSendMessageMutation';
 import { ChatInputButtonSend } from './chat-input-button-send';
 import { ChatInputControl } from './chat-input-control';
-import { ChatInputSelectModel } from './chat-input-select-model';
+import { ChatInputDropdownModel } from './chat-input-dropdown-model';
 
 type Props = React.ComponentProps<'div'>;
 
@@ -19,9 +19,12 @@ export const ChatInput = ({ className, ...props }: Props) => {
   };
 
   return (
-    <div className={cn('bg-surface-2/95 backdrop-blur-md rounded-2xl px-3 py-3', className)} {...props}>
+    <div
+      className={cn('bg-surface-2 w-3xl rounded-xl px-2 py-2 shadow-md shadow-black/20', className)}
+      {...props}
+    >
       <ChatInputControl
-        className="placeholder:text-text-primary/50 rounded-lg bg-transparent px-3 py-2 pb-4 focus:outline-none"
+        className="placeholder:text-text-primary/50 rounded-lg bg-transparent px-3 py-2 pb-3 focus:outline-none"
         placeholder="Ask anything"
         value={value}
         onChange={(e) => {
@@ -35,8 +38,8 @@ export const ChatInput = ({ className, ...props }: Props) => {
         }}
       />
 
-      <div className="flex items-center">
-        <ChatInputSelectModel />
+      <div className="flex items-center px-1">
+        <ChatInputDropdownModel />
 
         <ChatInputButtonSend
           className="ml-auto"

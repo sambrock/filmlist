@@ -17,12 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout(props: React.PropsWithChildren) {
   return (
     <html lang="en">
-      <body
-        className={cn(
-          'bg-surface-0 text-text-primary overflow-y-auto h-screen w-screen',
-          fontSans.className
-        )}
-      >
+      <body className={cn('bg-surface-0 text-text-0 h-screen w-screen overflow-y-auto', fontSans.className)}>
         {props.children}
       </body>
     </html>

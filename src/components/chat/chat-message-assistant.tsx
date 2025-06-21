@@ -9,9 +9,9 @@ export const ChatMessageAssistant = ({ message, className, ...props }: Props) =>
   return (
     <div className={cn(className)} {...props}>
       {message.content}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="bg-surface-0 gap-2 rounded-lg p-2">
         {message.movies.map((movie) => (
-          <div key={movie.tmdbId} className="mt-2 overflow-clip rounded-md">
+          <div key={movie.tmdbId} className="w-[200px] overflow-clip rounded-md">
             <img
               className="h-full object-cover"
               src={`https://image.tmdb.org/t/p/w300${movie.posterPath}`}
