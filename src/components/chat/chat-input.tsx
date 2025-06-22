@@ -20,7 +20,7 @@ export const ChatInput = ({ className, ...props }: Props) => {
 
   return (
     <div
-      className={cn('bg-surface-2 w-3xl rounded-xl px-2 py-2 shadow-md shadow-black/20', className)}
+      className={cn('bg-background-2 w-3xl rounded-xl px-2 py-2 shadow-md shadow-black/20', className)}
       {...props}
     >
       <ChatInputControl

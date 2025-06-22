@@ -1,3 +1,5 @@
+export type ModelKey = keyof typeof models;
+
 export const models = new Map([
   [
     'deepseek/deepseek-chat-v3-0324:free',
@@ -63,7 +65,7 @@ export const models = new Map([
   //     free: true,
   //   },
   // ],
-] as const) satisfies Map<
+]) satisfies Map<
   string,
   {
     model: string;
