@@ -6,6 +6,7 @@ const variants = cva('flex cursor-pointer items-center font-medium focus:outline
     variant: {
       default: 'bg-surface-2 hover:bg-surface-3 text-text-primary',
       transparent: 'text-text-2 hover:bg-surface-3 bg-transparent',
+      ghost: 'text-text-2 bg-surface-2 hover:bg-surface-3',
       primary: 'bg-primary/20 border-primary/20 text-text-3 border',
     },
     size: {
