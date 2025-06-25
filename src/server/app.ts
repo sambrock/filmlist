@@ -1,7 +1,7 @@
 import { createApp } from './init';
-import * as chat from './routes/chat';
-import * as getMessages from './routes/get-messages';
-import * as getThreads from './routes/get-threads';
+import * as chat from './routes/chat.route';
+import * as getMessages from './routes/get-messages.route';
+import * as getThreads from './routes/get-threads.route';
 
 export type AppType = typeof app;
 

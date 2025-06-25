@@ -4,20 +4,13 @@ import { z } from 'zod';
 
 import { AppRouteHandler } from '@/server/types';
 import { db } from '@/lib/drizzle/db';
-import { messages, messagesMovies, movies } from '@/lib/drizzle/schema';
-import { openaiClient } from '@/lib/openai/client';
-import { tmdbClient } from '@/lib/tmdb/client';
-import { ChatMessage, Movie } from '@/lib/types';
-import { baseMessage } from '@/lib/utils/chat';
-import { findMoviesFromCompletionString } from '@/lib/utils/parse-completion';
-import { HttpStatusCodes, jsonContent } from '@/lib/utils/server';
-import { generateUuid } from '@/lib/utils/uuid';
-
-const chatSchema = z.object({
-  threadId: z.string(),
-  content: z.string(),
-  model: z.string(),
-});
+import { messages } from '@/lib/drizzle/schema';
+import { Message, Movie } from '@/lib/drizzle/zod';
+import { openai } from '@/lib/openai/client';
+import { tmdb } from '@/lib/tmdb/client';
+import { baseMessage, findMoviesFromCompletionString } from '@/lib/utils/chat.utils';
+import { HttpStatusCodes, jsonContent } from '@/lib/utils/openapi.utils';
+import { generateUuid } from '@/lib/utils/uuid.util';
 
 export const route = createRoute({
   path: '/chat',
@@ -25,7 +18,13 @@ export const route = createRoute({
   description: 'Returns streaming chat responses',
   request: {
     body: {
-      content: jsonContent(chatSchema),
+      content: jsonContent(
+        z.object({
+          threadId: z.string().uuid(),
+          model: z.string(),
+          content: z.string(),
+        })
+      ),
     },
   },
   responses: {
@@ -43,7 +42,7 @@ export const route = createRoute({
 });
 
 export type EventStreamData =
-  | { type: 'message'; v: ChatMessage }
+  | { type: 'message'; v: Message }
   | { type: 'content'; id: string; v: string }
   | { type: 'movie'; id: string; v: Movie }
   | { type: 'end' };
@@ -51,33 +50,40 @@ export type EventStreamData =
 export const handler: AppRouteHandler<typeof route> = async (c) => {
   const data = c.req.valid('json');
 
-  const userMessage: ChatMessage = {
-    messageId: generateUuid(),
-    threadId: data.threadId,
-    parentId: null,
-    content: data.content,
-    role: 'user',
-    model: data.model,
-    movies: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+  const thread = await db.query.threads.findFirst({
+    where: (thread, { eq }) => eq(thread.threadId, data.threadId),
+  });
 
-  const assistantMessage: ChatMessage = {
-    messageId: generateUuid(),
-    threadId: data.threadId,
-    parentId: userMessage.messageId,
-    content: '',
-    role: 'assistant',
-    model: data.model,
-    movies: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+  if (!thread) {
+    throw new Error('Thread not found');
+  }
 
-  const completion = openaiClient.chat.completions.stream({
+  const userMessage = await db
+    .insert(messages)
+    .values({
+      threadFk: thread.pk,
+      content: data.content,
+      messageId: generateUuid(),
+      model: data.model,
+      role: 'user',
+    })
+    .returning({ pk: messages.pk });
+
+  // const assistantMessage = {
+  //   messageId: generateUuid(),
+  //   : data.threadId,
+  //   parentId: userMessage.messageId,
+  //   content: '',
+  //   role: 'assistant',
+  //   model: data.model,
+  //   movies: [],
+  //   createdAt: new Date(),
+  //   updatedAt: new Date(),
+  // };
+
+  const completion = openai.chat.completions.stream({
     model: data.model,
-    messages: [{ role: userMessage.role, content: baseMessage(userMessage.content) }],
+    messages: [{ role: 'user', content: baseMessage(data.content) }],
   });
 
   return streamSSE(c, async (stream) => {
@@ -124,7 +130,7 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
 
       await Promise.all(
         foundMovies.map(async (found) => {
-          const { data } = await tmdbClient.GET('/3/search/movie', {
+          const { data } = await tmdb.GET('/3/search/movie', {
             params: {
               query: {
                 query: found.title,

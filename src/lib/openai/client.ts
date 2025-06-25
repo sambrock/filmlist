@@ -1,9 +1,9 @@
 import OpenAI from 'openai';
 
 import { OPENAI_BASE_URL, OPENAI_HTTP_REFERER, OPENAI_TITLE } from '../constants';
-import { env } from '../utils/env';
+import { env } from '../env';
 
-export const openaiClient = new OpenAI({
+export const openai = new OpenAI({
   baseURL: OPENAI_BASE_URL,
   apiKey: env.OPENAI_API_KEY,
   defaultHeaders: {

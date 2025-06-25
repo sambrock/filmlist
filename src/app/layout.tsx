@@ -19,7 +19,7 @@ export default function RootLayout(props: React.PropsWithChildren) {
     <html lang="en">
       <body
         className={cn(
-          'bg-background-0 text-foreground-0 h-screen w-screen overflow-y-auto',
+          'bg-background-0 text-foreground-0 fixed top-0 left-0 h-screen w-screen overflow-y-auto',
           fontSans.className
         )}
       >

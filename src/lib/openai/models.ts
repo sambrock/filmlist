@@ -1,6 +1,6 @@
-export type ModelKey = keyof typeof models;
+export type Model = Parameters<(typeof MODELS)['get']>[number];
 
-export const models = new Map([
+export const MODELS = new Map([
   [
     'deepseek/deepseek-chat-v3-0324:free',
     {
@@ -55,24 +55,4 @@ export const models = new Map([
       free: true,
     },
   ],
-  // [
-  //   'deepseek/deepseek-r1:free',
-  //   {
-  //     model: 'deepseek/deepseek-r1:free',
-  //     label: 'DeepSeek R1',
-  //     provider: 'DeepSeek',
-  //     active: false,
-  //     free: true,
-  //   },
-  // ],
-]) satisfies Map<
-  string,
-  {
-    model: string;
-    label: string;
-    provider: string;
-    free: boolean;
-  }
->;
-
-export const supportedModelsEnum = [...models.keys()] as [string, ...string[]];
+] as const) satisfies Map<string, { model: string; label: string; provider: string; free: boolean }>;

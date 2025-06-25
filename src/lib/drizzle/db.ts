@@ -1,19 +1,19 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 
-import { env } from '../utils/env';
+import { env } from '../env';
 import {
-  messageMoviesRelations,
+  library,
+  libraryRelations,
   messageRelations,
   messages,
-  messagesMovies,
+  messagesToMovies,
+  messagesToMoviesRelations,
   movies,
   moviesRelations,
   threads,
   threadsRelations,
-  userMoviesRelations,
   userRelations,
   users,
-  usersMovies,
 } from './schema';
 
 export const db = drizzle(env.DATABASE_URL, {
@@ -22,13 +22,13 @@ export const db = drizzle(env.DATABASE_URL, {
     threads,
     messages,
     movies,
-    usersMovies,
-    threadsRelations,
-    messagesMovies,
-    moviesRelations,
-    messageMoviesRelations,
-    userMoviesRelations,
+    library,
+    libraryRelations,
     messageRelations,
+    messagesToMovies,
+    messagesToMoviesRelations,
+    moviesRelations,
+    threadsRelations,
     userRelations,
   },
 });

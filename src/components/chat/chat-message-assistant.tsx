@@ -9,9 +9,9 @@ export const ChatMessageAssistant = ({ message, className, ...props }: Props) =>
   return (
     <div className={cn(className)} {...props}>
       {message.content}
-      <ul className="flex w-3xl snap-x snap-mandatory items-center gap-4 overflow-x-scroll rounded-lg">
-        {message.movies.map((movie) => (
-          <li key={movie.tmdbId} className="w-[190px] shrink-0 snap-start overflow-clip rounded-md">
+      <ul className="bg-background-0 grid w-3xl snap-mandatory grid-cols-4 items-center gap-3 overflow-x-scroll rounded-xl p-3">
+        {message.movies.slice(0, 4).map((movie) => (
+          <li key={movie.tmdbId} className="overflow-clip rounded-md">
             <img
               className="h-full object-cover"
               src={`https://image.tmdb.org/t/p/w300${movie.posterPath}`}

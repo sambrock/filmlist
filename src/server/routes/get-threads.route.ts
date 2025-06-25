@@ -1,7 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 import { db } from '@/lib/drizzle/db';
-import { HttpStatusCodes } from '@/lib/utils/server';
+import { HttpStatusCodes } from '@/lib/utils/openapi.utils';
 import { AppRouteHandler } from '../types';
 
 export const route = createRoute({
