@@ -8,16 +8,21 @@ export const baseMessage = (content: string) => {
   `.trim();
 };
 
-export const findMoviesFromCompletionString = (completion: string) => {
-  const movieRegex = /"title":\s*"([^"]+)",\s*"release_year":\s*(\d{4})/g;
-  const movies: { title: string; release_year: number }[] = [];
-  let match;
+export const parseMoviesFromMessage = (
+  message: string,
+  foundMoviesMap: Map<number, { title: string; releaseYear: string }>
+) => {
+  const regex1 = /"title":\s*"([^"]+)",\s*"release_year":\s*(\d{4})/g;
 
-  while ((match = movieRegex.exec(completion)) !== null) {
-    const title = match[1];
-    const releaseYear = parseInt(match[2], 10);
-    movies.push({ title, release_year: releaseYear });
+  const matches = [...message.matchAll(regex1)];
+
+  for (const match of matches) {
+    const index = matches.indexOf(match);
+    const [, title, releaseYear] = match;
+
+    foundMoviesMap.set(index, {
+      title: title.trim(),
+      releaseYear: releaseYear.trim(),
+    });
   }
-
-  return movies;
 };

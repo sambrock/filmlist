@@ -1,23 +1,26 @@
 import { enableMapSet, produce } from 'immer';
 import { createStore } from 'zustand/vanilla';
 
-import { ChatMessage, Movie } from '@/lib/types';
+import { Message, Movie } from '@/lib/drizzle/zod';
+import { Model } from '@/lib/openai/models';
 
 enableMapSet();
+
+export type ChatMessage = Message & { movies: Movie[] };
 
 export type ChatState = {
   threadId: string;
   threadExists: boolean;
   inputValue: string;
-  model: string;
+  model: Model;
 
-  messageStack: Map<string, ChatMessage>;
+  messageStack: Map<string, Partial<ChatMessage>>;
 };
 
 export type ChatActions = {
   setThreadExists: (exists: boolean) => void;
   setInputValue: (value: string) => void;
-  setModel: (model: string) => void;
+  setModel: (model: Model) => void;
   setMessage: (messageId: string, message: ChatMessage) => void;
   appendMessageContent: (messageId: string, content: string) => void;
   addMessageMovies: (messageId: string, movie: Movie) => void;
@@ -79,7 +82,7 @@ export const createChatStore = (initState: { threadId: string; threadExists?: bo
           produce(state, (draft) => {
             const message = draft.messageStack.get(messageId);
             if (message) {
-              message.movies.push(movie);
+              message.movies?.push(movie);
               draft.messageStack.set(messageId, message);
             }
           })

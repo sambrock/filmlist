@@ -33,11 +33,10 @@ export const route = createRoute({
                 updatedAt: z.string().datetime(),
                 movies: z.array(
                   z.object({
+                    movieId: z.string(),
                     title: z.string(),
                     createdAt: z.string().datetime(),
                     releaseDate: z.string().datetime(),
-                    movieId: z.string(),
-                    tmdbId: z.number(),
                     posterPath: z.string(),
                     backdropPath: z.string().optional(),
                   })
@@ -64,7 +63,7 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
       and(eq(messages.threadId, threadId), lt(messages.createdAt, searchCursor)),
     orderBy: (messages, { desc }) => [desc(messages.createdAt)],
     with: {
-      messageMovies: {
+      movies: {
         with: {
           movie: true,
         },
@@ -73,9 +72,9 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
     limit,
   });
 
-  const messagesWithMovies = messages.map(({ messageMovies, ...message }) => ({
+  const messagesWithMovies = messages.map(({ movies, ...message }) => ({
     ...message,
-    movies: messageMovies.map((mm) => mm.movie),
+    movies: movies.map((mm) => mm.movie),
   }));
 
   return c.json({

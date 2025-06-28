@@ -1,4 +1,4 @@
-import { models } from '@/lib/openai/models';
+import { MODELS } from '@/lib/openai/models';
 import { useChatStore } from '@/providers/chat-store-provider';
 import { Button } from '../common/button';
 import { DropdownContent, DropdownItem, DropdownRoot, DropdownTrigger } from '../common/dropdown';
@@ -11,13 +11,13 @@ export const ChatInputDropdownModel = () => {
     <DropdownRoot>
       <DropdownTrigger asChild>
         <Button variant="transparent" size="sm" className="text-sm">
-          {models.get(model)!.label}
+          {MODELS.get(model)!.label}
           <IconChevronDown className="-mr-1 size-4" />
         </Button>
       </DropdownTrigger>
 
       <DropdownContent align="start" side="top" sideOffset={4} className="origin-bottom-left">
-        {[...models.values()].map((model) => (
+        {[...MODELS.values()].map((model) => (
           <DropdownItem
             key={model.model}
             className="cursor-pointer"

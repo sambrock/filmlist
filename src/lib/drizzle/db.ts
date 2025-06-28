@@ -4,10 +4,10 @@ import { env } from '../env';
 import {
   library,
   libraryRelations,
+  messageMovies,
+  messageMoviesRelations,
   messageRelations,
   messages,
-  messagesToMovies,
-  messagesToMoviesRelations,
   movies,
   moviesRelations,
   threads,
@@ -18,17 +18,17 @@ import {
 
 export const db = drizzle(env.DATABASE_URL, {
   schema: {
-    users,
-    threads,
-    messages,
-    movies,
     library,
     libraryRelations,
+    messageMovies,
+    messageMoviesRelations,
     messageRelations,
-    messagesToMovies,
-    messagesToMoviesRelations,
+    messages,
+    movies,
     moviesRelations,
+    threads,
     threadsRelations,
     userRelations,
+    users,
   },
 });

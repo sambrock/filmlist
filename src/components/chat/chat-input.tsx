@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils/cn.util';
 import { useChatStore } from '@/providers/chat-store-provider';
 import { useSendMessageMutation } from '@/hooks/api/useSendMessageMutation';
 import { ChatInputButtonSend } from './chat-input-button-send';

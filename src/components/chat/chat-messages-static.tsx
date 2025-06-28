@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils/cn.util';
 import { useChatStore } from '@/providers/chat-store-provider';
 import { useChatMessagesQuery } from '@/hooks/api/useChatMessagesQuery';
 import { ChatMessageAssistant } from './chat-message-assistant';

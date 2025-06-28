@@ -1,5 +1,5 @@
-import { Message } from '@/lib/types';
-import { cn } from '@/lib/utils/cn';
+import { Message } from '@/lib/drizzle/zod';
+import { cn } from '@/lib/utils/cn.util';
 
 type Props = React.ComponentProps<'div'> & {
   message: Message;

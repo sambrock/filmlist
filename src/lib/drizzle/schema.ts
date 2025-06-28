@@ -1,31 +1,19 @@
 import { relations } from 'drizzle-orm';
-import {
-  boolean,
-  date,
-  integer,
-  pgTable,
-  primaryKey,
-  serial,
-  text,
-  timestamp,
-  uuid,
-} from 'drizzle-orm/pg-core';
+import { boolean, date, pgTable, primaryKey, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
-  pk: serial('pk').unique().primaryKey(),
-  userId: uuid('userId').notNull().unique(),
+  userId: uuid('user_id').primaryKey(),
   anon: boolean('anon').notNull().default(true),
-  createdAt: timestamp('createdAt').notNull().defaultNow(),
-  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
 export const threads = pgTable('threads', {
-  pk: serial('pk').unique().primaryKey(),
-  userFk: integer('user_fk')
-    .notNull()
+  threadId: uuid('thread_id').primaryKey(),
+  userId: uuid('user_id')
     .unique()
-    .references(() => users.pk),
-  threadId: uuid('thread_id').notNull().unique(),
+    .notNull()
+    .references(() => users.userId),
   model: text('model').notNull().default(''),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at')
@@ -36,13 +24,12 @@ export const threads = pgTable('threads', {
 });
 
 export const messages = pgTable('messages', {
-  pk: serial('pk').unique().primaryKey(),
-  parentFk: integer('parent_fk'),
-  threadFk: integer('thread_fk')
-    .notNull()
+  messageId: uuid('message_id').primaryKey(),
+  threadId: uuid('thread_id')
     .unique()
-    .references(() => threads.pk),
-  messageId: uuid('message_id').notNull().unique(),
+    .notNull()
+    .references(() => threads.threadId),
+  parentId: uuid('parent_id'),
   content: text('content').notNull(),
   model: text('model').notNull(),
   role: text({ enum: ['user', 'assistant'] }).notNull(),
@@ -54,8 +41,7 @@ export const messages = pgTable('messages', {
 });
 
 export const movies = pgTable('movies', {
-  pk: serial('pk').unique().primaryKey(),
-  tmdbId: integer('tmdb_id').notNull().unique(),
+  movieId: uuid('movie_id').primaryKey(),
   title: text('title').notNull(),
   releaseDate: date('release_date', { mode: 'date' }).notNull(),
   posterPath: text('poster_path').notNull(),
@@ -66,14 +52,12 @@ export const movies = pgTable('movies', {
 export const library = pgTable(
   'library',
   {
-    userFk: integer('user_fk')
+    userId: uuid('user_id')
       .notNull()
-      .unique()
-      .references(() => users.pk),
-    movieFk: integer('movie_fk')
+      .references(() => users.userId),
+    movieId: uuid('movie_id')
       .notNull()
-      .unique()
-      .references(() => movies.pk),
+      .references(() => movies.movieId),
     watched: boolean('watched').default(false),
     liked: boolean('liked').default(false),
     watchlist: boolean('watchlist').default(false),
@@ -86,27 +70,27 @@ export const library = pgTable(
   },
   (t) => [
     primaryKey({
-      columns: [t.userFk, t.movieFk],
+      columns: [t.userId, t.movieId],
     }),
   ]
 );
 
-export const messagesToMovies = pgTable(
-  'messages_to_movies',
+export const messageMovies = pgTable(
+  'message_movies',
   {
-    messageFk: integer('message_fk')
+    messageId: uuid('message_id')
       .notNull()
       .unique()
-      .references(() => messages.pk),
-    movieFk: integer('movie_fk')
+      .references(() => messages.messageId),
+    movieId: uuid('movie_id')
       .notNull()
       .unique()
-      .references(() => movies.pk),
+      .references(() => movies.movieId),
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
   (t) => [
     primaryKey({
-      columns: [t.messageFk, t.movieFk],
+      columns: [t.messageId, t.movieId],
     }),
   ]
 );
@@ -114,54 +98,54 @@ export const messagesToMovies = pgTable(
 export const userRelations = relations(users, ({ many, one }) => ({
   threads: many(threads),
   library: one(library, {
-    fields: [users.pk],
-    references: [library.userFk],
+    fields: [users.userId],
+    references: [library.userId],
   }),
 }));
 
 export const threadsRelations = relations(threads, ({ one, many }) => ({
   user: one(users, {
-    fields: [threads.userFk],
-    references: [users.pk],
+    fields: [threads.userId],
+    references: [users.userId],
   }),
   messages: many(messages),
 }));
 
 export const messageRelations = relations(messages, ({ one, many }) => ({
   thread: one(threads, {
-    fields: [messages.threadFk],
-    references: [threads.pk],
+    fields: [messages.threadId],
+    references: [threads.threadId],
   }),
   parent: one(messages, {
-    fields: [messages.parentFk],
-    references: [messages.pk],
+    fields: [messages.parentId],
+    references: [messages.messageId],
   }),
-  movies: many(messagesToMovies),
+  movies: many(messageMovies),
 }));
 
 export const moviesRelations = relations(movies, ({ many }) => ({
   libraries: many(library),
-  messages: many(messagesToMovies),
+  messages: many(messageMovies),
 }));
 
-export const messagesToMoviesRelations = relations(messagesToMovies, ({ one }) => ({
+export const messageMoviesRelations = relations(messageMovies, ({ one }) => ({
   message: one(messages, {
-    fields: [messagesToMovies.messageFk],
-    references: [messages.pk],
+    fields: [messageMovies.messageId],
+    references: [messages.messageId],
   }),
   movie: one(movies, {
-    fields: [messagesToMovies.movieFk],
-    references: [movies.pk],
+    fields: [messageMovies.movieId],
+    references: [movies.movieId],
   }),
 }));
 
 export const libraryRelations = relations(library, ({ one }) => ({
   users: one(users, {
-    fields: [library.userFk],
-    references: [users.pk],
+    fields: [library.userId],
+    references: [users.userId],
   }),
   movies: one(movies, {
-    fields: [library.movieFk],
-    references: [movies.pk],
+    fields: [library.movieId],
+    references: [movies.movieId],
   }),
 }));
