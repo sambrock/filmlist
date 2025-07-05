@@ -1,29 +1,24 @@
-import { generateUuid } from '@/lib/utils/uuid';
 import { ChatStoreProvider } from '@/providers/chat-store-provider';
+import { ChatMessages } from '@/components/chat-messages/chat-messages';
+import { ChatMessagesPending } from '@/components/chat-messages/chat-messages-pending';
 import { ChatInput } from '@/components/chat/chat-input';
-import { ChatMessagesSession } from '@/components/chat/chat-messages-session';
-import { ChatMessagesStatic } from '@/components/chat/chat-messages-static';
-import { ChatScrollIntoView } from '@/components/chat/chat-scroll-into-view';
 
-type Props = {
-  threadId?: string;
-};
-
-export default function ChatPage(props: Props) {
-  const threadId = props.threadId || generateUuid();
+export default function ChatPage() {
+  const threadId = '64242a95-ffa8-42b7-9893-9ff7bc4d1cae';
 
   return (
-    <ChatStoreProvider threadId={threadId} threadExists={props.threadId !== undefined}>
+    <ChatStoreProvider threadId={threadId} threadExists={true}>
       <main className="bg-background-1 relative flex h-full flex-col items-center overflow-y-auto">
-        <div className="w-3xl">
-          <ChatMessagesStatic />
-          <ChatMessagesSession />
+        <div className="mb-40 w-3xl">
+          <ChatMessages />
+          <ChatMessagesPending />
         </div>
-        <ChatScrollIntoView />
 
         <div className="bg-background-1 fixed bottom-0 pb-4">
           <ChatInput className="-mt-4" />
         </div>
+
+        <div id="chat-end" />
       </main>
     </ChatStoreProvider>
   );

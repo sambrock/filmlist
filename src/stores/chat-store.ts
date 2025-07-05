@@ -1,29 +1,40 @@
 import { enableMapSet, produce } from 'immer';
 import { createStore } from 'zustand/vanilla';
 
-import { Message, Movie } from '@/lib/drizzle/zod';
-import { Model } from '@/lib/openai/models';
+import type { Message, Movie } from '@/lib/drizzle/zod';
+import { type Model } from '@/lib/openai/models';
+import { type ChatEventStreamData } from '@/lib/utils/chat.utils';
 
 enableMapSet();
 
-export type ChatMessage = Message & { movies: Movie[] };
+export type ChatMessage =
+  | {
+      key: string;
+      state: 'pending';
+      user: Partial<Message>;
+      assistant: Partial<Message>;
+      movies: Movie[];
+    }
+  | {
+      key: string;
+      state: 'complete';
+      user: Message;
+      assistant: Message;
+      movies: Movie[];
+    };
 
 export type ChatState = {
   threadId: string;
   threadExists: boolean;
   inputValue: string;
   model: Model;
-
-  messageStack: Map<string, Partial<ChatMessage>>;
+  messages: Map<string, ChatMessage>;
 };
 
 export type ChatActions = {
-  setThreadExists: (exists: boolean) => void;
-  setInputValue: (value: string) => void;
-  setModel: (model: Model) => void;
-  setMessage: (messageId: string, message: ChatMessage) => void;
-  appendMessageContent: (messageId: string, content: string) => void;
-  addMessageMovies: (messageId: string, movie: Movie) => void;
+  updateChat: (partial: Partial<ChatState>) => void;
+  initMessage: () => string;
+  ingestChatStream: (key: string, data: ChatEventStreamData) => void;
 };
 
 export type ChatStore = ChatState & { actions: ChatActions };
@@ -33,60 +44,64 @@ export const createChatStore = (initState: { threadId: string; threadExists?: bo
     threadId: initState.threadId,
     threadExists: initState.threadExists ?? false,
     inputValue: '',
-    model: 'meta-llama/llama-3.3-8b-instruct:free',
-
-    messageStack: new Map<string, ChatMessage>(),
+    model: 'deepseek/deepseek-chat-v3-0324:free',
+    messages: new Map(),
 
     actions: {
-      setThreadExists: (exists) =>
-        set((state) =>
-          produce(state, (draft) => {
-            draft.threadExists = exists;
+      updateChat: (partial) => {
+        set(
+          produce((state: ChatStore) => {
+            Object.assign(state, partial);
           })
-        ),
+        );
+      },
 
-      setInputValue: (value) =>
-        set((state) =>
-          produce(state, (draft) => {
-            draft.inputValue = value;
+      initMessage: () => {
+        const key = Math.random().toString(36).substring(2, 15);
+
+        set(
+          produce((state: ChatStore) => {
+            state.messages.set(key, {
+              key,
+              state: 'pending',
+              user: { content: state.inputValue },
+              assistant: { content: '' },
+              movies: [],
+            });
           })
-        ),
+        );
 
-      setModel: (model) =>
-        set((state) =>
-          produce(state, (draft) => {
-            draft.model = model;
-          })
-        ),
+        return key;
+      },
 
-      setMessage: (messageId, message) =>
-        set((state) =>
-          produce(state, (draft) => {
-            draft.messageStack.set(messageId, message);
-          })
-        ),
+      ingestChatStream: (key, data) => {
+        set(
+          produce((state: ChatStore) => {
+            const message = state.messages.get(key)!;
 
-      appendMessageContent: (messageId, content) =>
-        set((state) =>
-          produce(state, (draft) => {
-            const message = draft.messageStack.get(messageId);
-            if (message) {
-              message.content += content;
-              draft.messageStack.set(messageId, message);
+            if (data.type === 'content') {
+              message.assistant.content += data.v;
+            }
+            if (data.type === 'movie') {
+              const movie: Movie = data.v;
+              if (!message.movies.some((m) => m.movieId === movie.movieId)) {
+                message.movies.push(movie);
+              }
+            }
+            if (data.type === 'message') {
+              if (data.v.role === 'user') {
+                message.user = data.v;
+              }
+              if (data.v.role === 'assistant') {
+                message.assistant = data.v;
+              }
+            }
+            if (data.type === 'end') {
+              message.state = 'complete';
             }
           })
-        ),
-
-      addMessageMovies: (messageId, movie) =>
-        set((state) =>
-          produce(state, (draft) => {
-            const message = draft.messageStack.get(messageId);
-            if (message) {
-              message.movies?.push(movie);
-              draft.messageStack.set(messageId, message);
-            }
-          })
-        ),
+        );
+      },
     },
   }));
 };

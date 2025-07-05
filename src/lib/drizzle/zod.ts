@@ -1,37 +1,25 @@
 import { z } from '@hono/zod-openapi';
-import { createSchemaFactory } from 'drizzle-zod';
 
-import { messages, movies, threads, users } from './schema';
+export type Message = z.infer<typeof MessageSchema>;
+export type Movie = z.infer<typeof MovieSchema>;
 
-const { createSelectSchema, createInsertSchema } = createSchemaFactory({ zodInstance: z });
-
-export type User = typeof UserSchema._zod.output;
-export type Thread = typeof ThreadSchema._zod.output;
-export type Message = typeof MessageSchema._zod.output;
-export type Movie = typeof MovieSchema._zod.output;
-
-export type InsertUser = typeof InsertUserSchema._zod.input;
-export type InsertThread = typeof InsertThreadSchema._zod.input;
-export type InsertMessage = typeof InsertMessageSchema._zod.input;
-export type InsertMovie = typeof InsertMovieSchema._zod.input;
-
-export const UserSchema = createSelectSchema(users);
-export const ThreadSchema = createSelectSchema(threads);
-export const MessageSchema = createSelectSchema(messages);
-export const MovieSchema = createSelectSchema(movies);
-
-export const InsertUserSchema = createInsertSchema(users).omit({
-  createdAt: true,
-  updatedAt: true,
+export const MessageSchema = z.object({
+  messageId: z.string(),
+  threadId: z.string(),
+  parentId: z.string().nullable(),
+  content: z.string(),
+  role: z.enum(['user', 'assistant']),
+  model: z.string(),
+  createdAt: z.date().or(z.string()).openapi({ type: 'string', format: 'date-time' }),
+  updatedAt: z.date().or(z.string()).openapi({ type: 'string', format: 'date-time' }),
 });
-export const InsertThreadSchema = createInsertSchema(threads).omit({
-  createdAt: true,
-  updatedAt: true,
-});
-export const InsertMessageSchema = createInsertSchema(messages).omit({
-  createdAt: true,
-  updatedAt: true,
-});
-export const InsertMovieSchema = createInsertSchema(movies).omit({
-  createdAt: true,
+
+export const MovieSchema = z.object({
+  movieId: z.string(),
+  tmdbId: z.number(),
+  title: z.string(),
+  releaseDate: z.date().or(z.string()).openapi({ type: 'string', format: 'date-time' }),
+  posterPath: z.string(),
+  backdropPath: z.string(),
+  createdAt: z.date().or(z.string()).openapi({ type: 'string', format: 'date-time' }),
 });

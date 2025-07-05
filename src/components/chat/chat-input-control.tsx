@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils/cn.util';
+import { cn } from '@/lib/utils/app.utils';
 
 type Props = React.ComponentProps<'textarea'>;
 

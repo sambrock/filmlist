@@ -3,7 +3,7 @@ import { Schibsted_Grotesk } from 'next/font/google';
 
 import './globals.css';
 
-import { cn } from '@/lib/utils/cn.util';
+import { cn } from '@/lib/utils/app.utils';
 
 const fontSans = Schibsted_Grotesk({
   subsets: ['latin'],

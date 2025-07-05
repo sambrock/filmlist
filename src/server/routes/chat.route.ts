@@ -1,15 +1,14 @@
-import { createRoute } from '@hono/zod-openapi';
+import { createRoute, z } from '@hono/zod-openapi';
 import { streamSSE } from 'hono/streaming';
-import { z } from 'zod';
 
 import { AppRouteHandler } from '@/server/types';
 import { db } from '@/lib/drizzle/db';
-import { messages } from '@/lib/drizzle/schema';
-import { Movie } from '@/lib/drizzle/zod';
-import { openai } from '@/lib/openai/client';
-import { baseMessage, parseMoviesFromMessage } from '@/lib/utils/chat.utils';
-import { HttpStatusCodes, jsonContent } from '@/lib/utils/openapi.utils';
-import { generateUuid } from '@/lib/utils/uuid.util';
+import { messageMovies, messages, movies } from '@/lib/drizzle/schema';
+import { openai } from '@/lib/openai';
+import { findMovie } from '@/lib/tmdb';
+import { chatEventStreamData, findMoviesInContent } from '@/lib/utils/chat.utils';
+import { baseMessage } from '@/lib/utils/message.utils';
+import { generateUuid, HttpStatusCodes, jsonContent } from '@/lib/utils/server.utils';
 
 export const route = createRoute({
   path: '/chat',
@@ -40,11 +39,6 @@ export const route = createRoute({
   },
 });
 
-export type EventStreamData =
-  | { type: 'content'; v: string }
-  | { type: 'movie'; id: string; v: Movie }
-  | { type: 'end' };
-
 export const handler: AppRouteHandler<typeof route> = async (c) => {
   const data = c.req.valid('json');
 
@@ -61,114 +55,96 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
   return streamSSE(c, async (stream) => {
     const foundMovies = new Map<number, { title: string; releaseYear: string }>([]);
 
-    chatStream.on('content', async (content) => {
-      content += content;
+    let contentSoFar = '';
 
+    chatStream.on('content', async (content) => {
+      console.log('content', content);
       await stream.writeSSE({
         event: 'delta',
-        data: JSON.stringify({ type: 'content', v: content } satisfies EventStreamData),
+        data: JSON.stringify(chatEventStreamData({ type: 'content', v: content })),
       });
-
-      parseMoviesFromMessage(content, foundMovies);
+      contentSoFar += content;
+      findMoviesInContent(contentSoFar, foundMovies);
     });
 
     chatStream.on('finalContent', async (finalContent) => {
-      const userMessageId = generateUuid();
-      const assistantMessageId = generateUuid();
-
-      await db.insert(messages).values([
-        {
-          messageId: userMessageId,
-          threadId: data.threadId,
-          content: data.content,
-          model: data.model,
-          role: 'user',
-        },
-        {
-          messageId: assistantMessageId,
-          threadId: data.threadId,
-          parentId: userMessageId,
-          content: finalContent,
-          model: data.model,
-          role: 'assistant',
-        },
-      ]);
-
-      await stream.writeSSE({
-        event: 'delta',
-        data: JSON.stringify({ type: 'end' } satisfies EventStreamData),
-      });
+      contentSoFar = finalContent;
     });
 
     chatStream.on('end', async () => {
+      const userMessageId = generateUuid();
+      const assistantMessageId = generateUuid();
+
+      const [userMessage, assistantMessage] = await db
+        .insert(messages)
+        .values([
+          {
+            messageId: userMessageId,
+            threadId: data.threadId,
+            content: data.content,
+            model: data.model,
+            role: 'user',
+          },
+          {
+            messageId: assistantMessageId,
+            threadId: data.threadId,
+            parentId: userMessageId,
+            content: contentSoFar,
+            model: data.model,
+            role: 'assistant',
+          },
+        ])
+        .returning();
+
+      // TODO: make these a single event?
+      await stream.writeSSE({
+        event: 'delta',
+        data: JSON.stringify(chatEventStreamData({ type: 'message', v: userMessage })),
+      });
+      await stream.writeSSE({
+        event: 'delta',
+        data: JSON.stringify(chatEventStreamData({ type: 'message', v: assistantMessage })),
+      });
+      await stream.writeSSE({
+        event: 'delta',
+        data: JSON.stringify(chatEventStreamData({ type: 'end' })),
+      });
+
+      await Promise.all(
+        [...foundMovies.values()].entries().map(async ([, found]) => {
+          const movie = await findMovie(found.title, found.releaseYear);
+          if (!movie) return undefined;
+
+          const [inserted] = await db
+            .insert(movies)
+            .values({
+              movieId: generateUuid(),
+              tmdbId: movie.id,
+              title: movie.title!,
+              backdropPath: movie.backdrop_path!,
+              posterPath: movie.poster_path!,
+              releaseDate: new Date(movie.release_date!),
+            })
+            .returning()
+            .onConflictDoNothing();
+
+          await stream.writeSSE({
+            event: 'delta',
+            data: JSON.stringify(chatEventStreamData({ type: 'movie', v: inserted })),
+          });
+
+          await db
+            .insert(messageMovies)
+            .values({
+              messageId: assistantMessageId,
+              movieId: inserted.movieId,
+            })
+            .onConflictDoNothing();
+        })
+      );
+
       await stream.close();
     });
-
-    // completion.on('finalContent', async (finalContent) => {
-    //   assistantMessage.content = finalContent;
-    //   assistantMessage.createdAt = new Date();
-    //   assistantMessage.updatedAt = new Date();
-    // });
-
-    // completion.on('end', async () => {
-    //   await stream.writeSSE({
-    //     event: 'delta',
-    //     data: JSON.stringify({ type: 'end' } satisfies EventStreamData),
-    //   });
-
-    //   await db.insert(messages).values(userMessage);
-    //   await db.insert(messages).values(assistantMessage);
-
-    //   const foundMovies = findMoviesFromCompletionString(assistantMessage.content);
-
-    //   await Promise.all(
-    //     foundMovies.map(async (found) => {
-    //       const { data } = await tmdb.GET('/3/search/movie', {
-    //         params: {
-    //           query: {
-    //             query: found.title,
-    //             year: found.release_year ? String(found.release_year) : undefined,
-    //             primary_release_year: found.release_year ? String(found.release_year) : undefined,
-    //           },
-    //         },
-    //       });
-
-    //       if (!data) return;
-    //       if (!data.results || data.results?.length === 0) return;
-
-    //       const [result] = data.results;
-
-    //       const movie: Movie = {
-    //         movieId: result.id,
-    //         tmdbId: result.id,
-    //         title: result.title!,
-    //         backdropPath: result.backdrop_path!,
-    //         posterPath: result.poster_path!,
-    //         releaseDate: new Date(result.release_date!),
-    //         createdAt: new Date(),
-    //       };
-
-    //       await stream.writeSSE({
-    //         event: 'delta',
-    //         data: JSON.stringify({
-    //           type: 'movie',
-    //           id: assistantMessage.messageId,
-    //           v: movie,
-    //         } satisfies EventStreamData),
-    //       });
-
-    //       await db.insert(movies).values(movie).onConflictDoNothing();
-
-    //       await db.insert(messagesMovies).values({
-    //         messageId: assistantMessage.messageId,
-    //         movieId: movie.movieId,
-    //         createdAt: new Date(),
-    //       });
-    //     })
-    //   );
-
-    //   await stream.close();
-    // });
 
     while (true) {
       await stream.sleep(100000); // Keep stream alive

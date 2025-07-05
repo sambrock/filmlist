@@ -2,7 +2,7 @@
 
 import { DropdownMenu } from 'radix-ui';
 
-import { cn } from '@/lib/utils/cn.util';
+import { cn } from '@/lib/utils/app.utils';
 
 export const DropdownRoot = DropdownMenu.Root;
 export const DropdownTrigger = DropdownMenu.Trigger;

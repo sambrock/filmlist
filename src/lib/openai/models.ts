@@ -1,6 +1,6 @@
-export type Model = Parameters<(typeof MODELS)['get']>[number];
+export type Model = Parameters<(typeof models)['get']>[number];
 
-export const MODELS = new Map([
+export const models = new Map([
   [
     'deepseek/deepseek-chat-v3-0324:free',
     {
@@ -52,6 +52,15 @@ export const MODELS = new Map([
       model: 'microsoft/mai-ds-r1:free',
       label: 'MAI DS R1',
       provider: 'Microsoft',
+      free: true,
+    },
+  ],
+  [
+    'qwen/qwen3-32b:free',
+    {
+      model: 'qwen/qwen3-32b:free',
+      label: 'Qwen 3',
+      provider: 'Qwen',
       free: true,
     },
   ],

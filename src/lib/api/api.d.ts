@@ -24,9 +24,10 @@ export interface paths {
             requestBody?: {
                 content: {
                     "application/json": {
+                        /** Format: uuid */
                         threadId: string;
-                        content: string;
                         model: string;
+                        content: string;
                     };
                 };
             };
@@ -76,72 +77,33 @@ export interface paths {
                     content: {
                         "application/json": {
                             messages: {
-                                messageId: string;
-                                threadId: string;
-                                content: string;
-                                /** Format: date-time */
-                                createdAt: string;
-                                /** Format: date-time */
-                                updatedAt: string;
-                                movies: {
-                                    title: string;
+                                message: {
+                                    messageId: string;
+                                    threadId: string;
+                                    parentId: string | null;
+                                    content: string;
+                                    /** @enum {string} */
+                                    role: "user" | "assistant";
+                                    model: string;
                                     /** Format: date-time */
                                     createdAt: string;
                                     /** Format: date-time */
-                                    releaseDate: string;
+                                    updatedAt: string;
+                                };
+                                movies: {
                                     movieId: string;
                                     tmdbId: number;
+                                    title: string;
+                                    /** Format: date-time */
+                                    releaseDate: string;
                                     posterPath: string;
-                                    backdropPath?: string;
+                                    backdropPath: string;
+                                    /** Format: date-time */
+                                    createdAt: string;
                                 }[];
                             }[];
-                            nextCursor?: number | null;
+                            nextCursor: number;
                         };
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/user-threads/{userId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    userId: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": {
-                            threadId: string;
-                            ownerId: string;
-                            title: string;
-                            model: string;
-                            /** Format: date-time */
-                            createdAt: string;
-                            /** Format: date-time */
-                            updatedAt: string;
-                        }[];
                     };
                 };
             };

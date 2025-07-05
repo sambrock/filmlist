@@ -1,5 +1,15 @@
 import { relations } from 'drizzle-orm';
-import { boolean, date, pgTable, primaryKey, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  date,
+  integer,
+  pgTable,
+  primaryKey,
+  serial,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   userId: uuid('user_id').primaryKey(),
@@ -11,7 +21,6 @@ export const users = pgTable('users', {
 export const threads = pgTable('threads', {
   threadId: uuid('thread_id').primaryKey(),
   userId: uuid('user_id')
-    .unique()
     .notNull()
     .references(() => users.userId),
   model: text('model').notNull().default(''),
@@ -26,10 +35,10 @@ export const threads = pgTable('threads', {
 export const messages = pgTable('messages', {
   messageId: uuid('message_id').primaryKey(),
   threadId: uuid('thread_id')
-    .unique()
     .notNull()
     .references(() => threads.threadId),
   parentId: uuid('parent_id'),
+  serial: serial('serial').notNull(),
   content: text('content').notNull(),
   model: text('model').notNull(),
   role: text({ enum: ['user', 'assistant'] }).notNull(),
@@ -42,6 +51,7 @@ export const messages = pgTable('messages', {
 
 export const movies = pgTable('movies', {
   movieId: uuid('movie_id').primaryKey(),
+  tmdbId: integer('tmdb_id').notNull().unique(),
   title: text('title').notNull(),
   releaseDate: date('release_date', { mode: 'date' }).notNull(),
   posterPath: text('poster_path').notNull(),
@@ -80,11 +90,9 @@ export const messageMovies = pgTable(
   {
     messageId: uuid('message_id')
       .notNull()
-      .unique()
       .references(() => messages.messageId),
     movieId: uuid('movie_id')
       .notNull()
-      .unique()
       .references(() => movies.movieId),
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },

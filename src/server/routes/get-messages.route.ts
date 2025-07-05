@@ -1,7 +1,8 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 import { db } from '@/lib/drizzle/db';
-import { HttpStatusCodes } from '@/lib/utils/openapi.utils';
+import { MessageSchema, MovieSchema } from '@/lib/drizzle/zod';
+import { HttpStatusCodes, jsonContent } from '@/lib/utils/server.utils';
 import { AppRouteHandler } from '../types';
 
 export const route = createRoute({
@@ -13,40 +14,22 @@ export const route = createRoute({
     }),
     query: z.object({
       limit: z.coerce.number().optional().default(20),
-      cursor: z.coerce
-        .number()
-        .optional()
-        .default(() => Date.now()),
+      cursor: z.coerce.number().optional(),
     }),
   },
   responses: {
     [HttpStatusCodes.OK]: {
-      content: {
-        'application/json': {
-          schema: z.object({
-            messages: z.array(
-              z.object({
-                messageId: z.string(),
-                threadId: z.string(),
-                content: z.string(),
-                createdAt: z.string().datetime(),
-                updatedAt: z.string().datetime(),
-                movies: z.array(
-                  z.object({
-                    movieId: z.string(),
-                    title: z.string(),
-                    createdAt: z.string().datetime(),
-                    releaseDate: z.string().datetime(),
-                    posterPath: z.string(),
-                    backdropPath: z.string().optional(),
-                  })
-                ),
-              })
-            ),
-            nextCursor: z.nullable(z.number()).optional(),
-          }),
-        },
-      },
+      content: jsonContent(
+        z.object({
+          messages: z
+            .object({
+              message: MessageSchema,
+              movies: MovieSchema.array(),
+            })
+            .array(),
+          nextCursor: z.number(),
+        })
+      ),
       description: '',
     },
   },
@@ -56,12 +39,10 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
   const { threadId } = c.req.valid('param');
   const { limit, cursor } = c.req.valid('query');
 
-  const searchCursor = cursor ? new Date(cursor) : new Date();
-
-  const messages = await db.query.messages.findMany({
+  const messagesWithMovies = await db.query.messages.findMany({
     where: (messages, { and, eq, lt }) =>
-      and(eq(messages.threadId, threadId), lt(messages.createdAt, searchCursor)),
-    orderBy: (messages, { desc }) => [desc(messages.createdAt)],
+      and(eq(messages.threadId, threadId), cursor ? lt(messages.serial, cursor) : undefined),
+    orderBy: (messages, { desc }) => [desc(messages.serial)],
     with: {
       movies: {
         with: {
@@ -72,13 +53,11 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
     limit,
   });
 
-  const messagesWithMovies = messages.map(({ movies, ...message }) => ({
-    ...message,
-    movies: movies.map((mm) => mm.movie),
-  }));
-
   return c.json({
-    messages: messagesWithMovies,
-    nextCursor: messages.length > 0 ? messages[messages.length - 1].createdAt.getTime() : null,
+    messages: messagesWithMovies.map((messageWithMovies) => {
+      const { movies, ...message } = messageWithMovies;
+      return { message, movies: movies.map((m) => m.movie) };
+    }),
+    nextCursor: messagesWithMovies.length > 0 ? messagesWithMovies[messagesWithMovies.length - 1].serial : 0,
   });
 };
