@@ -42,7 +42,7 @@ export const route = createRoute({
 export const handler: AppRouteHandler<typeof route> = async (c) => {
   const data = c.req.valid('json');
 
-  const chatStream = openai.chat.completions.stream({
+  const completionStream = openai.chat.completions.stream({
     model: data.model,
     messages: [
       {
@@ -53,11 +53,11 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
   });
 
   return streamSSE(c, async (stream) => {
-    const foundMovies = new Map<number, { title: string; releaseYear: string }>([]);
+    const foundMovies: Map<number, { title: string; releaseYear: string }> = new Map();
 
     let contentSoFar = '';
 
-    chatStream.on('content', async (content) => {
+    completionStream.on('content', async (content) => {
       console.log('content', content);
       await stream.writeSSE({
         event: 'delta',
@@ -67,11 +67,11 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
       findMoviesInContent(contentSoFar, foundMovies);
     });
 
-    chatStream.on('finalContent', async (finalContent) => {
+    completionStream.on('finalContent', async (finalContent) => {
       contentSoFar = finalContent;
     });
 
-    chatStream.on('end', async () => {
+    completionStream.on('end', async () => {
       const userMessageId = generateUuid();
       const assistantMessageId = generateUuid();
 

@@ -1,8 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { ChatEventStreamData } from '@/server/routes/chat.route';
 import { api } from '@/lib/api';
-import { readChatEventStream } from '@/lib/utils/chat.utils';
+import { ChatEventStreamData, readChatEventStream } from '@/lib/utils/chat.utils';
 import {
   useChatActions,
   useChatInputValue,

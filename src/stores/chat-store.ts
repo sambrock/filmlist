@@ -12,7 +12,7 @@ export type ChatMessage =
       key: string;
       state: 'pending';
       user: Partial<Message>;
-      assistant: Partial<Message>;
+      assistant: Partial<Message> & { content: string };
       movies: Movie[];
     }
   | {

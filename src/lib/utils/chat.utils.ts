@@ -53,6 +53,33 @@ export const findMoviesInContent = (
   }
 };
 
-export const convertMarkdownContentToHtml = (content: string) => {
-  return marked(content);
+export const convertMarkdownContentToHtml = (content: string): string => {
+  return marked(content) as string;
+};
+
+export const formatContent = (content: string): ({ type: 'TEXT'; html: string } | { type: 'MOVIES' })[] => {
+  const jsonCodeRegex = /\`\`\`(?:\w+\n)?([\s\S]*?)\`\`\`/g;
+  const partialJsonCodeRegex = /\`\`\`(.*)/g;
+
+  if (content.match(jsonCodeRegex)) {
+    const parts = content.split(jsonCodeRegex);
+    return parts.map((part) => {
+      if (part.trim() === '') return { type: 'TEXT', html: '' };
+      if (part.startsWith('json') || part.startsWith('`') || part.includes('[')) {
+        return { type: 'MOVIES' };
+      }
+      return { type: 'TEXT', html: convertMarkdownContentToHtml(part) };
+    });
+  } else if (content.match(partialJsonCodeRegex)) {
+    const parts = content.split(partialJsonCodeRegex);
+    return parts.map((part) => {
+      if (part.trim() === '') return { type: 'TEXT', html: '' };
+      if (part.startsWith('json') || part.startsWith('`') || part.startsWith('[')) {
+        return { type: 'MOVIES' };
+      }
+      return { type: 'TEXT', html: convertMarkdownContentToHtml(part) };
+    });
+  } else {
+    return [{ type: 'TEXT', html: convertMarkdownContentToHtml(content) }];
+  }
 };
