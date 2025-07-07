@@ -1,5 +1,5 @@
 import type { Movie } from '@/lib/drizzle/zod';
-import { backdropSrc, posterSrc } from '@/lib/utils/app.utils';
+import { posterSrc } from '@/lib/utils/app.utils';
 
 type Props = {
   movies: Movie[];
@@ -7,24 +7,20 @@ type Props = {
 
 export const ChatMessageMovies = ({ movies }: Props) => {
   return (
-    <div className="bg-background-0  my-4 rounded-lg px-4 py-4">
-      <div className="grid grid-cols-2 gap-4">
-        {movies.map((movie) => (
-          <div key={movie.movieId} className="flex flex-col">
-            <div className="relative overflow-clip rounded-sm">
-              <img
-                src={posterSrc(movie.posterPath, 'w500')}
-                className="absolute bottom-2 left-2 w-20 rounded-sm"
-                alt={movie.title}
-              />
-              <img src={backdropSrc(movie.backdropPath, 'w780')} alt={movie.title} />
-            </div>
-            <div>
-              <div>{movie.title}</div>
+    <div className="border-background-3 grid grid-cols-4 gap-3 rounded-lg border p-3">
+      {movies.slice(0,4).map((movie) => (
+        <div key={movie.movieId} className="bg-background-1 flex flex-col rounded-md">
+          <div className="relative overflow-clip rounded-sm">
+            <img src={posterSrc(movie.posterPath, 'w500')} className="rounded-sm" alt={movie.title} />
+          </div>
+          <div className="mt-2 px-0.5">
+            <div className="text-foreground-0 text-sm font-medium">{movie.title}</div>
+            <div className="text-foreground-1 text-xs font-medium">
+              {new Date(movie.releaseDate).getFullYear()}
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 };

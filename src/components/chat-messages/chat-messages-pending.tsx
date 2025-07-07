@@ -25,10 +25,10 @@ export const ChatMessagesPending = () => {
   return (
     <ChatMessagesList ref={divRef} className="mt-4">
       {messages.map((message) => (
-        <Fragment key={message.key}>
+        <div key={message.key}>
           <ChatMessageUser message={message.user} />
           <ChatMessageAssistant message={message.assistant} movies={message.movies} />
-        </Fragment>
+        </div>
       ))}
     </ChatMessagesList>
   );

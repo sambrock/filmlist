@@ -1,6 +1,5 @@
 import { ChatStoreProvider } from '@/providers/chat-store-provider';
 import { ChatMessages } from '@/components/chat-messages/chat-messages';
-import { ChatMessagesFetchMore } from '@/components/chat-messages/chat-messages-fetch-more';
 import { ChatMessagesPending } from '@/components/chat-messages/chat-messages-pending';
 import { ChatInput } from '@/components/chat/chat-input';
 

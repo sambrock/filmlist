@@ -24,10 +24,10 @@ export const ChatMessages = () => {
     <ChatMessagesList>
       {!isLoading && <ChatMessagesFetchMore fetchNextPage={fetchNextPage} />}
       {data?.map(({ message, movies }) => (
-        <Fragment key={message.messageId}>
+        <div key={message.messageId}>
           {message.role === 'user' && <ChatMessageUser message={message} />}
           {message.role === 'assistant' && <ChatMessageAssistant message={message} movies={movies} />}
-        </Fragment>
+        </div>
       ))}
     </ChatMessagesList>
   );
