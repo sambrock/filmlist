@@ -1,9 +1,10 @@
 import { enableMapSet, produce } from 'immer';
 import { createStore } from 'zustand/vanilla';
 
-import type { Message, Movie } from '@/lib/drizzle/zod';
+import type { Message, MessageMovie, Movie } from '@/lib/drizzle/zod';
 import { type Model } from '@/lib/openai/models';
-import { type ChatEventStreamData } from '@/lib/utils/chat.utils';
+import { parseMessageContentToMovies, type ChatEventStreamData } from '@/lib/utils/chat.utils';
+import { Prettify } from '@/lib/utils/type.utils';
 
 enableMapSet();
 
@@ -13,14 +14,14 @@ export type ChatMessage =
       state: 'pending';
       user: Partial<Message>;
       assistant: Partial<Message> & { content: string };
-      movies: Movie[];
+      movies: Prettify<Partial<MessageMovie> & { movie?: Movie }>[];
     }
   | {
       key: string;
       state: 'complete';
       user: Message;
       assistant: Message;
-      movies: Movie[];
+      movies: Prettify<MessageMovie & { movie?: Movie }>[];
     };
 
 export type ChatState = {
@@ -81,19 +82,22 @@ export const createChatStore = (initState: { threadId: string; threadExists?: bo
 
             if (data.type === 'content') {
               message.assistant.content += data.v;
+              const parsed = parseMessageContentToMovies(message.assistant.content);
+              message.movies = parsed;
             }
             if (data.type === 'movie') {
-              const movie: Movie = data.v;
-              if (!message.movies.some((m) => m.movieId === movie.movieId)) {
-                message.movies.push(movie);
-              }
+              const movie = data.v;
+              const index = data.i;
+              console.log(movie, index, message.movies[index]);
+              message.movies[index].movie = movie;
+              console.log('Updated movie:', message.movies[index]);
             }
             if (data.type === 'message') {
               if (data.v.role === 'user') {
                 message.user = data.v;
               }
               if (data.v.role === 'assistant') {
-                message.assistant = data.v;
+                Object.assign(message.assistant, data.v);
               }
             }
             if (data.type === 'end') {

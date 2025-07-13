@@ -6,7 +6,7 @@ import { db } from '@/lib/drizzle/db';
 import { messageMovies, messages, movies } from '@/lib/drizzle/schema';
 import { openai } from '@/lib/openai';
 import { findMovie } from '@/lib/tmdb';
-import { chatEventStreamData, findMoviesInContent } from '@/lib/utils/chat.utils';
+import { chatEventStreamData, parseMessageContentToMovies } from '@/lib/utils/chat.utils';
 import { baseMessage } from '@/lib/utils/message.utils';
 import { generateUuid, HttpStatusCodes, jsonContent } from '@/lib/utils/server.utils';
 
@@ -53,8 +53,6 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
   });
 
   return streamSSE(c, async (stream) => {
-    const foundMovies: Map<number, { title: string; releaseYear: string }> = new Map();
-
     let contentSoFar = '';
 
     completionStream.on('content', async (content) => {
@@ -64,7 +62,6 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
         data: JSON.stringify(chatEventStreamData({ type: 'content', v: content })),
       });
       contentSoFar += content;
-      findMoviesInContent(contentSoFar, foundMovies);
     });
 
     completionStream.on('finalContent', async (finalContent) => {
@@ -96,7 +93,6 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
         ])
         .returning();
 
-      // TODO: make these a single event?
       await stream.writeSSE({
         event: 'delta',
         data: JSON.stringify(chatEventStreamData({ type: 'message', v: userMessage })),
@@ -110,34 +106,38 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
         data: JSON.stringify(chatEventStreamData({ type: 'end' })),
       });
 
-      await Promise.all(
-        [...foundMovies.values()].entries().map(async ([, found]) => {
-          const movie = await findMovie(found.title, found.releaseYear);
-          if (!movie) return undefined;
+      const parsed = parseMessageContentToMovies(contentSoFar);
 
-          const [inserted] = await db
-            .insert(movies)
-            .values({
-              movieId: generateUuid(),
-              tmdbId: movie.id,
-              title: movie.title!,
-              backdropPath: movie.backdrop_path!,
-              posterPath: movie.poster_path!,
-              releaseDate: new Date(movie.release_date!),
-            })
-            .returning()
-            .onConflictDoNothing();
+      await Promise.all(
+        parsed.map(async (parsedMovie, index) => {
+          const found = await findMovie(parsedMovie.title, parsedMovie.releaseYear);
+          if (!found) return undefined;
+
+          const movie = {
+            movieId: generateUuid(),
+            tmdbId: found.id,
+            title: found.title!,
+            backdropPath: found.backdrop_path!,
+            posterPath: found.poster_path!,
+            releaseDate: new Date(found.release_date!),
+            createdAt: new Date(),
+          };
 
           await stream.writeSSE({
             event: 'delta',
-            data: JSON.stringify(chatEventStreamData({ type: 'movie', v: inserted })),
+            data: JSON.stringify(chatEventStreamData({ type: 'movie', v: movie, i: index })),
           });
+
+          await db.insert(movies).values(movie).returning().onConflictDoNothing();
 
           await db
             .insert(messageMovies)
             .values({
               messageId: assistantMessageId,
-              movieId: inserted.movieId,
+              movieId: movie.movieId,
+              title: parsedMovie.title,
+              releaseYear: parsedMovie.releaseYear,
+              why: parsedMovie.why,
             })
             .onConflictDoNothing();
         })

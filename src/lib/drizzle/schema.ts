@@ -94,6 +94,9 @@ export const messageMovies = pgTable(
     movieId: uuid('movie_id')
       .notNull()
       .references(() => movies.movieId),
+    title: text('title').notNull(), // Title parsed from the completion content (it may noy accurately match the movie title, so we store it as well)
+    releaseYear: text('release_year').notNull(),
+    why: text('why').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
   (t) => [

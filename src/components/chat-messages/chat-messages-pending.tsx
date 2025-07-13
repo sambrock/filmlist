@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { scrollToEnd } from '@/lib/utils/app.utils';
 import { useChatStore } from '@/providers/chat-store-provider';
@@ -23,7 +23,7 @@ export const ChatMessagesPending = () => {
   }, []);
 
   return (
-    <ChatMessagesList ref={divRef} className="mt-4">
+    <ChatMessagesList ref={divRef}>
       {messages.map((message) => (
         <div key={message.key}>
           <ChatMessageUser message={message.user} />

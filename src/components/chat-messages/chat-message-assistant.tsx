@@ -1,23 +1,23 @@
 'use client';
 
-import type { Message, Movie } from '@/lib/drizzle/zod';
-import { formatContent } from '@/lib/utils/chat.utils';
-import { ChatMessageMovies } from './chat-message-movies';
+import type { Message, MessageMovie, Movie } from '@/lib/drizzle/zod';
+import { Prettify } from '@/lib/utils/type.utils';
 
 type Props = {
-  message: Partial<Message> & { content: string };
-  movies: Movie[];
+  message: Partial<Message>;
+  movies?: Prettify<Partial<MessageMovie> & { movie?: Movie }>[];
 };
 
-export const ChatMessageAssistant = ({ message, movies }: Props) => {
-  const formatted = formatContent(message.content);
-
+export const ChatMessageAssistant = ({ message, movies = [] }: Props) => {
+  console.log(message);
   return (
-    <div className="space-y-4">
-      {formatted.map((part, index) => (
-        <div key={index} className="">
-          {part.type === 'TEXT' && <div dangerouslySetInnerHTML={{ __html: part.html }} />}
-          {part.type === 'MOVIES' && <ChatMessageMovies movies={movies} />}
+    <div className="space-y-4 pb-8">
+      {movies.map((movie, index) => (
+        <div key={index}>
+          <div>{movie.movie?.tmdbId}</div>
+          <div>{movie.title}</div>
+          <div>{movie.releaseYear}</div>
+          <div>{movie.why}</div>
         </div>
       ))}
     </div>

@@ -91,15 +91,24 @@ export interface paths {
                                     updatedAt: string;
                                 };
                                 movies: {
+                                    messageId: string;
                                     movieId: string;
-                                    tmdbId: number;
                                     title: string;
-                                    /** Format: date-time */
-                                    releaseDate: string;
-                                    posterPath: string;
-                                    backdropPath: string;
+                                    releaseYear: string;
+                                    why: string;
                                     /** Format: date-time */
                                     createdAt: string;
+                                    movie: {
+                                        movieId: string;
+                                        tmdbId: number;
+                                        title: string;
+                                        /** Format: date-time */
+                                        releaseDate: string;
+                                        posterPath: string;
+                                        backdropPath: string;
+                                        /** Format: date-time */
+                                        createdAt: string;
+                                    };
                                 }[];
                             }[];
                             nextCursor: number;

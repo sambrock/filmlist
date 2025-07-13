@@ -7,9 +7,9 @@ type Props = {
 
 export const ChatMessageMovies = ({ movies }: Props) => {
   return (
-    <div className="border-background-3 grid grid-cols-4 gap-3 rounded-lg border p-3">
-      {movies.slice(0,4).map((movie) => (
-        <div key={movie.movieId} className="bg-background-1 flex flex-col rounded-md">
+    <div className="border-background-1 bg-background-0 grid grid-cols-4 gap-3 rounded-lg border p-3">
+      {movies.slice(0, 4).map((movie) => (
+        <div key={movie.movieId} className="flex flex-col rounded-md">
           <div className="relative overflow-clip rounded-sm">
             <img src={posterSrc(movie.posterPath, 'w500')} className="rounded-sm" alt={movie.title} />
           </div>

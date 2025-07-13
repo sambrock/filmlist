@@ -1,7 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 import { db } from '@/lib/drizzle/db';
-import { MessageSchema, MovieSchema } from '@/lib/drizzle/zod';
+import { MessageMovieSchema, MessageSchema, MovieSchema } from '@/lib/drizzle/zod';
 import { HttpStatusCodes, jsonContent } from '@/lib/utils/server.utils';
 import { AppRouteHandler } from '../types';
 
@@ -24,7 +24,7 @@ export const route = createRoute({
           messages: z
             .object({
               message: MessageSchema,
-              movies: MovieSchema.array(),
+              movies: MessageMovieSchema.extend({ movie: MovieSchema }).array(),
             })
             .array(),
           nextCursor: z.number(),
@@ -56,7 +56,7 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
   return c.json({
     messages: messagesWithMovies.map((messageWithMovies) => {
       const { movies, ...message } = messageWithMovies;
-      return { message, movies: movies.map((m) => m.movie) };
+      return { message, movies };
     }),
     nextCursor: messagesWithMovies.length > 0 ? messagesWithMovies[messagesWithMovies.length - 1].serial : 0,
   });

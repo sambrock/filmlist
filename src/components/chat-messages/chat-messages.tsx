@@ -1,13 +1,10 @@
 'use client';
 
-import { Fragment } from 'react';
-
 import { scrollToEnd } from '@/lib/utils/app.utils';
 import { useChatThreadId } from '@/providers/chat-store-provider';
 import { useChatMessagesInfiniteQuery } from '@/hooks/useChatMessages.query';
 import { ChatMessageAssistant } from './chat-message-assistant';
 import { ChatMessageUser } from './chat-message-user';
-import { ChatMessagesFetchMore } from './chat-messages-fetch-more';
 import { ChatMessagesList } from './chat-messages-list';
 
 export const ChatMessages = () => {
@@ -22,7 +19,7 @@ export const ChatMessages = () => {
 
   return (
     <ChatMessagesList>
-      {!isLoading && <ChatMessagesFetchMore fetchNextPage={fetchNextPage} />}
+      {/* {!isLoading && <ChatMessagesFetchMore fetchNextPage={fetchNextPage} />} */}
       {data?.map(({ message, movies }) => (
         <div key={message.messageId}>
           {message.role === 'user' && <ChatMessageUser message={message} />}

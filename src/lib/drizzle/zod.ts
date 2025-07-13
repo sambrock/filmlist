@@ -2,6 +2,7 @@ import { z } from '@hono/zod-openapi';
 
 export type Message = z.infer<typeof MessageSchema>;
 export type Movie = z.infer<typeof MovieSchema>;
+export type MessageMovie = z.infer<typeof MessageMovieSchema>;
 
 export const MessageSchema = z.object({
   messageId: z.string(),
@@ -12,6 +13,15 @@ export const MessageSchema = z.object({
   model: z.string(),
   createdAt: z.date().or(z.string()).openapi({ type: 'string', format: 'date-time' }),
   updatedAt: z.date().or(z.string()).openapi({ type: 'string', format: 'date-time' }),
+});
+
+export const MessageMovieSchema = z.object({
+  messageId: z.string(),
+  movieId: z.string(),
+  title: z.string(),
+  releaseYear: z.string(),
+  why: z.string(),
+  createdAt: z.date().or(z.string()).openapi({ type: 'string', format: 'date-time' }),
 });
 
 export const MovieSchema = z.object({
