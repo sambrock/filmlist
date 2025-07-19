@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils/app.utils';
+import { cn } from '@/lib/utils';
 import { useChatStore } from '@/providers/chat-store-provider';
 import { Button } from '../common/button';
 import { IconArrowUp } from '../common/icon';

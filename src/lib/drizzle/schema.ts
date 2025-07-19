@@ -1,8 +1,8 @@
 import { relations } from 'drizzle-orm';
 import {
   boolean,
-  date,
   integer,
+  jsonb,
   pgTable,
   primaryKey,
   serial,
@@ -10,6 +10,8 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
+
+import { TMDbMovieWithDirector } from '../tmdb';
 
 export const users = pgTable('users', {
   userId: uuid('user_id').primaryKey(),
@@ -49,13 +51,23 @@ export const messages = pgTable('messages', {
     .$onUpdate(() => new Date()),
 });
 
-export const movies = pgTable('movies', {
-  movieId: uuid('movie_id').primaryKey(),
-  tmdbId: integer('tmdb_id').notNull().unique(),
+export const recommendations = pgTable('recommendations', {
+  recommendationId: uuid('recommendation_id').primaryKey(),
+  messageId: uuid('message_id')
+    .notNull()
+    .references(() => messages.messageId),
+  movieId: integer('movie_id')
+    .notNull()
+    .references(() => movies.movieId),
   title: text('title').notNull(),
-  releaseDate: date('release_date', { mode: 'date' }).notNull(),
-  posterPath: text('poster_path').notNull(),
-  backdropPath: text('backdrop_path').notNull(),
+  releaseYear: text('release_year').notNull(),
+  why: text('why').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export const movies = pgTable('movies', {
+  movieId: integer('movie_id').primaryKey(), // Same as TMDb ID
+  source: jsonb('source_tmdb').$type<TMDbMovieWithDirector>().notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
@@ -65,7 +77,7 @@ export const library = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.userId),
-    movieId: uuid('movie_id')
+    movieId: integer('movie_id')
       .notNull()
       .references(() => movies.movieId),
     watched: boolean('watched').default(false),
@@ -81,27 +93,6 @@ export const library = pgTable(
   (t) => [
     primaryKey({
       columns: [t.userId, t.movieId],
-    }),
-  ]
-);
-
-export const messageMovies = pgTable(
-  'message_movies',
-  {
-    messageId: uuid('message_id')
-      .notNull()
-      .references(() => messages.messageId),
-    movieId: uuid('movie_id')
-      .notNull()
-      .references(() => movies.movieId),
-    title: text('title').notNull(), // Title parsed from the completion content (it may noy accurately match the movie title, so we store it as well)
-    releaseYear: text('release_year').notNull(),
-    why: text('why').notNull(),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-  },
-  (t) => [
-    primaryKey({
-      columns: [t.messageId, t.movieId],
     }),
   ]
 );
@@ -131,21 +122,21 @@ export const messageRelations = relations(messages, ({ one, many }) => ({
     fields: [messages.parentId],
     references: [messages.messageId],
   }),
-  movies: many(messageMovies),
+  recommendations: many(recommendations),
 }));
 
 export const moviesRelations = relations(movies, ({ many }) => ({
   libraries: many(library),
-  messages: many(messageMovies),
+  recommendations: many(recommendations),
 }));
 
-export const messageMoviesRelations = relations(messageMovies, ({ one }) => ({
+export const recommendationsRelations = relations(recommendations, ({ one }) => ({
   message: one(messages, {
-    fields: [messageMovies.messageId],
+    fields: [recommendations.messageId],
     references: [messages.messageId],
   }),
   movie: one(movies, {
-    fields: [messageMovies.movieId],
+    fields: [recommendations.movieId],
     references: [movies.movieId],
   }),
 }));

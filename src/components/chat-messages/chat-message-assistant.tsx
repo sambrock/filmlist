@@ -1,24 +1,25 @@
 'use client';
 
-import type { Message, MessageMovie, Movie } from '@/lib/drizzle/zod';
-import { Prettify } from '@/lib/utils/type.utils';
+import type { Message, RecommendationWithMovie } from '@/lib/drizzle/zod';
+import { type DeepPartial } from '@/lib/utils';
+import { ChatMessageMovie } from './chat-message-movie';
 
 type Props = {
   message: Partial<Message>;
-  movies?: Prettify<Partial<MessageMovie> & { movie?: Movie }>[];
+  recommendations?: DeepPartial<RecommendationWithMovie>[];
 };
 
-export const ChatMessageAssistant = ({ message, movies = [] }: Props) => {
-  console.log(message);
+export const ChatMessageAssistant = ({ recommendations = [] }: Props) => {
   return (
-    <div className="space-y-4 pb-8">
-      {movies.map((movie, index) => (
-        <div key={index}>
-          <div>{movie.movie?.tmdbId}</div>
-          <div>{movie.title}</div>
-          <div>{movie.releaseYear}</div>
-          <div>{movie.why}</div>
-        </div>
+    <div className="space-y-2 pt-8 pb-4">
+      {recommendations.map((recommendation, index) => (
+        <ChatMessageMovie
+          key={index}
+          title={recommendation.title}
+          releaseYear={recommendation.releaseYear}
+          why={recommendation.why}
+          movie={recommendation.movie}
+        />
       ))}
     </div>
   );

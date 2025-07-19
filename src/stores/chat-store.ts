@@ -1,41 +1,35 @@
-import { enableMapSet, produce } from 'immer';
+import { produce } from 'immer';
 import { createStore } from 'zustand/vanilla';
 
-import type { Message, MessageMovie, Movie } from '@/lib/drizzle/zod';
-import { type Model } from '@/lib/openai/models';
-import { parseMessageContentToMovies, type ChatEventStreamData } from '@/lib/utils/chat.utils';
-import { Prettify } from '@/lib/utils/type.utils';
-
-enableMapSet();
+import type { ChatSSEData } from '@/app/api/chat/route';
+import { parseRecommendationsFromResponse } from '@/lib/ai';
+import type { Message, MessageWithRecommendations } from '@/lib/drizzle';
+import { DeepPartial } from '@/lib/utils';
 
 export type ChatMessage =
   | {
-      key: string;
       state: 'pending';
       user: Partial<Message>;
-      assistant: Partial<Message> & { content: string };
-      movies: Prettify<Partial<MessageMovie> & { movie?: Movie }>[];
+      assistant: DeepPartial<MessageWithRecommendations>;
     }
   | {
-      key: string;
       state: 'complete';
       user: Message;
-      assistant: Message;
-      movies: Prettify<MessageMovie & { movie?: Movie }>[];
+      assistant: MessageWithRecommendations;
     };
 
 export type ChatState = {
   threadId: string;
   threadExists: boolean;
   inputValue: string;
-  model: Model;
-  messages: Map<string, ChatMessage>;
+  model: string;
+  messages: ChatMessage[];
 };
 
 export type ChatActions = {
-  updateChat: (partial: Partial<ChatState>) => void;
-  initMessage: () => string;
-  ingestChatStream: (key: string, data: ChatEventStreamData) => void;
+  update: (partial: Partial<ChatState>) => void;
+  createMessage: () => void;
+  processChatSSE: (data: ChatSSEData) => void;
 };
 
 export type ChatStore = ChatState & { actions: ChatActions };
@@ -45,11 +39,11 @@ export const createChatStore = (initState: { threadId: string; threadExists?: bo
     threadId: initState.threadId,
     threadExists: initState.threadExists ?? false,
     inputValue: '',
-    model: 'deepseek/deepseek-chat-v3-0324:free',
-    messages: new Map(),
+    model: '',
+    messages: [],
 
     actions: {
-      updateChat: (partial) => {
+      update: (partial) => {
         set(
           produce((state: ChatStore) => {
             Object.assign(state, partial);
@@ -57,49 +51,38 @@ export const createChatStore = (initState: { threadId: string; threadExists?: bo
         );
       },
 
-      initMessage: () => {
-        const key = Math.random().toString(36).substring(2, 15);
-
+      createMessage: () => {
         set(
           produce((state: ChatStore) => {
-            state.messages.set(key, {
-              key,
+            state.messages.push({
               state: 'pending',
               user: { content: state.inputValue },
-              assistant: { content: '' },
-              movies: [],
+              assistant: { content: '', recommendations: [] },
             });
           })
         );
-
-        return key;
       },
 
-      ingestChatStream: (key, data) => {
+      processChatSSE: (data) => {
         set(
           produce((state: ChatStore) => {
-            const message = state.messages.get(key)!;
+            const index = state.messages.length - 1;
+            const message = state.messages[index];
 
             if (data.type === 'content') {
-              message.assistant.content += data.v;
-              const parsed = parseMessageContentToMovies(message.assistant.content);
-              message.movies = parsed;
-            }
-            if (data.type === 'movie') {
-              const movie = data.v;
-              const index = data.i;
-              console.log(movie, index, message.movies[index]);
-              message.movies[index].movie = movie;
-              console.log('Updated movie:', message.movies[index]);
+              const content = (message.assistant.content += data.v);
+              message.assistant.content = content;
+              message.assistant.recommendations = parseRecommendationsFromResponse(content);
             }
             if (data.type === 'message') {
-              if (data.v.role === 'user') {
-                message.user = data.v;
-              }
-              if (data.v.role === 'assistant') {
-                Object.assign(message.assistant, data.v);
-              }
+              if (data.v.role === 'user') message.user = data.v;
+              if (data.v.role === 'assistant') Object.assign(message.assistant, data.v); // Don't overwrite recommendations
             }
+            if (data.type === 'recommendations') {
+              console.log(data.v);
+              message.assistant.recommendations = data.v;
+            }
+
             if (data.type === 'end') {
               message.state = 'complete';
             }

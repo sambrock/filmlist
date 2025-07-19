@@ -1,11 +1,10 @@
 'use client';
 
-import { scrollToEnd } from '@/lib/utils/app.utils';
+import { useChatMessagesInfiniteQuery } from '@/lib/api/useChatMessages';
+import { scrollToEnd } from '@/lib/utils';
 import { useChatThreadId } from '@/providers/chat-store-provider';
-import { useChatMessagesInfiniteQuery } from '@/hooks/useChatMessages.query';
 import { ChatMessageAssistant } from './chat-message-assistant';
 import { ChatMessageUser } from './chat-message-user';
-import { ChatMessagesList } from './chat-messages-list';
 
 export const ChatMessages = () => {
   const threadId = useChatThreadId();
@@ -17,15 +16,19 @@ export const ChatMessages = () => {
     requestAnimationFrame(scrollToEnd);
   }
 
+  const messages = data?.pages.flatMap((page) => page.messages) || [];
+
   return (
-    <ChatMessagesList>
+    <div>
       {/* {!isLoading && <ChatMessagesFetchMore fetchNextPage={fetchNextPage} />} */}
-      {data?.map(({ message, movies }) => (
+      {messages.map(({ message, recommendations }) => (
         <div key={message.messageId}>
           {message.role === 'user' && <ChatMessageUser message={message} />}
-          {message.role === 'assistant' && <ChatMessageAssistant message={message} movies={movies} />}
+          {message.role === 'assistant' && (
+            <ChatMessageAssistant message={message} recommendations={recommendations} />
+          )}
         </div>
       ))}
-    </ChatMessagesList>
+    </div>
   );
 };

@@ -2,14 +2,12 @@
 
 import { useEffect, useRef } from 'react';
 
-import { scrollToEnd } from '@/lib/utils/app.utils';
+import { scrollToEnd } from '@/lib/utils';
 import { useChatStore } from '@/providers/chat-store-provider';
-import { ChatMessageAssistant } from '../chat-messages/chat-message-assistant';
 import { ChatMessageUser } from '../chat-messages/chat-message-user';
-import { ChatMessagesList } from './chat-messages-list';
 
 export const ChatMessagesPending = () => {
-  const messages = useChatStore((store) => [...store.messages.values()]);
+  const messages = useChatStore((store) => store.messages);
 
   const divRef = useRef<HTMLDivElement>(null);
 
@@ -23,13 +21,18 @@ export const ChatMessagesPending = () => {
   }, []);
 
   return (
-    <ChatMessagesList ref={divRef}>
-      {messages.map((message) => (
-        <div key={message.key}>
+    <div ref={divRef}>
+      {messages.map((message, index) => (
+        <div key={index}>
           <ChatMessageUser message={message.user} />
-          <ChatMessageAssistant message={message.assistant} movies={message.movies} />
+          {message.assistant.recommendations?.map((recommendation, index) => (
+            <div key={index}>
+              <div>{recommendation?.movie?.source?.id}</div>
+              <div>{recommendation?.title}</div>
+            </div>
+          ))}
         </div>
       ))}
-    </ChatMessagesList>
+    </div>
   );
 };

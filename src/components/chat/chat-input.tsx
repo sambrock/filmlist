@@ -1,8 +1,8 @@
 'use client';
 
-import { cn } from '@/lib/utils/app.utils';
+import { useSendMessage } from '@/lib/api/useSendMessage';
+import { cn } from '@/lib/utils';
 import { useChatActions, useChatInputValue } from '@/providers/chat-store-provider';
-import { useSendMessageMutation } from '@/hooks/useSendChatMessage.mutation';
 import { ChatInputButtonSend } from './chat-input-button-send';
 import { ChatInputControl } from './chat-input-control';
 import { ChatInputDropdownModel } from './chat-input-dropdown-model';
@@ -11,13 +11,13 @@ type Props = React.ComponentProps<'div'>;
 
 export const ChatInput = ({ className, ...props }: Props) => {
   const value = useChatInputValue();
-  const { updateChat, initMessage } = useChatActions();
+  const { update, createMessage } = useChatActions();
 
-  const sendMutation = useSendMessageMutation();
+  const sendMutation = useSendMessage();
 
   const handleSendMessage = () => {
-    const key = initMessage();
-    sendMutation.mutate(key);
+    createMessage();
+    sendMutation.mutate();
   };
 
   return (
@@ -30,7 +30,7 @@ export const ChatInput = ({ className, ...props }: Props) => {
         placeholder="Ask anything"
         value={value}
         onChange={(e) => {
-          updateChat({ inputValue: e.target.value });
+          update({ inputValue: e.target.value });
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {

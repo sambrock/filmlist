@@ -4,7 +4,7 @@ import { ChatMessagesPending } from '@/components/chat-messages/chat-messages-pe
 import { ChatInput } from '@/components/chat/chat-input';
 
 export default function ChatPage() {
-  const threadId = '487d110a-105a-4da1-9363-7c22d3ab2cc2';
+  const threadId = 'de97710d-22b0-46d1-8116-5d7f493eb7a9';
 
   return (
     <ChatStoreProvider threadId={threadId} threadExists={true}>

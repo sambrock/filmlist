@@ -1,4 +1,4 @@
-import { Model } from './openai/models';
+import { Model } from './ai/models';
 
 export const OPENAI_BASE_URL = 'https://openrouter.ai/api/v1';
 export const OPENAI_HTTP_REFERER = 'https://filmlist.app';

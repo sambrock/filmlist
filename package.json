@@ -13,18 +13,22 @@
     "db:setup-local": "docker compose -f ./infra/local.docker-compose.yml up -d",
     "db:generate": "drizzle-kit generate",
     "generate-api": "openapi-typescript http://localhost:3000/api/docs --output ./src/lib/api/api.d.ts --type-mappings=DateTime=Date",
-    "generate-tmdb": "openapi-typescript https://developer.themoviedb.org/openapi/64542913e1f86100738e227f --output ./src/lib/tmdb/tmdb-api-v3.d.ts"
+    "generate-tmdb": "openapi-typescript https://developer.themoviedb.org/openapi/64542913e1f86100738e227f --output ./src/lib/tmdb/schema-v3.d.ts"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.0-beta.10",
+    "@ai-sdk/react": "^2.0.0-beta.23",
     "@hono/zod-openapi": "^0.19.8",
     "@tanstack/query-persist-client-core": "^5.80.6",
     "@tanstack/query-sync-storage-persister": "^5.80.6",
     "@tanstack/react-query": "^5.80.2",
     "@tanstack/react-query-persist-client": "^5.80.6",
-    "@trpc/client": "^11.2.0",
+    "@trpc/client": "^11.4.3",
     "@trpc/next": "^11.2.0",
-    "@trpc/server": "^11.2.0",
-    "ai": "^4.3.17",
+    "@trpc/server": "^11.4.3",
+    "@trpc/tanstack-react-query": "^11.4.3",
+    "add": "^2.0.6",
+    "ai": "^5.0.0-beta.23",
     "class-variance-authority": "^0.7.1",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.44.2",
@@ -50,7 +54,7 @@
     "usehooks-ts": "^3.1.1",
     "uuid": "^11.1.0",
     "ws": "^8.18.2",
-    "zod": "^3.25.64",
+    "zod": "^4.0.5",
     "zustand": "^5.0.5"
   },
   "devDependencies": {
