@@ -89,8 +89,6 @@ export const POST = async (request: NextRequest) => {
           const movieWithCredits = await getMovieById(found.id);
           if (!movieWithCredits) return;
 
-          console.dir(movieWithCredits, { depth: Infinity });
-
           const movie: Movie = {
             movieId: movieWithCredits.id,
             source: movieWithCredits,

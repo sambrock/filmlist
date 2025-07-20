@@ -12,7 +12,7 @@ export const RecommendationInsertSchema = createInsertSchema(recommendations);
 export const MovieSchema = createSelectSchema(movies);
 export const MovieInsertSchema = createInsertSchema(movies);
 export const RecommendationWithMovieSchema = RecommendationSchema.extend({
-  movie: MovieSchema.optional(),
+  movie: MovieSchema,
 });
 export const MessageWithRecommendationsSchema = MessageSchema.extend({
   recommendations: RecommendationWithMovieSchema.array(),

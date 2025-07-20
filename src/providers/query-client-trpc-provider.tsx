@@ -6,7 +6,7 @@ import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
 
 import type { AppRouter } from '@/server';
-import { TRPCProvider } from '@/lib/utils/trpc';
+import { TRPCProvider } from '@/lib/trpc';
 
 function makeQueryClient() {
   return new QueryClient({

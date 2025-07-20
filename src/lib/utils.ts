@@ -58,3 +58,10 @@ export const readEventStream = async (response: Response, onData: (data: string)
     }
   }
 };
+
+export const runtimeToHoursMins = (runtimeMins: number) => {
+  const hours = Math.floor(runtimeMins / 60);
+  const minutes = runtimeMins % 60;
+
+  return `${hours > 0 ? `${hours}h ` : ''}${minutes}m`;
+};
