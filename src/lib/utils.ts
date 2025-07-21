@@ -63,5 +63,9 @@ export const runtimeToHoursMins = (runtimeMins: number) => {
   const hours = Math.floor(runtimeMins / 60);
   const minutes = runtimeMins % 60;
 
+  if(minutes === 0) {
+    return `${hours}h`;
+  }
+
   return `${hours > 0 ? `${hours}h ` : ''}${minutes}m`;
 };

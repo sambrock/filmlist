@@ -11,12 +11,12 @@ type Props = React.ComponentProps<'div'>;
 
 export const ChatInput = ({ className, ...props }: Props) => {
   const value = useChatInputValue();
-  const { update, createMessage } = useChatActions();
+  const { update, initializePendingMessage } = useChatActions();
 
   const sendMutation = useSendMessage();
 
   const handleSendMessage = () => {
-    createMessage();
+    initializePendingMessage();
     sendMutation.mutate();
   };
 

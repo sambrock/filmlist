@@ -36,11 +36,12 @@ export const parseRecommendationsFromResponse = (content: string) => {
   const parsed: { title: string; releaseYear: string; why: string }[] = [];
 
   const titleRegex = /"title":\s*"([^"]+)"?/g;
-  const releaseYearRegex = /"release_year":\s*"([^"]+)/g;
+  const releaseYearRegex1 = /"release_year":\s*"([^"]+)/g;
+  const releaseYearRegex2 = /"release_year":\s*(\d+)/g;
   const whyRegex = /"why":\s*"([^"]+)"?/g;
 
   const titleMatches = content.matchAll(titleRegex);
-  const releaseYearMatches = content.matchAll(releaseYearRegex);
+  const releaseYearMatches = [...content.matchAll(releaseYearRegex1), ...content.matchAll(releaseYearRegex2)];
   const whyMatches = content.matchAll(whyRegex);
 
   [...titleMatches].forEach((match, index) => {

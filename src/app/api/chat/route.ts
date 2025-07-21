@@ -6,12 +6,14 @@ import { z } from 'zod';
 import { baseMessage, parseRecommendationsFromResponse } from '@/lib/ai';
 import {
   db,
-  MessageInsert,
+  Message,
+  MessageAssistant,
   messages,
+  MessageUser,
   Movie,
   movies,
+  Recommendation,
   recommendations,
-  RecommendationWithMovie,
 } from '@/lib/drizzle';
 import { findMovie, getMovieById } from '@/lib/tmdb';
 import { generateUuid } from '@/lib/utils';
@@ -36,6 +38,38 @@ export const POST = async (request: NextRequest) => {
 
   const { threadId, model, content } = parsed.data;
 
+  const ops: Promise<unknown>[] = [];
+
+  const messageUser: MessageUser = {
+    messageId: generateUuid(),
+    threadId,
+    parentId: null,
+    serial: -1,
+    model,
+    content,
+    role: 'user',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const messageAssistant: MessageAssistant = {
+    messageId: generateUuid(),
+    threadId,
+    parentId: messageUser.messageId,
+    serial: -1,
+    model,
+    content: '',
+    role: 'assistant',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    recommendations: [],
+  };
+
+  ops.push(
+    db.insert(messages).values({ ...messageUser, serial: undefined }),
+    db.insert(messages).values({ ...messageAssistant, serial: undefined })
+  );
+
   const stream = streamText({
     model: openai('gpt-4.1-nano'),
     messages: [{ role: 'user', content: baseMessage(content) }],
@@ -43,46 +77,21 @@ export const POST = async (request: NextRequest) => {
 
   const dataStream = new ReadableStream({
     async start(controller) {
-      let contentSoFar = '';
-
       const reader = stream.textStream.getReader();
+
+      controller.enqueue(encodeSSE({ type: 'message', v: messageUser }));
+      controller.enqueue(encodeSSE({ type: 'message', v: messageAssistant }));
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         controller.enqueue(encodeSSE({ type: 'content', v: value }));
-        contentSoFar += value;
+        messageAssistant.content += value;
       }
 
-      const userMessageId = generateUuid();
-
-      const [userMessage, assistantMessage] = await db
-        .insert(messages)
-        .values([
-          {
-            messageId: userMessageId,
-            threadId,
-            content,
-            model,
-            role: 'user',
-          },
-          {
-            messageId: generateUuid(),
-            threadId,
-            parentId: userMessageId,
-            content: contentSoFar,
-            model,
-            role: 'assistant',
-          },
-        ])
-        .returning();
-
-      controller.enqueue(encodeSSE({ type: 'message', v: userMessage }));
-      controller.enqueue(encodeSSE({ type: 'message', v: assistantMessage }));
-
-      const recommendationsWithMovie = await Promise.all(
-        parseRecommendationsFromResponse(contentSoFar).map(async (generated) => {
+      await Promise.all(
+        parseRecommendationsFromResponse(messageAssistant.content).map(async (generated) => {
           const found = await findMovie(generated.title, generated.releaseYear);
           if (!found) return;
 
@@ -95,31 +104,35 @@ export const POST = async (request: NextRequest) => {
             createdAt: new Date(),
           };
 
-          await db.insert(movies).values(movie).onConflictDoNothing();
+          const recommendation: Recommendation = {
+            recommendationId: generateUuid(),
+            movieId: movie.movieId,
+            messageId: messageAssistant.messageId,
+            releaseYear: generated.releaseYear,
+            title: generated.title,
+            why: generated.why,
+            createdAt: new Date(),
+          };
 
-          const [recommendation] = await db
-            .insert(recommendations)
-            .values({
-              messageId: assistantMessage.messageId,
-              recommendationId: generateUuid(),
-              movieId: movie.movieId,
-              releaseYear: generated.releaseYear,
-              title: generated.title,
-              why: generated.why,
-            })
-            .onConflictDoNothing()
-            .returning();
+          messageAssistant.recommendations.push({ ...recommendation, movie });
 
-          return { ...recommendation, movie };
+          ops.push(
+            db.insert(movies).values(movie).onConflictDoNothing(),
+            db.insert(recommendations).values(recommendation).onConflictDoNothing()
+          );
         })
       );
 
-      // @ts-expect-error: todo fix
-      controller.enqueue(encodeSSE({ type: 'recommendations', v: recommendationsWithMovie }));
+      controller.enqueue(encodeSSE({ type: 'final', v: messageAssistant }));
 
       controller.enqueue(encodeSSE({ type: 'end' }));
       controller.enqueue(encodeSSE('end'));
       controller.close();
+
+      for (const op of ops) {
+        await op;
+      }
+      // todo: use neon batch in production?
     },
   });
 
@@ -135,8 +148,8 @@ export const POST = async (request: NextRequest) => {
 
 export type ChatSSEData =
   | { type: 'content'; v: string }
-  | { type: 'message'; v: MessageInsert }
-  | { type: 'recommendations'; v: RecommendationWithMovie[] }
+  | { type: 'message'; v: Message }
+  | { type: 'final'; v: MessageAssistant }
   | { type: 'end' };
 
 const encodeSSE = (data: ChatSSEData | 'end') => {

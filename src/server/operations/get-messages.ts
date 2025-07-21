@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { db, MessageWithRecommendationsSchema } from '@/lib/drizzle';
+import { db, MessageAssistantSchema, MessageUserSchema } from '@/lib/drizzle';
 import { publicProcedure } from '../trpc';
 
 export const getMessagesProcedures = publicProcedure
@@ -14,7 +14,7 @@ export const getMessagesProcedures = publicProcedure
   .output(
     z.object({
       nextCursor: z.number(),
-      messages: MessageWithRecommendationsSchema.array(),
+      messages: z.union([MessageUserSchema, MessageAssistantSchema]).array(),
     })
   )
   .query(async ({ input }) => {

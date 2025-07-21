@@ -3,19 +3,22 @@ import { createStore } from 'zustand/vanilla';
 
 import type { ChatSSEData } from '@/app/api/chat/route';
 import { parseRecommendationsFromResponse } from '@/lib/ai';
-import type { Message, MessageWithRecommendations } from '@/lib/drizzle';
-import { DeepPartial } from '@/lib/utils';
+import type { MessageAssistant, MessageUser } from '@/lib/drizzle';
 
 export type ChatMessage =
   | {
-      state: 'pending';
-      user: Partial<Message>;
-      assistant: DeepPartial<MessageWithRecommendations>;
+      status: 'pending';
+      messageUser: { content: string; role: 'user' };
+      messageAssistant: {
+        content: string;
+        role: 'assistant';
+        recommendations: { title: string; releaseYear: string; why: string }[];
+      };
     }
   | {
-      state: 'complete';
-      user: Message;
-      assistant: MessageWithRecommendations;
+      status: 'done';
+      messageUser: MessageUser;
+      messageAssistant: MessageAssistant;
     };
 
 export type ChatState = {
@@ -28,7 +31,7 @@ export type ChatState = {
 
 export type ChatActions = {
   update: (partial: Partial<ChatState>) => void;
-  createMessage: () => void;
+  initializePendingMessage: () => void;
   processChatSSE: (data: ChatSSEData) => void;
 };
 
@@ -37,9 +40,10 @@ export type ChatStore = ChatState & { actions: ChatActions };
 export const createChatStore = (initState: { threadId: string; threadExists?: boolean }) => {
   return createStore<ChatStore>()((set) => ({
     threadId: initState.threadId,
-    threadExists: initState.threadExists ?? false,
+    threadExists: initState.threadExists || false,
     inputValue: '',
     model: '',
+    pending: false,
     messages: [],
 
     actions: {
@@ -51,13 +55,16 @@ export const createChatStore = (initState: { threadId: string; threadExists?: bo
         );
       },
 
-      createMessage: () => {
+      initializePendingMessage: () => {
         set(
           produce((state: ChatStore) => {
+            if (state.messages.find((m) => m.status === 'pending')) {
+              return;
+            }
             state.messages.push({
-              state: 'pending',
-              user: { content: state.inputValue },
-              assistant: { content: '', recommendations: [] },
+              status: 'pending',
+              messageUser: { content: '', role: 'user' },
+              messageAssistant: { content: '', role: 'assistant', recommendations: [] },
             });
           })
         );
@@ -66,25 +73,24 @@ export const createChatStore = (initState: { threadId: string; threadExists?: bo
       processChatSSE: (data) => {
         set(
           produce((state: ChatStore) => {
-            const index = state.messages.length - 1;
+            const index = state.messages.findIndex((m) => m.status === 'pending');
             const message = state.messages[index];
 
-            if (data.type === 'content') {
-              const content = (message.assistant.content += data.v);
-              message.assistant.content = content;
-              message.assistant.recommendations = parseRecommendationsFromResponse(content);
+            if (message.status === 'pending' && data.type === 'content') {
+              message.messageAssistant.content += data.v;
+              message.messageAssistant.recommendations = parseRecommendationsFromResponse(
+                message.messageAssistant.content
+              );
             }
-            if (data.type === 'message') {
-              if (data.v.role === 'user') message.user = data.v;
-              if (data.v.role === 'assistant') Object.assign(message.assistant, data.v); // Don't overwrite recommendations
+            if (data.type === 'message' && data.v.role === 'user') {
+              message.messageUser = data.v as MessageUser;
             }
-            if (data.type === 'recommendations') {
-              console.log(data.v);
-              message.assistant.recommendations = data.v;
+            if (data.type === 'message' && data.v.role === 'assistant') {
+              message.messageAssistant = data.v as MessageAssistant;
             }
-
-            if (data.type === 'end') {
-              message.state = 'complete';
+            if (data.type === 'final') {
+              message.status = 'done';
+              message.messageAssistant = data.v;
             }
           })
         );
