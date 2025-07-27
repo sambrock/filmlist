@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-import { db, MessageAssistantSchema, MessageUserSchema } from '@/lib/drizzle';
+import { db, MessageAssistantSchema, MessageSchema, MessageUserSchema } from '@/lib/drizzle';
 import { publicProcedure } from '../trpc';
 
-export const getMessagesProcedures = publicProcedure
+export const getThreadMessages = publicProcedure
   .input(
     z.object({
       threadId: z.string(),
@@ -14,31 +14,24 @@ export const getMessagesProcedures = publicProcedure
   .output(
     z.object({
       nextCursor: z.number(),
-      messages: z.union([MessageUserSchema, MessageAssistantSchema]).array(),
+      messages: z.union([MessageSchema, MessageUserSchema, MessageAssistantSchema]).array(),
     })
   )
   .query(async ({ input }) => {
     const { threadId, limit, cursor } = input;
 
-    const messagesWithRecommendations = await db.query.messages.findMany({
+    const messages = await db.query.messages.findMany({
       where: (messages, { and, eq, lt }) =>
         and(eq(messages.threadId, threadId), cursor ? lt(messages.serial, cursor) : undefined),
       orderBy: (messages, { desc }) => [desc(messages.serial)],
-      with: {
-        recommendations: {
-          with: { movie: true },
-        },
-      },
+      with: { movies: true },
       limit,
     });
 
-    const nextCursor =
-      messagesWithRecommendations.length > 0
-        ? messagesWithRecommendations[messagesWithRecommendations.length - 1].serial
-        : 0;
+    const nextCursor = messages.length > 0 ? messages[messages.length - 1].serial : 0;
 
     return {
       nextCursor,
-      messages: messagesWithRecommendations,
+      messages,
     };
   });

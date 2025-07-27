@@ -4,6 +4,9 @@ import { Schibsted_Grotesk } from 'next/font/google';
 import './globals.css';
 
 import { cn } from '@/lib/utils';
+import { QueryClientTRPCProvider } from '@/providers/query-client-trpc-provider';
+import { Sidebar } from '@/components/sidebar/sidebar';
+import { InitializeClient } from './initialize-client';
 
 const fontSans = Schibsted_Grotesk({
   subsets: ['latin'],
@@ -11,10 +14,10 @@ const fontSans = Schibsted_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: 'FILMLIST',
+  title: 'Filmlist',
 };
 
-export default function RootLayout(props: React.PropsWithChildren) {
+export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body
@@ -23,7 +26,13 @@ export default function RootLayout(props: React.PropsWithChildren) {
           fontSans.className
         )}
       >
-        {props.children}
+        <QueryClientTRPCProvider>
+          <div className="fixed top-0 left-0 flex h-full w-full">
+            <Sidebar />
+            {props.children}
+          </div>
+          <InitializeClient />
+        </QueryClientTRPCProvider>
       </body>
     </html>
   );

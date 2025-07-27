@@ -11,13 +11,16 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
-import { TMDbMovieWithDirector } from '../tmdb';
+import { MovieDetails } from '../tmdb';
 
 export const users = pgTable('users', {
   userId: uuid('user_id').primaryKey(),
   anon: boolean('anon').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at')
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 export const threads = pgTable('threads', {
@@ -42,6 +45,7 @@ export const messages = pgTable('messages', {
   parentId: uuid('parent_id'),
   serial: serial('serial').notNull(),
   content: text('content').notNull(),
+  parsed: jsonb('parsed').$type<{ tmdbId: number; title: string; releaseYear: number; why: string }[]>(),
   model: text('model').notNull(),
   role: text({ enum: ['user', 'assistant'] }).notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -51,23 +55,10 @@ export const messages = pgTable('messages', {
     .$onUpdate(() => new Date()),
 });
 
-export const recommendations = pgTable('recommendations', {
-  recommendationId: uuid('recommendation_id').primaryKey(),
-  messageId: uuid('message_id')
-    .notNull()
-    .references(() => messages.messageId),
-  movieId: integer('movie_id')
-    .notNull()
-    .references(() => movies.movieId),
-  title: text('title').notNull(),
-  releaseYear: text('release_year').notNull(),
-  why: text('why').notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-});
-
 export const movies = pgTable('movies', {
-  movieId: integer('movie_id').primaryKey(), // Same as TMDb ID
-  source: jsonb('source_tmdb').$type<TMDbMovieWithDirector>().notNull(),
+  movieId: uuid('movie_id').primaryKey(),
+  tmdbId: integer('tmdb_id').unique(),
+  source: jsonb('source_tmdb').$type<MovieDetails>().notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
@@ -77,7 +68,7 @@ export const library = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.userId),
-    movieId: integer('movie_id')
+    movieId: uuid('movie_id')
       .notNull()
       .references(() => movies.movieId),
     watched: boolean('watched').default(false),
@@ -93,6 +84,24 @@ export const library = pgTable(
   (t) => [
     primaryKey({
       columns: [t.userId, t.movieId],
+    }),
+  ]
+);
+
+export const messageMovies = pgTable(
+  'message_movies',
+  {
+    messageId: uuid('message_id')
+      .notNull()
+      .references(() => messages.messageId),
+    movieId: uuid('movie_id')
+      .notNull()
+      .references(() => movies.movieId),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({
+      columns: [t.messageId, t.movieId],
     }),
   ]
 );
@@ -122,23 +131,12 @@ export const messageRelations = relations(messages, ({ one, many }) => ({
     fields: [messages.parentId],
     references: [messages.messageId],
   }),
-  recommendations: many(recommendations),
+  movies: many(messageMovies),
 }));
 
 export const moviesRelations = relations(movies, ({ many }) => ({
   libraries: many(library),
-  recommendations: many(recommendations),
-}));
-
-export const recommendationsRelations = relations(recommendations, ({ one }) => ({
-  message: one(messages, {
-    fields: [recommendations.messageId],
-    references: [messages.messageId],
-  }),
-  movie: one(movies, {
-    fields: [recommendations.movieId],
-    references: [movies.movieId],
-  }),
+  messages: many(messageMovies),
 }));
 
 export const libraryRelations = relations(library, ({ one }) => ({
@@ -148,6 +146,17 @@ export const libraryRelations = relations(library, ({ one }) => ({
   }),
   movies: one(movies, {
     fields: [library.movieId],
+    references: [movies.movieId],
+  }),
+}));
+
+export const messageMoviesRelations = relations(messageMovies, ({ one }) => ({
+  messages: one(messages, {
+    fields: [messageMovies.messageId],
+    references: [messages.messageId],
+  }),
+  movies: one(movies, {
+    fields: [messageMovies.movieId],
     references: [movies.movieId],
   }),
 }));

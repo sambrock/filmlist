@@ -1,10 +1,10 @@
-import { getMessagesProcedures } from './operations/get-messages';
+import { getThreadMessages } from './operations/get-thread-messages';
+import { getUserThreads } from './operations/get-user-threads';
 import { router } from './trpc';
 
 export const appRouter = router({
-  getMessages: getMessagesProcedures,
+  getThreadMessages,
+  getUserThreads,
 });
 
-// Export type router type signature,
-// NOT the router itself.
 export type AppRouter = typeof appRouter;
