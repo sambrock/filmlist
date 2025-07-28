@@ -32,8 +32,8 @@ Example output:
  * @param content - The content returned from the AI model
  * @returns An array of movie objects with title, release year, and why
  */
-export const parseRecommendationsFromResponse = (content: string) => {
-  const parsed: { title: string; releaseYear: string; why: string }[] = [];
+export const parseMoviesFromAiResponse = (content: string) => {
+  const parsed: { tmdbId: number; title: string; releaseYear: string; why: string }[] = [];
 
   const titleRegex = /"title":\s*"([^"]+)"?/g;
   const releaseYearRegex1 = /"release_year":\s*"([^"]+)/g;
@@ -48,7 +48,7 @@ export const parseRecommendationsFromResponse = (content: string) => {
     const title = match[1].trim();
 
     if (!parsed[index]) {
-      parsed[index] = { title, releaseYear: '', why: '' };
+      parsed[index] = { tmdbId: 0, title, releaseYear: '', why: '' };
     } else {
       parsed[index].title = title;
     }
@@ -58,7 +58,7 @@ export const parseRecommendationsFromResponse = (content: string) => {
     const releaseYear = match[1].trim();
 
     if (!parsed[index]) {
-      parsed[index] = { title: '', releaseYear, why: '' };
+      parsed[index] = { tmdbId: 0, title: '', releaseYear, why: '' };
     } else {
       parsed[index].releaseYear = releaseYear;
     }
@@ -68,7 +68,7 @@ export const parseRecommendationsFromResponse = (content: string) => {
     const why = match[1].trim();
 
     if (!parsed[index]) {
-      parsed[index] = { title: '', releaseYear: '', why };
+      parsed[index] = { tmdbId: 0, title: '', releaseYear: '', why };
     } else {
       parsed[index].why = why;
     }

@@ -45,9 +45,10 @@ export const messages = pgTable('messages', {
   parentId: uuid('parent_id'),
   serial: serial('serial').notNull(),
   content: text('content').notNull(),
-  parsed: jsonb('parsed').$type<{ tmdbId: number; title: string; releaseYear: number; why: string }[]>(),
+  parsed: jsonb('parsed').$type<{ tmdbId: number; title: string; releaseYear: string; why: string }[]>(),
   model: text('model').notNull(),
   role: text({ enum: ['user', 'assistant'] }).notNull(),
+  status: text({ enum: ['pending', 'done'] }).notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at')
     .notNull()
@@ -140,22 +141,22 @@ export const moviesRelations = relations(movies, ({ many }) => ({
 }));
 
 export const libraryRelations = relations(library, ({ one }) => ({
-  users: one(users, {
+  user: one(users, {
     fields: [library.userId],
     references: [users.userId],
   }),
-  movies: one(movies, {
+  movie: one(movies, {
     fields: [library.movieId],
     references: [movies.movieId],
   }),
 }));
 
 export const messageMoviesRelations = relations(messageMovies, ({ one }) => ({
-  messages: one(messages, {
+  message: one(messages, {
     fields: [messageMovies.messageId],
     references: [messages.messageId],
   }),
-  movies: one(movies, {
+  movie: one(movies, {
     fields: [messageMovies.movieId],
     references: [movies.movieId],
   }),

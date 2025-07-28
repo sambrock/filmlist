@@ -1,20 +1,8 @@
+import { ThreadView } from '@/components/views/thread-view';
+
 export default function Thread() {
-  return <main>Main</main>;
-  //   return (
-  //     <ChatStoreProvider threadId={threadId} threadExists={true}>
-  //       <main className="bg-background-1 relative flex h-full flex-col items-center overflow-y-auto">
-  //         <div className="mb-40 w-3xl">
-  //           <ChatMessages />
-  //         </div>
+  // const threadId = generateUuid();
+  const threadId = 'b0a63a00-6876-42eb-8c48-2205efa5d927';
 
-  //         <div className="bg-background-1 fixed bottom-0 pb-4">
-  //           <ChatInput className="-mt-4" />
-  //         </div>
-
-  //         <div id="chat-end" />
-  //       </main>
-  //     </ChatStoreProvider>
-
-  //   );
-  // }
+  return <ThreadView threadId={threadId} />;
 }

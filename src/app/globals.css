@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@plugin 'tailwindcss-motion';
+@import 'tw-animate-css';
 
 @theme {
   --color-background-0: oklch(0.1798 0.0104 248.41);

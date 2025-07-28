@@ -6,7 +6,6 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { QueryClientTRPCProvider } from '@/providers/query-client-trpc-provider';
 import { Sidebar } from '@/components/sidebar/sidebar';
-import { InitializeClient } from './initialize-client';
 
 const fontSans = Schibsted_Grotesk({
   subsets: ['latin'],
@@ -31,7 +30,6 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             <Sidebar />
             {props.children}
           </div>
-          <InitializeClient />
         </QueryClientTRPCProvider>
       </body>
     </html>

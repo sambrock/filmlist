@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 import { db, MessageAssistantSchema, MessageSchema, MessageUserSchema } from '@/lib/drizzle';
-import { publicProcedure } from '../trpc';
+import { protectedProcedure } from '../trpc';
 
-export const getThreadMessages = publicProcedure
+export const getThreadMessages = protectedProcedure
   .input(
     z.object({
       threadId: z.string(),
