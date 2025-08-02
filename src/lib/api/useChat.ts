@@ -2,40 +2,37 @@ import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query'
 import { produce } from 'immer';
 
 import type { ChatSSEData } from '@/app/api/chat/route';
-import { useThreadContext } from '@/providers/thread-provider';
 import { Message, MessageAssistant, MessageUser } from '../drizzle';
 import { readEventStream } from '../utils';
 
 export const useChat = () => {
-  const { threadId } = useThreadContext();
-
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (content: string) => {
       const response = await fetch('/api/chat', {
         method: 'POST',
-        body: JSON.stringify({ threadId, content, model: 'gpt-4o' }),
+        body: JSON.stringify({ threadId: undefined, userId: undefined, content, model: 'gpt-4o' }),
       });
 
-      await readEventStream(response, (data) => {
-        const parsed = JSON.parse(data) as ChatSSEData;
+      // await readEventStream(response, (data) => {
+      //   const parsed = JSON.parse(data) as ChatSSEData;
 
-        if (parsed.type === 'message') {
-          queryClientAddMessage(queryClient, threadId, parsed.v);
-        }
-        if (parsed.type === 'content') {
-          queryClientUpdateMessageContent(queryClient, threadId, parsed.id, parsed.v);
-        }
-        if (parsed.type === 'final') {
-          queryClientReplaceMessage(queryClient, threadId, parsed.v);
-        }
-        if (parsed.type === 'end') {
-          queryClient.invalidateQueries({
-            queryKey: [threadId, 'messages'],
-          });
-        }
-      });
+      //   if (parsed.type === 'message') {
+      //     queryClientAddMessage(queryClient, threadId, parsed.v);
+      //   }
+      //   if (parsed.type === 'content') {
+      //     queryClientUpdateMessageContent(queryClient, threadId, parsed.id, parsed.v);
+      //   }
+      //   if (parsed.type === 'final') {
+      //     queryClientReplaceMessage(queryClient, threadId, parsed.v);
+      //   }
+      //   if (parsed.type === 'end') {
+      //     queryClient.invalidateQueries({
+      //       queryKey: [threadId, 'messages'],
+      //     });
+      //   }
+      // });
     },
     retry: false,
   });

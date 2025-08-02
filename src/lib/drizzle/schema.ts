@@ -46,7 +46,8 @@ export const messages = pgTable('messages', {
   parentId: uuid('parent_id'),
   serial: serial('serial').notNull(),
   content: text('content').notNull(),
-  parsed: jsonb('parsed').$type<{ tmdbId: number; title: string; releaseYear: string; why: string }[]>(),
+  structured:
+    jsonb('structured').$type<{ tmdbId: number; title: string; releaseYear: string; why: string }[]>(),
   model: text('model').notNull(),
   role: text({ enum: ['user', 'assistant'] }).notNull(),
   status: text({ enum: ['pending', 'done'] }).notNull(),
@@ -59,7 +60,7 @@ export const messages = pgTable('messages', {
 
 export const movies = pgTable('movies', {
   movieId: uuid('movie_id').primaryKey(),
-  tmdbId: integer('tmdb_id').unique(),
+  tmdbId: integer('tmdb_id').unique().notNull(),
   source: jsonb('source_tmdb').$type<MovieDetails>().notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });

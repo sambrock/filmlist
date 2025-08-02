@@ -11,6 +11,7 @@ export type Movie = z.infer<typeof MovieSchema>;
 export type MovieInsert = z.infer<typeof MovieInsertSchema>;
 export type MessageUser = z.infer<typeof MessageUserSchema>;
 export type MessageAssistant = z.infer<typeof MessageAssistantSchema>;
+export type Structured = z.infer<typeof StructuredSchema>;
 
 export const ThreadSchema = createSelectSchema(threads);
 export const ThreadInsertSchema = createInsertSchema(threads);
@@ -28,4 +29,11 @@ export const MessageUserSchema = MessageSchema.extend({
 export const MessageAssistantSchema = MessageSchema.extend({
   role: z.literal('assistant'),
   movies: MovieSchema.array(),
+});
+
+export const StructuredSchema = z.object({
+  tmdbId: z.number(),
+  title: z.string(),
+  releaseYear: z.string(),
+  why: z.string(),
 });

@@ -15,7 +15,7 @@ export const cn = (...inputs: CxOptions) => {
   return cx(inputs);
 };
 
-export const generateUuid = () => {
+export const uuid = () => {
   return v4();
 };
 

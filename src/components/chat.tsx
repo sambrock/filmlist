@@ -3,14 +3,9 @@
 import { useIsClient } from 'usehooks-ts';
 
 import { useChat } from '@/lib/api/useChat';
-import { useThreadMessages } from '@/lib/api/useThreadMessages';
-import { useUserInfo } from '@/lib/api/useUserInfo';
 
 export const Chat = () => {
-  const userInfo = useUserInfo();
-  const threadMessages = useThreadMessages();
   const { mutate } = useChat();
-
   const isClient = useIsClient();
 
   const onChatInputSubmit = (value: string) => {
@@ -22,7 +17,6 @@ export const Chat = () => {
   }
   return (
     <div className="">
-      <div>{userInfo.data?.userId}</div>
       <input
         onKeyDown={(e) => {
           const value = (e.target as HTMLInputElement).value;
@@ -31,14 +25,6 @@ export const Chat = () => {
           }
         }}
       />
-
-      {threadMessages.data?.pages.map((page) =>
-        [...page.messages].reverse().map((message) => (
-          <div key={message.messageId}>
-            {message.role}: {message.content}
-          </div>
-        ))
-      )}
     </div>
   );
 };

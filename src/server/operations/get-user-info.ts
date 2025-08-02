@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 
 import { generateAuthToken } from '@/lib/auth';
 import { db, users } from '@/lib/drizzle';
-import { generateUuid } from '@/lib/utils';
+import { uuid } from '@/lib/utils';
 import { publicProcedure } from '../trpc';
 
 export const getUserInfo = publicProcedure.query(async ({ ctx }) => {
@@ -14,7 +14,7 @@ export const getUserInfo = publicProcedure.query(async ({ ctx }) => {
 
   // If there is no user in the context, initialize an anonymous user
   const user = {
-    userId: generateUuid(),
+    userId: uuid(),
     anon: true,
   };
 

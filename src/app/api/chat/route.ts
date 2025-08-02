@@ -1,135 +1,119 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { openai } from '@ai-sdk/openai';
-import { streamText } from 'ai';
-import { produce } from 'immer';
+import { cookies as nextCookies } from 'next/headers';
 import { z } from 'zod';
 
-import { baseMessage, parseMoviesFromAiResponse } from '@/lib/ai';
-import { db, Message, MessageAssistant, messageMovies, messages, Movie, movies, Thread } from '@/lib/drizzle';
+import { parseMoviesFromOutputStream, stream } from '@/lib/ai';
+import { generateAuthToken } from '@/lib/auth';
+import {
+  createAnonymousUser,
+  createMovie,
+  createPendingUserAssistantMessages,
+  createThread,
+  getThreadMessages,
+  Message,
+  Movie,
+  Thread,
+  updateMessage,
+} from '@/lib/drizzle';
 import { findMovie, getMovieById } from '@/lib/tmdb';
-import { generateUuid } from '@/lib/utils';
 
 export const maxDuration = 30;
 // export const runtime = 'edge';
 // export const dynamic = 'force-dynamic';
 
 const bodySchema = z.object({
-  threadId: z.string(),
+  threadId: z.string().optional(),
+  userId: z.string().optional(),
   model: z.string(),
   content: z.string(),
 });
 
-export const POST = async (request: NextRequest) => {
+export const POST = async (request: Request) => {
   const body = await request.json();
+  const cookies = await nextCookies();
 
   const parsed = bodySchema.safeParse(body);
   if (parsed.success === false) {
-    return NextResponse.json(parsed.error, { status: 400 });
+    return Response.json(parsed.error, { status: 400 });
   }
 
-  const { threadId, model, content } = parsed.data;
+  let userId = parsed.data.userId;
+  let threadId = parsed.data.threadId;
+  let thread: Thread | null = null;
 
-  const messageUser: Message = {
-    messageId: generateUuid(),
-    threadId,
-    parentId: null,
-    serial: 0,
-    model,
-    content,
-    parsed: [],
-    role: 'user',
-    status: 'pending',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+  if (!userId) {
+    const user = await createAnonymousUser();
+    userId = user.userId;
 
-  const messageAssistant: Message = {
-    messageId: generateUuid(),
-    threadId,
-    parentId: messageUser.messageId,
-    serial: 0,
-    model,
-    content: '',
-    parsed: [],
-    role: 'assistant',
-    status: 'pending',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+    cookies.set('auth-token', generateAuthToken(user));
+  }
 
-  const stream = streamText({
-    model: openai('gpt-4.1-nano'),
-    messages: [{ role: 'user', content: baseMessage(content) }],
-  });
+  if (!threadId) {
+    thread = await createThread(userId);
+    threadId = thread.threadId;
+  }
 
-  const moviesArr: Movie[] = [];
+  const { model, content } = parsed.data;
 
-  const dataStream = new ReadableStream({
+  const messages = parsed.data.threadId ? await getThreadMessages(threadId) : [];
+  const [messageUser, messageAssistant] = await createPendingUserAssistantMessages(threadId, model, content);
+
+  const outputStream = await stream(model, [...messages, messageUser]);
+
+  const responseStream = new ReadableStream({
     async start(controller) {
-      const reader = stream.textStream.getReader();
+      const outputReader = outputStream.textStream.getReader();
 
-      controller.enqueue(encodeSSE({ type: 'message', v: messageUser }));
-      controller.enqueue(encodeSSE({ type: 'message', v: messageAssistant }));
+      if (thread) {
+        controller.enqueue(encodeSSE({ type: 'thread', v: thread }));
+      }
+      controller.enqueue(encodeSSE({ type: 'pending', v: messageUser }));
+      controller.enqueue(encodeSSE({ type: 'pending', v: messageAssistant }));
 
       while (true) {
-        const { done, value } = await reader.read();
+        const { done, value } = await outputReader.read();
         if (done) break;
 
-        controller.enqueue(encodeSSE({ type: 'content', v: value, id: messageAssistant.messageId }));
         messageAssistant.content += value;
-        messageAssistant.parsed = parseMoviesFromAiResponse(messageAssistant.content);
+
+        controller.enqueue(encodeSSE({ type: 'content', v: value }));
       }
 
-      await Promise.all(
-        messageAssistant.parsed!.map(async (generated, index) => {
-          const found = await findMovie(generated.title, generated.releaseYear);
-          if (!found) return;
+      messageAssistant.structured = await Promise.all(
+        parseMoviesFromOutputStream(messageAssistant.content).map(async (parsedOutput) => {
+          const found = await findMovie(parsedOutput.title, parsedOutput.releaseYear);
+          if (!found) return parsedOutput;
 
-          const tmdbMovie = await getMovieById(found.id);
-          if (!tmdbMovie) return;
+          const source = await getMovieById(found.id);
+          if (!source) return parsedOutput;
 
-          const movie: Movie = {
-            movieId: generateUuid(),
-            tmdbId: tmdbMovie.id,
-            source: tmdbMovie,
-            createdAt: new Date(),
+          const movie = await createMovie(source);
+
+          controller.enqueue(encodeSSE({ type: 'movie', v: movie }));
+
+          return {
+            ...parsedOutput,
+            tmdbId: movie.tmdbId,
           };
-
-          messageAssistant.parsed = produce(messageAssistant.parsed, (draft) => {
-            if (!draft) return;
-            draft[index].tmdbId = tmdbMovie.id;
-          });
-
-          moviesArr.push(movie);
         })
       );
 
-      controller.enqueue(
-        encodeSSE({ type: 'final', v: { ...messageAssistant, movies: moviesArr } as MessageAssistant })
-      );
+      messageUser.status = 'done';
+      messageAssistant.status = 'done';
+
+      await updateMessage(messageUser.messageId, messageUser);
+      await updateMessage(messageAssistant.messageId, messageAssistant);
+
+      controller.enqueue(encodeSSE({ type: 'done', v: messageUser }));
+      controller.enqueue(encodeSSE({ type: 'done', v: messageAssistant }));
 
       controller.enqueue(encodeSSE({ type: 'end' }));
       controller.enqueue(encodeSSE('end'));
+
       controller.close();
-
-      await db.insert(messages).values([
-        { ...messageUser, serial: undefined, status: 'done' },
-        { ...messageAssistant, serial: undefined, status: 'done' },
-      ]);
-
-      await db.insert(movies).values(moviesArr);
-
-      await db.insert(messageMovies).values(
-        moviesArr.map((movie) => ({
-          messageId: messageAssistant.messageId,
-          movieId: movie.movieId,
-          createdAt: new Date(),
-        }))
-      );
     },
   });
 
-  return new NextResponse(dataStream, {
+  return new Response(responseStream, {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Content-Type': 'text/event-stream',
@@ -141,10 +125,10 @@ export const POST = async (request: NextRequest) => {
 
 export type ChatSSEData =
   | { type: 'thread'; v: Thread }
-  | { type: 'thread-title'; v: string }
-  | { type: 'content'; v: string; id: string }
-  | { type: 'message'; v: Message }
-  | { type: 'final'; v: MessageAssistant }
+  | { type: 'pending'; v: Message }
+  | { type: 'done'; v: Message }
+  | { type: 'content'; v: string }
+  | { type: 'movie'; v: Movie }
   | { type: 'end' };
 
 const encodeSSE = (data: ChatSSEData | 'end') => {
