@@ -28,6 +28,7 @@ export const threads = pgTable('threads', {
   userId: uuid('user_id')
     .notNull()
     .references(() => users.userId),
+  title: text('title').notNull().default(''),
   model: text('model').notNull().default(''),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at')

@@ -5,7 +5,6 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
-import superjson from 'superjson';
 
 import type { AppRouter } from '@/server';
 import { TRPCProvider } from '@/lib/trpc';
@@ -56,7 +55,6 @@ export const QueryClientTRPCProvider = ({ children }: { children: React.ReactNod
       links: [
         httpBatchLink({
           url: 'http://localhost:3000/api/trpc',
-          transformer: superjson,
         }),
       ],
     })

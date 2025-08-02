@@ -21,7 +21,7 @@ export const Chat = () => {
     return null; // Prevent hydration mismatch
   }
   return (
-    <div className="overflow-y-scroll px-8">
+    <div className="">
       <div>{userInfo.data?.userId}</div>
       <input
         onKeyDown={(e) => {

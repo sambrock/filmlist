@@ -8,7 +8,9 @@ type Props = {
 export const ThreadView = async ({ threadId }: Props) => {
   return (
     <ThreadProvider threadId={threadId}>
-      <Chat />
+      <main className="bg-background-1 border-foreground-0/10 h-full w-full overflow-y-scroll px-8 py-4">
+        <Chat />
+      </main>
     </ThreadProvider>
   );
 };

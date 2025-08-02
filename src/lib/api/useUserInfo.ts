@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useTRPC } from '../trpc';
+import { trpc } from '../trpc';
 
 export const useUserInfo = () => {
-  const trpc = useTRPC();
-
-  return useQuery(trpc.getUserInfo.queryOptions(undefined, {}));
+  return useQuery({
+    queryKey: ['user'],
+    queryFn: () => trpc.getUserInfo.query(),
+  });
 };

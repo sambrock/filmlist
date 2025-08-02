@@ -26,8 +26,8 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         )}
       >
         <QueryClientTRPCProvider>
-          <div className="fixed top-0 left-0 flex h-full w-full">
-            <Sidebar />
+          <div className="fixed top-0 left-0 grid h-full w-full grid-cols-[260px_1fr]">
+            <Sidebar className="w-full" />
             {props.children}
           </div>
         </QueryClientTRPCProvider>

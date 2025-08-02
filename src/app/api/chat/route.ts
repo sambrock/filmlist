@@ -5,7 +5,7 @@ import { produce } from 'immer';
 import { z } from 'zod';
 
 import { baseMessage, parseMoviesFromAiResponse } from '@/lib/ai';
-import { db, Message, MessageAssistant, messageMovies, messages, Movie, movies } from '@/lib/drizzle';
+import { db, Message, MessageAssistant, messageMovies, messages, Movie, movies, Thread } from '@/lib/drizzle';
 import { findMovie, getMovieById } from '@/lib/tmdb';
 import { generateUuid } from '@/lib/utils';
 
@@ -140,6 +140,8 @@ export const POST = async (request: NextRequest) => {
 };
 
 export type ChatSSEData =
+  | { type: 'thread'; v: Thread }
+  | { type: 'thread-title'; v: string }
   | { type: 'content'; v: string; id: string }
   | { type: 'message'; v: Message }
   | { type: 'final'; v: MessageAssistant }
