@@ -1,12 +1,12 @@
 import { getThreadMessages } from './operations/get-thread-messages';
-import { getUserInfo } from './operations/get-user-info';
+import { getUser } from './operations/get-user';
 import { getUserThreads } from './operations/get-user-threads';
 import { router } from './trpc';
 
 export const appRouter = router({
-  getThreadMessages,
+  getUser,
   getUserThreads,
-  getUserInfo,
+  getThreadMessages,
 });
 
 export type AppRouter = typeof appRouter;

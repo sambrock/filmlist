@@ -1,7 +1,7 @@
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
-import { messages, movies, threads } from './schema';
+import { messages, movies, threads, users } from './schema';
 
 export type Thread = z.infer<typeof ThreadSchema>;
 export type ThreadInsert = z.infer<typeof ThreadInsertSchema>;
@@ -13,6 +13,7 @@ export type MessageUser = z.infer<typeof MessageUserSchema>;
 export type MessageAssistant = z.infer<typeof MessageAssistantSchema>;
 export type Structured = z.infer<typeof StructuredSchema>;
 
+export const UserSchema = createSelectSchema(users);
 export const ThreadSchema = createSelectSchema(threads);
 export const ThreadInsertSchema = createInsertSchema(threads);
 export const MessageSchema = createSelectSchema(messages);

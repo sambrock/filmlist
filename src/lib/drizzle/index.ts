@@ -8,3 +8,4 @@ export * from './operations/create-anonymous-user';
 export * from './operations/create-pending-messages';
 export * from './operations/create-movie';
 export * from './operations/update-message';
+export * from './operations/check-thread-exists';

@@ -1,17 +1,14 @@
-import { cookies as nextCookies } from 'next/headers';
 import { z } from 'zod';
 
 import { parseMoviesFromOutputStream, stream } from '@/lib/ai';
-import { generateAuthToken } from '@/lib/auth';
 import {
-  createAnonymousUser,
+  checkThreadExists,
   createMovie,
   createPendingUserAssistantMessages,
   createThread,
   getThreadMessages,
   Message,
   Movie,
-  Thread,
   updateMessage,
 } from '@/lib/drizzle';
 import { findMovie, getMovieById } from '@/lib/tmdb';
@@ -21,38 +18,26 @@ export const maxDuration = 30;
 // export const dynamic = 'force-dynamic';
 
 const bodySchema = z.object({
-  threadId: z.string().optional(),
-  userId: z.string().optional(),
+  threadId: z.string(),
+  userId: z.string(),
   model: z.string(),
   content: z.string(),
 });
 
 export const POST = async (request: Request) => {
   const body = await request.json();
-  const cookies = await nextCookies();
 
   const parsed = bodySchema.safeParse(body);
   if (parsed.success === false) {
     return Response.json(parsed.error, { status: 400 });
   }
 
-  let userId = parsed.data.userId;
-  let threadId = parsed.data.threadId;
-  let thread: Thread | null = null;
+  const { threadId, userId, model, content } = parsed.data;
 
-  if (!userId) {
-    const user = await createAnonymousUser();
-    userId = user.userId;
-
-    cookies.set('auth-token', generateAuthToken(user));
+  const threadExists = await checkThreadExists(threadId);
+  if (!threadExists) {
+    await createThread({ threadId, userId, title: '', model });
   }
-
-  if (!threadId) {
-    thread = await createThread(userId);
-    threadId = thread.threadId;
-  }
-
-  const { model, content } = parsed.data;
 
   const messages = parsed.data.threadId ? await getThreadMessages(threadId) : [];
   const [messageUser, messageAssistant] = await createPendingUserAssistantMessages(threadId, model, content);
@@ -63,9 +48,6 @@ export const POST = async (request: Request) => {
     async start(controller) {
       const outputReader = outputStream.textStream.getReader();
 
-      if (thread) {
-        controller.enqueue(encodeSSE({ type: 'thread', v: thread }));
-      }
       controller.enqueue(encodeSSE({ type: 'pending', v: messageUser }));
       controller.enqueue(encodeSSE({ type: 'pending', v: messageAssistant }));
 
@@ -78,8 +60,10 @@ export const POST = async (request: Request) => {
         controller.enqueue(encodeSSE({ type: 'content', v: value }));
       }
 
-      messageAssistant.structured = await Promise.all(
-        parseMoviesFromOutputStream(messageAssistant.content).map(async (parsedOutput) => {
+      messageAssistant.structured = parseMoviesFromOutputStream(messageAssistant.content);
+
+      await Promise.all(
+        messageAssistant.structured.map(async (parsedOutput, index) => {
           const found = await findMovie(parsedOutput.title, parsedOutput.releaseYear);
           if (!found) return parsedOutput;
 
@@ -88,12 +72,10 @@ export const POST = async (request: Request) => {
 
           const movie = await createMovie(source);
 
+          console.log(movie);
           controller.enqueue(encodeSSE({ type: 'movie', v: movie }));
 
-          return {
-            ...parsedOutput,
-            tmdbId: movie.tmdbId,
-          };
+          messageAssistant.structured![index].tmdbId = movie.tmdbId;
         })
       );
 
@@ -124,7 +106,6 @@ export const POST = async (request: Request) => {
 };
 
 export type ChatSSEData =
-  | { type: 'thread'; v: Thread }
   | { type: 'pending'; v: Message }
   | { type: 'done'; v: Message }
   | { type: 'content'; v: string }
