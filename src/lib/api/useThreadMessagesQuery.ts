@@ -4,7 +4,7 @@ import { trpc } from '../trpc/client';
 export const useThreadMessagesQuery = () => {
   const threadId = useClientStoreThreadId();
 
-  const threadIdReplaced = threadId.replace('new:', '');
+  const threadIdReplaced = threadId.replace('draft:', '');
 
   return trpc.getThreadMessages.useInfiniteQuery(
     {

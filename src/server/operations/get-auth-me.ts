@@ -14,7 +14,7 @@ export const getAuthMe = publicProcedure.query(async ({ ctx }) => {
   }
 
   const anonymousUser = {
-    userId: `anon:${uuid()}`,
+    userId: `draft:${uuid()}`,
     anon: true,
     persisted: false,
   };

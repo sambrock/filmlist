@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { getQueryKey } from '@trpc/react-query';
 import { produce } from 'immer';
 
-import type { ChatSSEData } from '@/app/api/chat/route';
+import type { ChatSSE } from '@/server/operations/chat';
 import {
   useClientStore,
   useClientStoreThreadId,
@@ -36,7 +36,7 @@ export const useChatStream = () => {
       let pendingMessageAssistant: Message;
 
       await readEventStream(response, (data) => {
-        const parsed = JSON.parse(data) as ChatSSEData;
+        const parsed = JSON.parse(data) as ChatSSE;
         console.log('parsed', parsed);
 
         if (parsed.type === 'pending') {

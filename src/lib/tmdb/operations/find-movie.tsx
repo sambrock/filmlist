@@ -1,6 +1,8 @@
+import { cache } from 'react';
+
 import { tmdb } from '../client';
 
-export const findMovie = async (query: string, year: string) => {
+export const findMovie = cache(async (query: string, year: string) => {
   const search = await tmdb.GET('/3/search/movie', {
     params: {
       query: {
@@ -22,4 +24,4 @@ export const findMovie = async (query: string, year: string) => {
   }
 
   return result;
-};
+});

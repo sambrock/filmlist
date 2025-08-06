@@ -20,6 +20,7 @@ module.exports = {
     '',
     '^@/actions.*$',
     '^@/server.*$',
+    '^@/drizzle.*$',
     '^@/app.*$',
     '^@/lib.*$',
     '^@/middleware.*$',

@@ -5,7 +5,7 @@ import { ThreadView } from '@/components/views/thread-view';
 export default async function NewThreadPage() {
   return (
     <HydrateClient>
-      <ThreadView threadId={`new:${uuid()}`} empty={true} />
+      <ThreadView threadId={`draft:${uuid()}`} empty={true} />
     </HydrateClient>
   );
 }

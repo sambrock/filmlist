@@ -4,7 +4,6 @@ export * from './zod';
 
 export * from './operations/get-thread-messages';
 export * from './operations/create-thread';
-export * from './operations/create-anonymous-user';
 export * from './operations/create-pending-messages';
 export * from './operations/create-movie';
 export * from './operations/update-message';

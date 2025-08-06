@@ -6,32 +6,30 @@ import { initTRPC, TRPCError } from '@trpc/server';
 
 import { verifyAuthToken } from '@/lib/auth';
 
-const t = initTRPC.context<typeof createTRPCContext>().create({});
+const t = initTRPC.context<typeof createContext>().create({});
 
 export const router = t.router;
 export const createCallerFactory = t.createCallerFactory;
 
 // Context
 
-export const createTRPCContext = cache(async () => {
-  const c = await cookies();
-  const authTokenCookie = c.get('auth-token');
+export const createContext = cache(async () => {
+  const cookieStore = await cookies();
+  const authTokenCookie = cookieStore.get('auth-token');
 
   if (authTokenCookie) {
-    return { token: authTokenCookie.value };
+    const verified = verifyAuthToken(authTokenCookie.value);
+    return { auth: !!verified, user: verified, token: authTokenCookie.value };
   }
 
-  return { token: null };
+  return { auth: false, user: null, token: null };
 });
 
 // Middleware
 
 export const isAuthed = t.middleware(async ({ ctx, next }) => {
-  if (ctx.token) {
-    const verified = verifyAuthToken(ctx.token);
-    if (verified) {
-      return next({ ctx: { user: verified } });
-    }
+  if (ctx.auth) {
+    return next();
   }
 
   throw new TRPCError({ code: 'UNAUTHORIZED' });

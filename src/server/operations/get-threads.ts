@@ -6,7 +6,7 @@ import { protectedProcedure } from '../trpc';
 export const getThreads = protectedProcedure
   .input(
     z.object({
-      userId: z.string().transform((val) => val.replace('anon:', '')),
+      userId: z.string().transform((val) => val.replace('draft:', '')),
     })
   )
   .query(async ({ input }) => {

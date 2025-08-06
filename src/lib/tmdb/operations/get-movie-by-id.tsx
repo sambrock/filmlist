@@ -1,7 +1,9 @@
+import { cache } from 'react';
+
 import { tmdb } from '../client';
 import { MovieDetails } from '../types';
 
-export const getMovieById = async (movieId: number) => {
+export const getMovieById = cache(async (movieId: number) => {
   const { data } = await tmdb.GET(`/3/movie/{movie_id}`, {
     params: {
       path: {
@@ -15,4 +17,4 @@ export const getMovieById = async (movieId: number) => {
   }
 
   return data as MovieDetails;
-};
+});

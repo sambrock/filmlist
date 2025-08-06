@@ -5,7 +5,7 @@ import { defaultShouldDehydrateQuery, QueryClient } from '@tanstack/react-query'
 import { createHydrationHelpers } from '@trpc/react-query/rsc';
 
 import { appRouter, type AppRouter } from '@/server';
-import { createCallerFactory, createTRPCContext } from '@/server/trpc';
+import { createCallerFactory, createContext } from '@/server/trpc';
 
 export const makeQueryClient = () => {
   return new QueryClient({
@@ -23,6 +23,6 @@ export const makeQueryClient = () => {
 };
 
 export const getQueryClient = cache(makeQueryClient);
-const caller = createCallerFactory(appRouter)(createTRPCContext);
+const caller = createCallerFactory(appRouter)(createContext);
 
 export const { trpc, HydrateClient } = createHydrationHelpers<AppRouter>(caller, getQueryClient);

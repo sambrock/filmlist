@@ -1,9 +1,7 @@
 import { openai } from '@ai-sdk/openai';
-import { streamText } from 'ai';
+import { ModelMessage, streamText } from 'ai';
 
-import { type Message } from '@/drizzle';
-
-export const stream = async (model: string, messages: Message[]) => {
+export const stream = async (model: string, messages: ModelMessage[]) => {
   return streamText({
     model: openai('gpt-4.1-nano'),
     messages: [
@@ -31,7 +29,7 @@ export const stream = async (model: string, messages: Message[]) => {
           ]
         `,
       },
-      ...messages.map((message) => ({ role: message.role, content: message.content })),
+      ...messages,
     ],
   });
 };
