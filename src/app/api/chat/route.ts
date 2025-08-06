@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
 import { parseMoviesFromOutputStream, stream } from '@/lib/ai';
+import { readAuthTokenCookie, setAuthTokenCookie } from '@/lib/auth';
 import {
-  checkThreadExists,
+  createAnonymousUser,
   createMovie,
   createPendingUserAssistantMessages,
   createThread,
@@ -10,7 +11,7 @@ import {
   Message,
   Movie,
   updateMessage,
-} from '@/lib/drizzle';
+} from '@/drizzle';
 import { findMovie, getMovieById } from '@/lib/tmdb';
 
 export const maxDuration = 30;
@@ -25,17 +26,27 @@ const bodySchema = z.object({
 });
 
 export const POST = async (request: Request) => {
-  const body = await request.json();
+  const user = await readAuthTokenCookie();
+  if (!user) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
+  const body = await request.json();
   const parsed = bodySchema.safeParse(body);
   if (parsed.success === false) {
     return Response.json(parsed.error, { status: 400 });
   }
 
-  const { threadId, userId, model, content } = parsed.data;
+  if (!user.persisted) {
+    await createAnonymousUser({ userId: user.userId, anon: true });
+    await setAuthTokenCookie({ ...user, persisted: true });
+  }
 
-  const threadExists = await checkThreadExists(threadId);
-  if (!threadExists) {
+  const { userId, model, content } = parsed.data;
+  let { threadId } = parsed.data;
+
+  if (threadId.startsWith('new:')) {
+    threadId = threadId.replace('new:', '');
     await createThread({ threadId, userId, title: '', model });
   }
 

@@ -12,8 +12,11 @@ export type MovieInsert = z.infer<typeof MovieInsertSchema>;
 export type MessageUser = z.infer<typeof MessageUserSchema>;
 export type MessageAssistant = z.infer<typeof MessageAssistantSchema>;
 export type Structured = z.infer<typeof StructuredSchema>;
+export type User = z.infer<typeof UserSchema>;
+export type UserInsert = z.infer<typeof UserInsertSchema>;
 
 export const UserSchema = createSelectSchema(users);
+export const UserInsertSchema = createInsertSchema(users);
 export const ThreadSchema = createSelectSchema(threads);
 export const ThreadInsertSchema = createInsertSchema(threads);
 export const MessageSchema = createSelectSchema(messages);

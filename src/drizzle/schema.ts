@@ -11,7 +11,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
-import { MovieDetails } from '../tmdb';
+import { MovieDetails } from '../lib/tmdb';
 
 export const users = pgTable('users', {
   userId: uuid('user_id').primaryKey(),

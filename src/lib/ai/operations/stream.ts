@@ -1,7 +1,7 @@
 import { openai } from '@ai-sdk/openai';
 import { streamText } from 'ai';
 
-import { type Message } from '@/lib/drizzle';
+import { type Message } from '@/drizzle';
 
 export const stream = async (model: string, messages: Message[]) => {
   return streamText({

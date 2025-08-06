@@ -1,19 +1,25 @@
-import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
+import { getQueryKey } from '@trpc/react-query';
 import { produce } from 'immer';
 
 import type { ChatSSEData } from '@/app/api/chat/route';
-import { useClientStore } from '@/providers/client-store-provider';
-import { useThreadContext } from '@/providers/thread-context-provider';
-import { useUserContext } from '@/providers/user-context-provider';
-import type { Message, MessageAssistant } from '../drizzle';
+import {
+  useClientStore,
+  useClientStoreThreadId,
+  useClientStoreUserId,
+} from '@/providers/client-store-provider';
+import type { Message } from '../../drizzle';
+import { trpc } from '../trpc/client';
 import { readEventStream } from '../utils';
 
 export const useChatStream = () => {
-  const queryClient = useQueryClient();
-
-  const { user } = useUserContext();
-  const { threadId } = useThreadContext();
+  const userId = useClientStoreUserId();
+  const threadId = useClientStoreThreadId();
   const model = useClientStore((s) => s.model);
+
+  const trpcUtils = trpc.useUtils();
+
+  const threadIdReplaced = threadId.replace('new:', '');
 
   return useMutation({
     mutationFn: async (content: string) => {
@@ -21,7 +27,7 @@ export const useChatStream = () => {
         method: 'POST',
         body: JSON.stringify({
           threadId,
-          userId: user.userId,
+          userId,
           content,
           model,
         }),
@@ -31,71 +37,64 @@ export const useChatStream = () => {
 
       await readEventStream(response, (data) => {
         const parsed = JSON.parse(data) as ChatSSEData;
+        console.log('parsed', parsed);
 
         if (parsed.type === 'pending') {
           const message = parsed.v;
           if (message.role === 'assistant') {
             pendingMessageAssistant = message;
           }
-          queryClient.setQueryData(
-            ['thread', threadId, 'messages'],
-            (state: InfiniteData<{ messages: Message[] }>) =>
-              produce(state, (draft) => {
-                if (!draft) {
-                  draft = { pages: [{ messages: [] }], pageParams: [] };
-                }
-                draft.pages[0].messages.unshift(message);
-              })
+          trpcUtils.getThreadMessages.setInfiniteData({ threadId: threadIdReplaced, cursor: 0 }, (state) =>
+            produce(state, (draft) => {
+              draft!.pages[0].messages.unshift(message);
+            })
           );
         }
         if (parsed.type === 'content') {
-          queryClient.setQueryData(
-            ['thread', threadId, 'messages'],
-            (state: InfiniteData<{ messages: Message[] }>) =>
-              produce(state, (draft) => {
-                const index = draft.pages[0].messages.findIndex(
-                  (m) => m.messageId === pendingMessageAssistant.messageId
-                );
-                if (index !== -1) {
-                  draft.pages[0].messages[index].content += parsed.v;
-                }
-              })
+          trpcUtils.getThreadMessages.setInfiniteData({ threadId: threadIdReplaced, cursor: 0 }, (state) =>
+            produce(state, (draft) => {
+              const index = draft!.pages[0].messages.findIndex(
+                (m) => m.messageId === pendingMessageAssistant.messageId
+              );
+              if (index !== -1) {
+                const message = draft!.pages[0].messages[index];
+                message.content += parsed.v;
+              }
+            })
           );
         }
         if (parsed.type === 'done') {
           const message = parsed.v;
-          queryClient.setQueryData(
-            ['thread', threadId, 'messages'],
-            (state: InfiniteData<{ messages: Message[] }>) =>
-              produce(state, (draft) => {
-                const index = draft.pages[0].messages.findIndex((m) => m.messageId === message.messageId);
-                if (index !== -1) {
-                  Object.assign(draft.pages[0].messages[index], message);
-                }
-              })
+          trpcUtils.getThreadMessages.setInfiniteData({ threadId: threadIdReplaced, cursor: 0 }, (state) =>
+            produce(state, (draft) => {
+              const index = draft!.pages[0].messages.findIndex((m) => m.messageId === message.messageId);
+              if (index !== -1) {
+                Object.assign(draft!.pages[0].messages[index], message);
+              }
+            })
           );
         }
         if (parsed.type === 'movie') {
           const movie = parsed.v;
-          queryClient.setQueryData(
-            ['thread', threadId, 'messages'],
-            (state: InfiniteData<{ messages: MessageAssistant[] }>) =>
-              produce(state, (draft) => {
-                const index = draft.pages[0].messages.findIndex(
-                  (m) => m.messageId === pendingMessageAssistant.messageId
-                );
-                if (index !== -1) {
-                  const message = draft.pages[0].messages[index] as MessageAssistant;
-                  if (message.movies === undefined) {
-                    message.movies = [];
-                  }
-                  draft.pages[0].messages[index].movies.push(movie);
+          trpcUtils.getThreadMessages.setInfiniteData({ threadId: threadIdReplaced, cursor: 0 }, (state) =>
+            produce(state, (draft) => {
+              const index = draft!.pages[0].messages.findIndex(
+                (m) => m.messageId === pendingMessageAssistant.messageId
+              );
+              if (index !== -1) {
+                const message = draft!.pages[0].messages[index];
+                if (message.movies === undefined) {
+                  message.movies = [];
                 }
-              })
+                draft!.pages[0].messages[index].movies.push(movie);
+              }
+            })
           );
         }
         if (parsed.type === 'end') {
-          // router.push(`/${threadId}`);
+          trpcUtils.invalidate(undefined, {
+            queryKey: getQueryKey(trpc.getThreadMessages, { threadId: threadIdReplaced }),
+          });
         }
       });
     },

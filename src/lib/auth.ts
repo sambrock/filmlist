@@ -8,28 +8,38 @@ import { env } from './env';
 export type User = {
   userId: string;
   anon: boolean;
+  persisted: boolean;
 };
 
 export const generateAuthToken = (user: User) => {
   return jwt.sign(user, env.JWT_SECRET);
 };
 
-export const verifyAuthToken = (token: string): User => {
-  try {
-    return jwt.verify(token, env.JWT_SECRET) as User;
-  } catch (err) {
-    console.error(err);
-    throw new Error('Invalid auth token');
+export const verifyAuthToken = (token: string): User | null => {
+  const user = jwt.verify(token, env.JWT_SECRET);
+  if (!user || typeof user !== 'object' || !('userId' in user)) {
+    return null;
   }
+  return user as User;
 };
 
-export const decodeAuthToken = (token: string): User => {
-  return jwt.decode(token) as User;
+export const readAuthTokenCookie = async () => {
+  const cookieStore = await cookies();
+  const authTokenCookie = cookieStore.get('auth-token');
+  if (!authTokenCookie) {
+    return null;
+  }
+  const user = verifyAuthToken(authTokenCookie.value);
+  return user;
 };
 
-export const getCurrentUser = async () => {
-  const c = await cookies();
-  const authTokenCookie = c.get('auth-token');
-
-  return authTokenCookie ? decodeAuthToken(authTokenCookie.value) : undefined;
+export const setAuthTokenCookie = async (user: User) => {
+  const cookieStore = await cookies();
+  const token = generateAuthToken(user);
+  cookieStore.set('auth-token', token, {
+    path: '/',
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+  });
 };

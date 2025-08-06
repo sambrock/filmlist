@@ -1,4 +1,4 @@
-import type { MessageAssistant } from '@/lib/drizzle';
+import type { MessageAssistant } from '@/drizzle';
 import { posterSrc, runtimeToHoursMins } from '@/lib/utils';
 
 type Props = {

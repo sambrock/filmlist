@@ -706,6 +706,14 @@
     "@emnapi/runtime" "^1.4.3"
     "@tybys/wasm-util" "^0.9.0"
 
+"@neondatabase/serverless@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@neondatabase/serverless/-/serverless-1.0.1.tgz#d641bef253d44a262414adc9fe8e55c97c263c17"
+  integrity sha512-O6yC5TT0jbw86VZVkmnzCZJB0hfxBl0JJz6f+3KHoZabjb/X08r9eFA+vuY06z1/qaovykvdkrXYq3SPUuvogA==
+  dependencies:
+    "@types/node" "^22.15.30"
+    "@types/pg" "^8.8.0"
+
 "@next/env@15.3.3":
   version "15.3.3"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-15.3.3.tgz#8c5548756df93efff1bf4bb4e9e430a763978155"
@@ -1691,6 +1699,11 @@
   resolved "https://registry.yarnpkg.com/@trpc/next/-/next-11.2.0.tgz#b930b45a7632e266410746011f528371dc6104c1"
   integrity sha512-PyTe8GXn14NaTnHqm7ggR9PtgQhBUiW+3HPVIvwTy9/P9P4xw+A4Kl6V8BZV4Sq4jkmapuEY2rLquVtV3nhYzw==
 
+"@trpc/react-query@^11.4.3":
+  version "11.4.3"
+  resolved "https://registry.yarnpkg.com/@trpc/react-query/-/react-query-11.4.3.tgz#870437cfb8b859d92c7a3164956acab373362555"
+  integrity sha512-z+jhAiOBD22NNhHtvF0iFp9hO36YFA7M8AiUu/XtNmMxyLd3Y9/d1SMjMwlTdnGqxEGPo41VEWBrdhDUGtUuHg==
+
 "@trpc/server@^11.4.3":
   version "11.4.3"
   resolved "https://registry.yarnpkg.com/@trpc/server/-/server-11.4.3.tgz#669a964c85a0feab45da51e3ad03f63668dba525"
@@ -1750,10 +1763,26 @@
   dependencies:
     undici-types "~6.19.2"
 
+"@types/node@^22.15.30":
+  version "22.17.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.17.0.tgz#e8c9090e957bd4d9860efb323eb92d297347eac7"
+  integrity sha512-bbAKTCqX5aNVryi7qXVMi+OkB3w/OyblodicMbvE38blyAz7GxXf6XYhklokijuPwwVg9sDLKRxt0ZHXQwZVfQ==
+  dependencies:
+    undici-types "~6.21.0"
+
 "@types/pg@^8.15.4":
   version "8.15.4"
   resolved "https://registry.yarnpkg.com/@types/pg/-/pg-8.15.4.tgz#419f791c6fac8e0bed66dd8f514b60f8ba8db46d"
   integrity sha512-I6UNVBAoYbvuWkkU3oosC8yxqH21f4/Jc4DK71JLG3dT2mdlGe1z+ep/LQGXaKaOgcvUrsQoPRqfgtMcvZiJhg==
+  dependencies:
+    "@types/node" "*"
+    pg-protocol "*"
+    pg-types "^2.2.0"
+
+"@types/pg@^8.8.0":
+  version "8.15.5"
+  resolved "https://registry.yarnpkg.com/@types/pg/-/pg-8.15.5.tgz#ef43e0f33b62dac95cae2f042888ec7980b30c09"
+  integrity sha512-LF7lF6zWEKxuT3/OR8wAZGzkg4ENGXFNyiV/JeOt9z5B+0ZVwbql9McqX5c/WStFq1GaGso7H1AzP/qSzmlCKQ==
   dependencies:
     "@types/node" "*"
     pg-protocol "*"

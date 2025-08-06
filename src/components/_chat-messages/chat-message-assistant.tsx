@@ -1,6 +1,6 @@
 'use client';
 
-import type { MessageAssistant } from '@/lib/drizzle';
+import type { MessageAssistant } from '@/drizzle';
 import { ChatMessageRecommendation } from './chat-message-recommendation';
 
 type Props = {

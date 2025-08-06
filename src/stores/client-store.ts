@@ -1,8 +1,6 @@
 import { enableMapSet, produce } from 'immer';
 import { createStore } from 'zustand/vanilla';
 
-import { User } from '@/lib/auth';
-
 enableMapSet();
 
 type ThreadState = {
@@ -12,43 +10,43 @@ type ThreadState = {
 };
 
 export type ClientState = {
-  user: User | null;
+  userId: string;
+  threadId: string;
   model: string;
   threads: Map<string, ThreadState>;
 };
 
-export type InitialClientState = {
-  user?: User | null;
-  threadId?: string;
-};
-
 export type ClientStateActions = {
-  initialize: (initialState: InitialClientState) => void;
+  setUserId: (userId: string) => void;
+  setThreadId: (threadId: string) => void;
   setModel: (model: string) => void;
   setThread: (threadId: string, threadState: ThreadState) => void;
 };
 
+export type InitClientState = {
+  userId?: string;
+};
+
 export type ClientStore = ClientState & { actions: ClientStateActions };
 
-export const createClientStore = () => {
+export const createClientStore = (init?: InitClientState) => {
   return createStore<ClientStore>()((set) => ({
-    user: null,
+    userId: init?.userId || '',
+    threadId: '',
     model: 'gpt-4.1-nano',
     threads: new Map(),
     actions: {
-      initialize: (initialState) => {
+      setUserId: (userId) => {
         set(
           produce((state: ClientStore) => {
-            if (initialState.user) {
-              state.user = initialState.user;
-            }
-            if (initialState.threadId) {
-              state.threads.set(initialState.threadId, {
-                threadId: initialState.threadId,
-                model: state.model,
-                inputValue: '',
-              });
-            }
+            state.userId = userId;
+          })
+        );
+      },
+      setThreadId: (threadId) => {
+        set(
+          produce((state: ClientStore) => {
+            state.threadId = threadId;
           })
         );
       },

@@ -1,25 +1,23 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
-
-import { useThreadContext } from '@/providers/thread-context-provider';
-import { trpc } from '../trpc';
+import { useClientStoreThreadId } from '@/providers/client-store-provider';
+import { trpc } from '../trpc/client';
 
 export const useThreadMessagesQuery = () => {
-  const { threadId } = useThreadContext();
+  const threadId = useClientStoreThreadId();
 
-  return useInfiniteQuery({
-    queryKey: ['thread', threadId, 'messages'],
-    queryFn: ({ pageParam }) => {
-      return trpc.getThreadMessages.query({
-        threadId,
-        cursor: pageParam,
-        limit: 20,
-      });
+  const threadIdReplaced = threadId.replace('new:', '');
+
+  return trpc.getThreadMessages.useInfiniteQuery(
+    {
+      threadId: threadIdReplaced,
     },
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-    initialPageParam: 0,
-    retryOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: false,
-  });
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      initialCursor: 0,
+      retryOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+      enabled: !!threadIdReplaced,
+    }
+  );
 };

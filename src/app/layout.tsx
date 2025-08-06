@@ -2,14 +2,13 @@ import type { Metadata } from 'next';
 import { Schibsted_Grotesk } from 'next/font/google';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import './globals.css';
-
-import { getCurrentUser } from '@/lib/auth';
+import { readAuthTokenCookie } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { ClientStoreProvider } from '@/providers/client-store-provider';
-import { QueryClientTRPCProvider } from '@/providers/query-client-trpc-provider';
-import { UserContextProvider } from '@/providers/user-context-provider';
+import { QueryClientProvider } from '@/providers/query-client-provider';
 import { Sidebar } from '@/components/sidebar/sidebar';
+
+import './globals.css';
 
 const fontSans = Schibsted_Grotesk({
   subsets: ['latin'],
@@ -21,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
-  const user = await getCurrentUser();
+  const user = await readAuthTokenCookie();
 
   return (
     <html lang="en">
@@ -31,18 +30,16 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
           fontSans.className
         )}
       >
-        <QueryClientTRPCProvider>
-          <ClientStoreProvider>
-            <UserContextProvider user={user}>
-              <div className="fixed top-0 left-0 grid h-full w-full grid-cols-[260px_1fr]">
-                <Sidebar className="w-full" />
-                {props.children}
-              </div>
+        <QueryClientProvider>
+          <ClientStoreProvider initialState={{ userId: user?.userId }}>
+            <div className="fixed top-0 left-0 grid h-full w-full grid-cols-[260px_1fr]">
+              <Sidebar className="w-full" />
+              {props.children}
+            </div>
 
-              <ReactQueryDevtools initialIsOpen={false} />
-            </UserContextProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
           </ClientStoreProvider>
-        </QueryClientTRPCProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );

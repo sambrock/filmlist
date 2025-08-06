@@ -1,6 +1,6 @@
 'use client';
 
-import { MessageUser } from '@/lib/drizzle';
+import { MessageUser } from '@/drizzle';
 
 type Props = {
   message: MessageUser;

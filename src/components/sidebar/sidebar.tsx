@@ -1,10 +1,16 @@
+import { readAuthTokenCookie } from '@/lib/auth';
+import { trpc } from '@/lib/trpc/server';
 import { cn } from '@/lib/utils';
-import { UserContextProvider } from '@/providers/user-context-provider';
-import { SidebarThreadLinks } from './sidebar-thread-links';
 
 type Props = React.ComponentProps<'div'>;
 
-export const Sidebar = ({ className, ...props }: Props) => {
+export const Sidebar = async ({ className, ...props }: Props) => {
+  const user = await readAuthTokenCookie();
+
+  if (user) {
+    void trpc.getThreads.prefetch({ userId: user.userId });
+  }
+
   return (
     <div className={cn('bg-background-0 border-foreground-0/10 border-r p-4', className)} {...props}>
       <div>
@@ -13,11 +19,7 @@ export const Sidebar = ({ className, ...props }: Props) => {
         </div>
       </div>
 
-      <div>
-        <UserContextProvider>
-          <SidebarThreadLinks />
-        </UserContextProvider>
-      </div>
+      <div></div>
     </div>
   );
 };
