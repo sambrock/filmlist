@@ -1,11 +1,13 @@
 import { HydrateClient } from '@/lib/trpc/server';
-import { uuid } from '@/lib/utils';
-import { ThreadView } from '@/components/views/thread-view';
+import { draftUuid } from '@/lib/utils/uuid';
+import { ChatView } from '@/components/views/chat-view';
 
-export default async function NewThreadPage() {
+export default async function NewChatPage() {
+  const draftThreadId = draftUuid();
+
   return (
     <HydrateClient>
-      <ThreadView threadId={`draft:${uuid()}`} empty={true} />
+      <ChatView threadId={draftThreadId} />
     </HydrateClient>
   );
 }

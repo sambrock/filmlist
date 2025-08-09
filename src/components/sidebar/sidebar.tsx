@@ -1,14 +1,14 @@
-import { readAuthTokenCookie } from '@/lib/auth';
+import { createContext } from '@/server/trpc';
 import { trpc } from '@/lib/trpc/server';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 type Props = React.ComponentProps<'div'>;
 
 export const Sidebar = async ({ className, ...props }: Props) => {
-  const user = await readAuthTokenCookie();
+  const ctx = await createContext();
 
-  if (user) {
-    void trpc.getThreads.prefetch({ userId: user.userId });
+  if (ctx.user) {
+    void trpc.getUserThreads.prefetch({ userId: ctx.user.userId });
   }
 
   return (
@@ -18,8 +18,6 @@ export const Sidebar = async ({ className, ...props }: Props) => {
           <img className="w-6" src="/logo.svg" alt="Logo" />
         </div>
       </div>
-
-      <div></div>
     </div>
   );
 };

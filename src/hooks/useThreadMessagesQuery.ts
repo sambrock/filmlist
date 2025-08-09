@@ -1,5 +1,5 @@
 import { trpc } from '@/lib/trpc/client';
-import { useClientStoreThreadId } from '@/providers/client-store-provider';
+import { useClientStoreThreadId } from '@/providers/global-store-provider';
 
 export const useThreadMessagesQuery = () => {
   const threadId = useClientStoreThreadId();

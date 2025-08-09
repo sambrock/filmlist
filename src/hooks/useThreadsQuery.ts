@@ -1,4 +1,4 @@
-import { useClientStoreUserId } from '@/providers/client-store-provider';
+import { useClientStoreUserId } from '@/providers/global-store-provider';
 import { trpc } from '../trpc/client';
 
 export const useThreadsQuery = () => {
