@@ -4,7 +4,7 @@ import { cache } from 'react';
 import { defaultShouldDehydrateQuery, QueryClient } from '@tanstack/react-query';
 import { createHydrationHelpers } from '@trpc/react-query/rsc';
 
-import { appRouter, type AppRouter } from '@/server';
+import { appRouter, type AppRouter } from '@/server/router';
 import { createCallerFactory, createContext } from '@/server/trpc';
 
 export const makeQueryClient = () => {

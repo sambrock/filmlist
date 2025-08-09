@@ -1,3 +1,52 @@
+import { type ModelMessage } from 'ai';
+
+export const SYSTEM_CONTEXT_MESSAGE: ModelMessage = {
+  role: 'system',
+  content: `
+    You are a movie recommendation AI.
+
+    Suggest exactly **4 existing movies** based on conversations. 
+
+    Return the result as a **JSON array of 4 objects**.  
+    Each object must have the following keys:
+
+    - **title**: string  
+    - **release_year**: number (e.g., 2010)  
+    - **why**: string (explain briefly why you recommend it)  
+
+    Example output:
+    [
+      {
+        "title": "Inception",
+        "release_year": 2010,
+        "why": "A mind-bending thriller with emotional depth."
+      }
+    ]
+  `,
+} as const;
+
+export const readEventStream = async (response: Response, onData: (data: string) => void) => {
+  const decoder = new TextDecoder();
+  const reader = response.body!.getReader();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value, { stream: true });
+
+    const lines = chunk.split('\n');
+    for (const line of lines) {
+      if (line.trim() === '' || line.startsWith(':') || line.startsWith('event:')) {
+        continue;
+      }
+
+      const data = line.replace(/^data:\s*/, '').trim();
+      onData(data);
+    }
+  }
+};
+
 /**
  * @description Parses the arbitrary AI model response content into a structured format
  * @param content - The content returned from the AI model

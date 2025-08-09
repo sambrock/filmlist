@@ -2,13 +2,13 @@ import { useMutation } from '@tanstack/react-query';
 import { getQueryKey } from '@trpc/react-query';
 import { produce } from 'immer';
 
-import type { ChatSSE } from '@/server/operations/chat';
+import { ChatSSE } from '@/app/api/chat/route';
 import {
   useClientStore,
   useClientStoreThreadId,
   useClientStoreUserId,
 } from '@/providers/client-store-provider';
-import type { Message } from '../../drizzle';
+import type { Message } from '../drizzle';
 import { trpc } from '../trpc/client';
 import { readEventStream } from '../utils';
 

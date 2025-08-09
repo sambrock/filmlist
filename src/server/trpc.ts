@@ -19,7 +19,7 @@ export const createContext = cache(async () => {
 
   if (authTokenCookie) {
     const verified = verifyAuthToken(authTokenCookie.value);
-    return { auth: !!verified, user: verified, token: authTokenCookie.value };
+    return { auth: Boolean(verified), user: verified, token: authTokenCookie.value };
   }
 
   return { auth: false, user: null, token: null };

@@ -2,9 +2,9 @@
 
 import { useIsClient } from 'usehooks-ts';
 
-import { useAuthMe } from '@/lib/api/useAuthMe';
-import { useChatStream } from '@/lib/api/useChatStream';
-import { useThreadMessagesQuery } from '@/lib/api/useThreadMessagesQuery';
+import { useAuthMe } from '@/lib/hooks/useAuthMe';
+import { useChatStream } from '@/lib/hooks/useChatStream';
+import { useThreadMessagesQuery } from '@/lib/hooks/useThreadMessagesQuery';
 import {
   useClientStoreSetThreadId,
   useClientStoreThreadId,

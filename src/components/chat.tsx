@@ -2,8 +2,8 @@
 
 import { useIsClient } from 'usehooks-ts';
 
-import { useChatStream } from '@/lib/api/useChatStream';
-import { useThreadMessagesQuery } from '@/lib/api/useThreadMessagesQuery';
+import { useChatStream } from '@/lib/hooks/useChatStream';
+import { useThreadMessagesQuery } from '@/lib/hooks/useThreadMessagesQuery';
 
 export const Chat = ({ threadId }: { threadId: string }) => {
   const { mutate } = useChatStream();

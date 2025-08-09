@@ -11,7 +11,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
-import { MovieDetails } from '../lib/tmdb';
+import { MovieDetails } from '../tmdb/types';
 
 export const users = pgTable('users', {
   userId: uuid('user_id').primaryKey(),
@@ -28,11 +28,11 @@ export const threads = pgTable('threads', {
   userId: uuid('user_id')
     .notNull()
     .references(() => users.userId),
+  serial: serial('serial').unique().notNull(),
   title: text('title').notNull().default(''),
   model: text('model').notNull().default(''),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at')
-    .notNull()
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
@@ -44,7 +44,7 @@ export const messages = pgTable('messages', {
     .notNull()
     .references(() => threads.threadId),
   parentId: uuid('parent_id'),
-  serial: serial('serial').notNull(),
+  serial: serial('serial').unique().notNull(),
   content: text('content').notNull(),
   structured:
     jsonb('structured').$type<{ tmdbId: number; title: string; releaseYear: string; why: string }[]>(),
