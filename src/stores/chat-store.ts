@@ -12,6 +12,7 @@ export type ChatState = {
 export type ChatStateActions = {
   setModel: (model: string) => void;
   setValue: (value: string) => void;
+  setThreadId: (threadId: string) => void;
 };
 
 export type ChatStore = ChatState & { actions: ChatStateActions };
@@ -38,6 +39,13 @@ export const createChatStore = (initialData: InitialChatState) => {
         set(
           produce((state: ChatState) => {
             state.value = value;
+          })
+        );
+      },
+      setThreadId: (threadId) => {
+        set(
+          produce((state: ChatState) => {
+            state.threadId = threadId;
           })
         );
       },

@@ -1,20 +1,32 @@
 'use client';
 
-import { createContext, useContext, useRef } from 'react';
+import { createContext, useContext, useEffect, useRef } from 'react';
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/shallow';
 
 import { createGlobalStore, GlobalStore } from '@/stores/global-store';
+import { useGetUserQuery } from '@/hooks/useGetUserQuery';
 
 export type GlobalStoreApi = ReturnType<typeof createGlobalStore>;
 
 export const GlobalStoreContext = createContext<GlobalStoreApi | undefined>(undefined);
 
 export const GlobalStoreProvider = (props: React.PropsWithChildren) => {
+  const userQuery = useGetUserQuery();
+
   const storeRef = useRef<GlobalStoreApi | null>(null);
   if (storeRef.current === null) {
-    storeRef.current = createGlobalStore();
+    storeRef.current = createGlobalStore({
+      userId: userQuery.data?.userId,
+    });
+    storeRef.current.subscribe((state) => console.log(state));
   }
+
+  useEffect(() => {
+    if (!storeRef.current) return;
+    if (!userQuery.data) return;
+    storeRef.current.getState().actions.setUserId(userQuery.data.userId);
+  }, [userQuery.data]);
 
   return <GlobalStoreContext.Provider value={storeRef.current}>{props.children}</GlobalStoreContext.Provider>;
 };

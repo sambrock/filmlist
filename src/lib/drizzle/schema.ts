@@ -59,7 +59,7 @@ export const messages = pgTable('messages', {
 });
 
 export const movies = pgTable('movies', {
-  movieId: uuid('movie_id').primaryKey(),
+  movieId: integer('movie_id').primaryKey(), // same as tmdbId
   tmdbId: integer('tmdb_id').unique().notNull(),
   source: jsonb('source_tmdb').$type<MovieDetails>().notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -71,7 +71,7 @@ export const library = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.userId),
-    movieId: uuid('movie_id')
+    movieId: integer('movie_id')
       .notNull()
       .references(() => movies.movieId),
     watched: boolean('watched').default(false),
@@ -97,7 +97,7 @@ export const messageMovies = pgTable(
     messageId: uuid('message_id')
       .notNull()
       .references(() => messages.messageId),
-    movieId: uuid('movie_id')
+    movieId: integer('movie_id')
       .notNull()
       .references(() => movies.movieId),
     createdAt: timestamp('created_at').notNull().defaultNow(),

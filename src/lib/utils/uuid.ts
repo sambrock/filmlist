@@ -11,3 +11,7 @@ export const draftUuid = () => {
 export const isDraftUuid = (uuid: string) => {
   return uuid.startsWith('draft:');
 };
+
+export const clearUuid = (uuid: string) => {
+  return uuid.replace('draft:', '');
+};

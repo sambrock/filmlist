@@ -3,10 +3,13 @@ import 'server-only';
 import { cache } from 'react';
 import { cookies } from 'next/headers';
 import { initTRPC, TRPCError } from '@trpc/server';
+import superjson from 'superjson';
 
 import { verifyAuthToken } from '@/lib/auth';
 
-const t = initTRPC.context<typeof createContext>().create({});
+const t = initTRPC.context<typeof createContext>().create({
+  transformer: superjson,
+});
 
 export const router = t.router;
 export const createCallerFactory = t.createCallerFactory;

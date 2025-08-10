@@ -3,6 +3,7 @@ import z from 'zod';
 
 import { generateAuthToken, User, verifyAuthToken } from '@/lib/auth';
 import { db } from '@/lib/drizzle/db';
+import { MessageUserAssistantSchema } from '@/lib/drizzle/types';
 import { draftUuid } from '@/lib/utils/uuid';
 import { protectedProcedure, publicProcedure, router } from './trpc';
 
@@ -50,6 +51,12 @@ export const appRouter = router({
         direction: z.enum(['forward', 'backward']).optional(),
       })
     )
+    .output(
+      z.object({
+        messages: MessageUserAssistantSchema.array(),
+        nextCursor: z.number(),
+      })
+    )
     .query(async ({ input }) => {
       const messages = await db.query.messages.findMany({
         where: (messages, { and, eq, lt }) =>
@@ -58,12 +65,21 @@ export const appRouter = router({
             input.cursor ? lt(messages.serial, input.cursor) : undefined
           ),
         orderBy: (messages, { desc }) => [desc(messages.serial)],
-        with: { movies: true },
+        with: {
+          movies: {
+            with: { movie: true },
+          },
+        },
         limit: input.limit,
       });
 
       const nextCursor = messages.length > 0 ? messages[messages.length - 1].serial : 0;
 
-      return { nextCursor, messages };
+      const messagesWithMovies = messages.map((message) => ({
+        ...message,
+        movies: message.movies.map((m) => m.movie),
+      }));
+
+      return { nextCursor, messages: messagesWithMovies };
     }),
 });

@@ -23,6 +23,19 @@ export type MovieInsert = z.infer<typeof MovieInsertSchema>;
 export const MovieSchema = createSelectSchema(movies);
 export const MovieInsertSchema = createInsertSchema(movies);
 
+export type MessageUser = z.infer<typeof MessageUserSchema>;
+export type MessageAssistant = z.infer<typeof MessageAssistantSchema>;
+export const MessageUserSchema = MessageSchema.extend({ role: z.literal('user') });
+export const MessageAssistantSchema = MessageSchema.extend({
+  role: z.literal('assistant'),
+  movies: MovieSchema.array(),
+});
+
+export const MessageUserAssistantSchema = z.discriminatedUnion('role', [
+  MessageUserSchema,
+  MessageAssistantSchema,
+]);
+
 // export type MessageUser = z.infer<typeof MessageUserSchema>;
 // export type MessageAssistant = z.infer<typeof MessageAssistantSchema>;
 // export type Structured = z.infer<typeof StructuredSchema>;
