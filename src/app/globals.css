@@ -2,15 +2,15 @@
 @import 'tw-animate-css';
 
 @theme {
-  --color-background-0: oklch(0.1798 0.0104 248.41);
-  --color-background-1: oklch(0.2185 0.0104 248.41);
-  --color-background-2: oklch(0.2985 0.0104 248.41);
-  --color-background-3: oklch(0.3285 0.0104 248.41);
+  --color-background-0: oklch(0.2116 0.0202 284.63);
+  --color-background-1: oklch(0.2706 0.0202 280.93);
+  --color-background-2: oklch(0.3088 0.0202 281.08);
+
   --color-foreground-0: oklch(0.9491 0 0);
   --color-foreground-1: oklch(0.6931 0 0);
 
-  --color-primary: oklch(0.8524 0.2744 140.03);
-  --color-primary-foreground: oklch(0.9205 0.0903 140.03);
+  --color-primary: oklch(0.5246 0.2484 273.96);
+  --color-primary-foreground: oklch(0.9990 0.2484 273.96);
 
   --color-ring: #0466ff;
 

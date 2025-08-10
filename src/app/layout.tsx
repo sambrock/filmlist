@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import { Schibsted_Grotesk } from 'next/font/google';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Inter } from 'next/font/google';
 
 import { cn } from '@/lib/utils/cn';
 import { GlobalStoreProvider } from '@/providers/global-store-provider';
@@ -9,7 +8,7 @@ import { Sidebar } from '@/components/sidebar/sidebar';
 
 import './globals.css';
 
-const fontSans = Schibsted_Grotesk({
+const fontSans = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
 });
@@ -23,7 +22,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en">
       <body
         className={cn(
-          'bg-background-0 text-foreground-0 fixed top-0 left-0 h-screen w-screen overflow-y-auto',
+          'bg-background-0 fixed top-0 left-0 h-screen w-screen overflow-y-hidden',
           fontSans.className
         )}
       >
@@ -34,7 +33,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
               {props.children}
             </div>
 
-            <ReactQueryDevtools initialIsOpen={false} />
+            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           </GlobalStoreProvider>
         </QueryClientProvider>
       </body>
