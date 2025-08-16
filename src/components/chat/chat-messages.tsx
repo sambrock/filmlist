@@ -21,7 +21,7 @@ export const ChatMessages = () => {
     return null; // Avoid hydration mismatch
   }
   return (
-    <div className="mt-10 mb-20 space-y-4">
+    <div className="mt-8 mb-20 space-y-4">
       {chatMessagesQuery.data?.pages.map((page) =>
         [...page.messages].reverse().map((message) => (
           <div key={message.messageId} data-message-id={message.messageId}>
@@ -31,7 +31,7 @@ export const ChatMessages = () => {
         ))
       )}
 
-      <div id="chat-messages-end" className="pb-8" />
+      <div id="chat-messages-end" />
     </div>
   );
 };
