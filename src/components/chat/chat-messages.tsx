@@ -1,5 +1,6 @@
 'use client';
 
+import { useLayoutEffect } from 'react';
 import { useIsClient } from 'usehooks-ts';
 
 import { useChatMessagesQuery } from '@/hooks/useChatMessagesQuery';
@@ -10,6 +11,11 @@ export const ChatMessages = () => {
   const chatMessagesQuery = useChatMessagesQuery();
 
   const isClient = useIsClient();
+
+  useLayoutEffect(() => {
+    // Scroll to the bottom of the chat
+    document.getElementById('chat-messages-end')?.scrollIntoView({ behavior: 'instant' });
+  }, [chatMessagesQuery.data]);
 
   if (!isClient) {
     return null; // Avoid hydration mismatch
@@ -24,6 +30,8 @@ export const ChatMessages = () => {
           </div>
         ))
       )}
+
+      <div id="chat-messages-end" className="pb-8" />
     </div>
   );
 };

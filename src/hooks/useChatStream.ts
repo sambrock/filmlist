@@ -2,9 +2,9 @@ import { useMutation } from '@tanstack/react-query';
 import { produce } from 'immer';
 
 import type { ChatSSE } from '@/app/api/chat/route';
-import { Message } from '@/lib/drizzle/types';
+import { Message, MessageAssistant, MessageUser } from '@/lib/drizzle/types';
 import { trpc } from '@/lib/trpc/client';
-import { readEventStream } from '@/lib/utils/ai';
+import { parseMoviesFromOutputStream, readEventStream } from '@/lib/utils/ai';
 import { clearUuid } from '@/lib/utils/uuid';
 import { useChatStore } from '@/providers/chat-store-provider';
 import { useGlobalStore } from '@/providers/global-store-provider';
@@ -28,9 +28,19 @@ export const useChatStream = () => {
 
       let messageAssistant: Message;
 
+      // Optimistically update with user message
+      trpcUtils.getThreadMessages.setInfiniteData({ threadId: clearUuid(threadId) }, (state) =>
+        produce(state, (draft) => {
+          draft!.pages[0].messages.unshift({
+            messageId: '',
+            role: 'user',
+            content,
+          } as MessageUser);
+        })
+      );
+
       await readEventStream(response, (data) => {
         const parsed = JSON.parse(data) as ChatSSE;
-        console.log('parsed', parsed);
 
         if (parsed.type === 'user') {
           setUserId(parsed.v);
@@ -49,11 +59,15 @@ export const useChatStream = () => {
               const messages = draft!.pages[0].messages;
               if (messages.find((m) => m.messageId === message.messageId)) {
                 const index = messages.findIndex((m) => m.messageId === message.messageId);
-                // @ts-expect-error: todo
-                messages[index] = message;
+                Object.assign(messages[index], message);
               } else {
-                // @ts-expect-error: todo
-                messages.unshift(message);
+                if (message.role === 'user') {
+                  messages.shift(); // Remove initial user message
+                  messages.unshift(message as MessageUser);
+                }
+                if (message.role === 'assistant') {
+                  messages.unshift(message as MessageAssistant);
+                }
               }
             })
           );
@@ -67,6 +81,7 @@ export const useChatStream = () => {
               if (index !== -1) {
                 const message = draft!.pages[0].messages[index];
                 message.content += parsed.v;
+                message.structured = parseMoviesFromOutputStream(message.content);
               }
             })
           );
@@ -80,20 +95,15 @@ export const useChatStream = () => {
               );
               if (index !== -1) {
                 const message = draft!.pages[0].messages[index];
+                if (message.role !== 'assistant') return;
                 if (message.movies === undefined) {
                   message.movies = [];
                 }
-                // @ts-expect-error: todo
-                draft!.pages[0].messages[index].movies.push(movie);
+                message.movies.push(movie);
               }
             })
           );
         }
-        // if (parsed.type === 'end') {
-        //   trpcUtils.invalidate(undefined, {
-        //     queryKey: getQueryKey(trpc.getThreadMessages, { threadId: clearUuid(threadId) }),
-        //   });
-        // }
       });
     },
     retry: false,

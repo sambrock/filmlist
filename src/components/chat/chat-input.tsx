@@ -22,6 +22,9 @@ export const ChatInput = ({ className, ...props }: Props) => {
   const handleSubmit = () => {
     chatStream.mutate(value);
     window.history.pushState({}, '', `/chat/${clearUuid(threadId)}`);
+
+    // Scroll to the bottom of the chat
+    document.getElementById('chat-messages-end')?.scrollIntoView({ behavior: 'instant' });
   };
 
   return (

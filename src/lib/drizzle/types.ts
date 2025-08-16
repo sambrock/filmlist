@@ -36,6 +36,8 @@ export const MessageUserAssistantSchema = z.discriminatedUnion('role', [
   MessageAssistantSchema,
 ]);
 
+export type MessageStatus = Message['status'];
+
 // export type MessageUser = z.infer<typeof MessageUserSchema>;
 // export type MessageAssistant = z.infer<typeof MessageAssistantSchema>;
 // export type Structured = z.infer<typeof StructuredSchema>;
