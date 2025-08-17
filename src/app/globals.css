@@ -2,10 +2,10 @@
 @import 'tw-animate-css';
 
 @theme {
-  --color-background-0: oklch(0.2116 0.0202 284.63);
-  --color-background-1: oklch(0.2706 0.0202 280.93);
-  --color-background-2: oklch(0.3088 0.0202 281.08);
-  --color-background-3: oklch(0.3451 0.0202 281.67);
+  --color-background-0: oklch(0.2061 0.0086 240.33);
+  --color-background-1: oklch(0.2492 0.0086 229.42);
+  --color-background-2: oklch(0.3088 0.0086 281.08);
+  --color-background-3: oklch(0.3451 0.0086 281.67);
 
   --color-foreground-0: oklch(0.9491 0 0);
   --color-foreground-1: oklch(0.6931 0 0);

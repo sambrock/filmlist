@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, ChevronDown } from 'lucide-react';
 
 import { cn } from '@/lib/utils/cn';
 import { clearUuid } from '@/lib/utils/uuid';
@@ -30,15 +30,16 @@ export const ChatInput = ({ className, ...props }: Props) => {
   return (
     <div
       className={cn(
-        'border-foreground-0/5 bg-background-2 flex items-center rounded-4xl border border-x border-t px-2',
+        'border-foreground-0/5 bg-background-2 flex h-14 items-center rounded-4xl border border-x border-t px-2',
         className
       )}
       {...props}
     >
       <input
-        className="text-foreground-0 placeholder:text-foreground-0/40 w-full px-4 py-4 text-base focus:outline-none"
-        placeholder="Type your message here..."
+        className="text-foreground-0 placeholder:text-foreground-0/50 h-full w-full px-4 text-base focus:outline-none"
+        placeholder="Type your message..."
         value={value}
+        autoFocus
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && value.trim()) {
@@ -46,8 +47,12 @@ export const ChatInput = ({ className, ...props }: Props) => {
           }
         }}
       />
-      <div className="ml-auto flex items-center">
-        <Button size="icon" variant="primary">
+      <div className="ml-auto flex items-center gap-1">
+        <Button variant="ghost" pill>
+          gpt-4.1-nano
+          <ChevronDown className="ml-1 size-5" />
+        </Button>
+        <Button size="icon" variant="ghost" pill>
           <ArrowUp className="size-5" />
         </Button>
       </div>
