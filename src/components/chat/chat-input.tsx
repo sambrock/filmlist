@@ -1,12 +1,13 @@
 'use client';
 
-import { ArrowUp, ChevronDown } from 'lucide-react';
+import { ArrowUp } from 'lucide-react';
 
 import { cn } from '@/lib/utils/cn';
 import { clearUuid } from '@/lib/utils/uuid';
 import { useChatStore } from '@/providers/chat-store-provider';
 import { useChatStream } from '@/hooks/useChatStream';
 import { Button } from '../common/button';
+import { ChatModelSelect } from './chat-model-select';
 
 type Props = {} & React.ComponentProps<'div'>;
 
@@ -48,10 +49,11 @@ export const ChatInput = ({ className, ...props }: Props) => {
         }}
       />
       <div className="ml-auto flex items-center gap-1">
-        <Button variant="ghost" pill>
+        {/* <Button variant="ghost" pill>
           gpt-4.1-nano
           <ChevronDown className="ml-1 size-5" />
-        </Button>
+        </Button> */}
+        <ChatModelSelect />
         <Button size="icon" variant="ghost" pill>
           <ArrowUp className="size-5" />
         </Button>
