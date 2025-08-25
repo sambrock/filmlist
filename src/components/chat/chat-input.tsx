@@ -30,15 +30,13 @@ export const ChatInput = ({ className, ...props }: Props) => {
 
   return (
     <div
-      className={cn(
-        'border-foreground-0/5 bg-background-2 flex h-14 items-center rounded-4xl border border-x border-t px-2',
-        className
-      )}
+      className={cn('border-foreground-0/5 bg-background-2 flex flex-col rounded-xl border px-2', className)}
       {...props}
     >
-      <input
-        className="text-foreground-0 placeholder:text-foreground-0/50 h-full w-full px-4 text-base focus:outline-none"
+      <textarea
+        className="text-foreground-0 placeholder:text-foreground-0/35 my-2 w-full resize-none px-2 py-2 text-base focus:outline-none"
         placeholder="Type your message..."
+        rows={1}
         value={value}
         autoFocus
         onChange={(e) => setValue(e.target.value)}
@@ -48,13 +46,10 @@ export const ChatInput = ({ className, ...props }: Props) => {
           }
         }}
       />
-      <div className="ml-auto flex items-center gap-1">
-        {/* <Button variant="ghost" pill>
-          gpt-4.1-nano
-          <ChevronDown className="ml-1 size-5" />
-        </Button> */}
+
+      <div className="flex items-center gap-1 py-1 pb-1">
         <ChatModelSelect />
-        <Button size="icon" variant="ghost" pill>
+        <Button className="ml-auto" size="icon" variant="ghost">
           <ArrowUp className="size-5" />
         </Button>
       </div>

@@ -1,16 +1,18 @@
 import { enableMapSet, produce } from 'immer';
 import { createStore } from 'zustand/vanilla';
 
+import { Model } from '@/lib/models';
+
 enableMapSet();
 
 export type ChatState = {
   threadId: string;
-  model: string;
+  model: Model;
   value: string;
 };
 
 export type ChatStateActions = {
-  setModel: (model: string) => void;
+  setModel: (model: Model) => void;
   setValue: (value: string) => void;
   setThreadId: (threadId: string) => void;
 };
@@ -24,7 +26,7 @@ export type InitialChatState = {
 export const createChatStore = (initialData: InitialChatState) => {
   return createStore<ChatStore>()((set) => ({
     threadId: initialData.threadId,
-    model: 'gpt-4.1-nano',
+    model: 'openai/gpt-4.1-nano',
     value: '',
 
     actions: {

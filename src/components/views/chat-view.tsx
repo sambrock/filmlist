@@ -13,7 +13,7 @@ export const ChatView = ({ threadId }: Props) => {
       <main className={cn('h-[calc(100%-40px)] overflow-y-scroll')}>
         <div className="relative mx-auto w-3xl">
           <ChatMessages />
-          <ChatInput className="fixed bottom-6 w-3xl" />
+          <ChatInput className="fixed bottom-4 w-3xl" />
         </div>
       </main>
     </ChatStoreProvider>

@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
-// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
 import { cn } from '@/lib/utils/cn';
 import { GlobalStoreProvider } from '@/providers/global-store-provider';
 import { QueryClientProvider } from '@/providers/query-client-provider';
@@ -30,16 +28,10 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       >
         <QueryClientProvider>
           <GlobalStoreProvider>
-            <div className="flex">
+            <div className="grid grid-cols-[260px_1fr]">
               <Sidebar />
-              <div className="flex h-screen w-full p-2">
-                <div className="bg-background-1 border-foreground-0/5 h-full w-full overflow-y-auto rounded-lg border">
-                  {props.children}
-                </div>
-              </div>
+              {props.children}
             </div>
-            {/* {props.children} */}
-            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           </GlobalStoreProvider>
         </QueryClientProvider>
       </body>
