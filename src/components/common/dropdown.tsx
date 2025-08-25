@@ -17,7 +17,9 @@ export const DropdownContent = ({ className, ...props }: DropdownMenu.DropdownMe
         'data-[state=closed]:motion-scale-out-[.9] data-[state=closed]:motion-duration-150 data-[state=closed]:motion-opacity-out-0',
         className
       )}
-      onCloseAutoFocus={(e) => {e.preventDefault()}}
+      onCloseAutoFocus={(e) => {
+        e.preventDefault();
+      }}
       {...props}
     >
       {props.children}

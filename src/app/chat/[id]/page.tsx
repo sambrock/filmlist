@@ -8,7 +8,7 @@ type Props = {
 export default async function ChatPage(props: Props) {
   const { id } = await props.params;
 
-  void trpc.getThreadMessages.prefetchInfinite({ threadId: id });
+  void trpc.getChatMessages.prefetchInfinite({ threadId: id });
 
   return (
     <HydrateClient>

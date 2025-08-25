@@ -19,7 +19,7 @@ export const ChatModelSelect = () => {
           <ChevronDown className="size-5" />
         </Button>
       </DropdownTrigger>
-      <DropdownContent className="min-w-80" align="start"  sideOffset={4}>
+      <DropdownContent className="min-w-80" align="start" sideOffset={2}>
         {[...models.values()]
           .filter((model) => model.active)
           .map((model) => (

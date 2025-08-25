@@ -14,7 +14,7 @@ type Props = {
 
 export const ChatMovie = ({ title, why, releaseYear, movie }: Props) => {
   return (
-    <div className="border-background-1 flex border-b-2 px-2 py-2 last:border-0">
+    <div className="border-foreground-0/5 mx-2 flex border-b-1 py-2 last:border-0">
       <ChatMoviePoster movie={movie} />
 
       <div className="ml-4 flex w-full flex-col py-2">
@@ -36,7 +36,7 @@ export const ChatMovie = ({ title, why, releaseYear, movie }: Props) => {
 
 export const ChatMoviePoster = ({ movie }: { movie?: Movie }) => {
   return (
-    <div className={cn('bg-background-1 aspect-[1/1.5] w-26 overflow-clip rounded-sm')}>
+    <div className={cn('bg-background-4 aspect-[1/1.5] w-26 overflow-clip rounded-sm')}>
       {movie && (
         // eslint-disable-next-line @next/next/no-img-element
         <img

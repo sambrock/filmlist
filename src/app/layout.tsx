@@ -20,17 +20,12 @@ export const metadata: Metadata = {
 export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={cn(
-          'text-foreground-0 bg-background-0 fixed top-0 left-0 h-screen w-screen overflow-y-hidden',
-          fontSans.className
-        )}
-      >
+      <body className={cn('text-foreground-0 bg-background-0', fontSans.className)}>
         <QueryClientProvider>
           <GlobalStoreProvider>
-            <div className="grid grid-cols-[260px_1fr]">
-              <Sidebar />
-              {props.children}
+            <div className="flex h-screen overflow-hidden">
+              <Sidebar className="h-screen w-[260px] shrink-0" />
+              <div className="w-full">{props.children}</div>
             </div>
           </GlobalStoreProvider>
         </QueryClientProvider>

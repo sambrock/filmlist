@@ -1,37 +1,41 @@
 'use client';
 
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { useIsClient } from 'usehooks-ts';
 
 import { useChatMessagesQuery } from '@/hooks/useChatMessagesQuery';
-import { ChatMessageAssistant } from './chat-message-assistant';
-import { ChatMessageUser } from './chat-message-user';
+import { ChatMessage } from './chat-message';
 
 export const ChatMessages = () => {
   const chatMessagesQuery = useChatMessagesQuery();
 
+  const divRef = useRef<HTMLDivElement>(null);
+
   const isClient = useIsClient();
 
   useLayoutEffect(() => {
+    if (!divRef.current) return;
     // Scroll to the bottom of the chat
-    document.getElementById('chat-messages-end')?.scrollIntoView({ behavior: 'instant' });
+    divRef.current.scrollIntoView({ behavior: 'instant', block: 'end' });
   }, [chatMessagesQuery.data]);
 
   if (!isClient) {
     return null; // Avoid hydration mismatch
   }
   return (
-    <div className="mt-8 mb-20 space-y-4">
+    <div ref={divRef} className="mt-8 space-y-4 pb-26">
       {chatMessagesQuery.data?.pages.map((page) =>
-        [...page.messages].reverse().map((message) => (
-          <div key={message.messageId} data-message-id={message.messageId}>
-            {message.role === 'user' && <ChatMessageUser message={message} />}
-            {message.role === 'assistant' && <ChatMessageAssistant message={message} />}
-          </div>
-        ))
+        [...page.messages]
+          .reverse()
+          .map((message) => (
+            <ChatMessage
+              key={message.user.messageId}
+              messageUser={message.user}
+              messageAssistant={message.assistant}
+              movies={message.movies}
+            />
+          ))
       )}
-
-      <div id="chat-messages-end" />
     </div>
   );
 };

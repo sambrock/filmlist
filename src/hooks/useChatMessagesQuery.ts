@@ -1,11 +1,11 @@
 import { trpc } from '@/lib/trpc/client';
-import { clearUuid, isDraftUuid } from '@/lib/utils/uuid';
+import { clearUuid, isUnsavedUuid } from '@/lib/utils/uuid';
 import { useChatStore } from '@/providers/chat-store-provider';
 
 export const useChatMessagesQuery = () => {
   const threadId = useChatStore((store) => store.threadId);
 
-  return trpc.getThreadMessages.useInfiniteQuery(
+  return trpc.getChatMessages.useInfiniteQuery(
     { threadId: clearUuid(threadId) },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -15,7 +15,7 @@ export const useChatMessagesQuery = () => {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchOnMount: false,
-      enabled: !isDraftUuid(threadId),
+      enabled: !isUnsavedUuid(threadId),
     }
   );
 };

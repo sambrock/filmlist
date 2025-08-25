@@ -3,8 +3,8 @@ import z from 'zod';
 
 import { generateAuthToken, User, verifyAuthToken } from '@/lib/auth';
 import { db } from '@/lib/drizzle/db';
-import { MessageUserAssistantSchema } from '@/lib/drizzle/types';
-import { draftUuid } from '@/lib/utils/uuid';
+import { ChatMessageSchema, MessageAssistantSchema, MessageUserSchema } from '@/lib/drizzle/types';
+import { unsavedUuid } from '@/lib/utils/uuid';
 import { protectedProcedure, publicProcedure, router } from './trpc';
 
 export type AppRouter = typeof appRouter;
@@ -20,7 +20,7 @@ export const appRouter = router({
       if (verified) return verified;
     }
 
-    const anonUser: User = { userId: draftUuid(), anon: true };
+    const anonUser: User = { userId: unsavedUuid(), anon: true };
 
     const cookieStore = await cookies();
     cookieStore.set('auth-token', generateAuthToken(anonUser), {
@@ -42,7 +42,7 @@ export const appRouter = router({
     return threads;
   }),
 
-  getThreadMessages: protectedProcedure
+  getChatMessages: protectedProcedure
     .input(
       z.object({
         threadId: z.string(),
@@ -53,7 +53,7 @@ export const appRouter = router({
     )
     .output(
       z.object({
-        messages: MessageUserAssistantSchema.array(),
+        messages: ChatMessageSchema.array(),
         nextCursor: z.number(),
       })
     )
@@ -62,10 +62,12 @@ export const appRouter = router({
         where: (messages, { and, eq, lt }) =>
           and(
             eq(messages.threadId, input.threadId),
+            eq(messages.role, 'assistant'),
             input.cursor ? lt(messages.serial, input.cursor) : undefined
           ),
         orderBy: (messages, { desc }) => [desc(messages.serial)],
         with: {
+          parent: true,
           movies: {
             with: { movie: true },
           },
@@ -73,13 +75,14 @@ export const appRouter = router({
         limit: input.limit,
       });
 
-      const nextCursor = messages.length > 0 ? messages[messages.length - 1].serial : 0;
-
       const messagesWithMovies = messages.map((message) => ({
-        ...message,
+        user: MessageUserSchema.parse(message.parent),
+        assistant: MessageAssistantSchema.parse(message),
         movies: message.movies.map((m) => m.movie),
       }));
 
-      return { nextCursor, messages: messagesWithMovies };
+      const nextCursor = messages.length > 0 ? messages[messages.length - 1].serial : 0;
+
+      return { messages: messagesWithMovies, nextCursor };
     }),
 });

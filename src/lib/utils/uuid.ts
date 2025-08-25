@@ -4,14 +4,14 @@ export const uuid = () => {
   return v4();
 };
 
-export const draftUuid = () => {
-  return `draft:${v4()}`;
+export const unsavedUuid = () => {
+  return `unsaved:${v4()}`;
 };
 
-export const isDraftUuid = (uuid: string) => {
-  return uuid.startsWith('draft:');
+export const isUnsavedUuid = (uuid: string) => {
+  return uuid.startsWith('unsaved:');
 };
 
 export const clearUuid = (uuid: string) => {
-  return uuid.replace('draft:', '');
+  return uuid.replace('unsaved:', '');
 };

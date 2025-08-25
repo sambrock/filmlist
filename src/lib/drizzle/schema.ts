@@ -11,6 +11,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
+import { Model } from '../models';
 import { MovieDetails } from '../tmdb/types';
 
 export const users = pgTable('users', {
@@ -48,7 +49,7 @@ export const messages = pgTable('messages', {
   content: text('content').notNull(),
   structured:
     jsonb('structured').$type<{ tmdbId: number; title: string; releaseYear: string; why: string }[]>(),
-  model: text('model').notNull(),
+  model: text('model').notNull().$type<Model>(),
   role: text({ enum: ['user', 'assistant'] }).notNull(),
   status: text({ enum: ['pending', 'done'] }).notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),

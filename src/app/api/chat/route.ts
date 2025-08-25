@@ -11,7 +11,7 @@ import { messageMovies, messages, movies, threads, users } from '@/lib/drizzle/s
 import { Message, Movie } from '@/lib/drizzle/types';
 import { tmdbFindMovie, tmdbGetMovieById } from '@/lib/tmdb/client';
 import { parseMoviesFromOutputStream, SYSTEM_CONTEXT_MESSAGE } from '@/lib/utils/ai';
-import { clearUuid, isDraftUuid, uuid } from '@/lib/utils/uuid';
+import { clearUuid, isUnsavedUuid, uuid } from '@/lib/utils/uuid';
 
 export const maxDuration = 30;
 // export const runtime = 'edge';
@@ -60,13 +60,13 @@ export const POST = async (request: Request) => {
    */
   const batch: BatchItem<'pg'>[] = [];
 
-  if (isDraftUuid(userId)) {
+  if (isUnsavedUuid(userId)) {
     userId = clearUuid(userId);
     batch.push(db.insert(users).values({ userId, anon: true }).onConflictDoNothing());
     await setAuthTokenCookie({ userId, anon: true });
   }
 
-  if (isDraftUuid(threadId)) {
+  if (isUnsavedUuid(threadId)) {
     threadId = clearUuid(threadId);
     batch.push(db.insert(threads).values({ threadId, userId, title: '', model }).onConflictDoNothing());
   }

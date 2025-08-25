@@ -5,7 +5,7 @@ import { ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { clearUuid } from '@/lib/utils/uuid';
 import { useChatStore } from '@/providers/chat-store-provider';
-import { useChatStream } from '@/hooks/useChatStream';
+import { useChatMutation } from '@/hooks/useChatMutation';
 import { Button } from '../common/button';
 import { ChatModelSelect } from './chat-model-select';
 
@@ -18,12 +18,12 @@ export const ChatInput = ({ className, ...props }: Props) => {
     store.actions.setValue,
   ]);
 
-  const chatStream = useChatStream();
+  const chatMutation = useChatMutation();
 
   const handleSubmit = () => {
-    chatStream.mutate(value);
+    chatMutation.mutate(value);
+    setValue('');
     window.history.pushState({}, '', `/chat/${clearUuid(threadId)}`);
-
     // Scroll to the bottom of the chat
     document.getElementById('chat-messages-end')?.scrollIntoView({ behavior: 'instant' });
   };
@@ -42,6 +42,7 @@ export const ChatInput = ({ className, ...props }: Props) => {
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && value.trim()) {
+            e.preventDefault();
             handleSubmit();
           }
         }}
