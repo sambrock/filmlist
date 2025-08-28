@@ -5,7 +5,7 @@ import { generateAuthToken, User, verifyAuthToken } from '@/lib/auth';
 import { db } from '@/lib/drizzle/db';
 import { ChatMessageSchema, MessageAssistantSchema, MessageUserSchema } from '@/lib/drizzle/types';
 import { unsavedUuid } from '@/lib/utils/uuid';
-import { protectedProcedure, publicProcedure, router } from './trpc';
+import { publicProcedure, router } from './trpc';
 
 export type AppRouter = typeof appRouter;
 
@@ -33,7 +33,7 @@ export const appRouter = router({
     return anonUser;
   }),
 
-  getUserThreads: protectedProcedure.input(z.object({ userId: z.string() })).query(async ({ input }) => {
+  getUserThreads: publicProcedure.input(z.object({ userId: z.string() })).query(async ({ input }) => {
     const threads = await db.query.threads.findMany({
       where: (threads, { eq }) => eq(threads.userId, input.userId),
       orderBy: (threads, { desc }) => [desc(threads.createdAt)],
@@ -42,7 +42,7 @@ export const appRouter = router({
     return threads;
   }),
 
-  getChatMessages: protectedProcedure
+  getChatMessages: publicProcedure
     .input(
       z.object({
         threadId: z.string(),
