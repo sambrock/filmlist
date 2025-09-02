@@ -4,28 +4,26 @@ import { ArrowUp } from 'lucide-react';
 
 import { cn } from '@/lib/utils/cn';
 import { clearUuid } from '@/lib/utils/uuid';
+import { useChatContext } from '@/providers/chat-context-provider';
 import { useChatStore } from '@/providers/chat-store-provider';
-import { useChatMutation } from '@/hooks/useChatMutation';
+import { useSendChatMessage } from '@/hooks/use-send-chat-message';
 import { Button } from '../common/button';
 import { ChatModelSelect } from './chat-model-select';
 
 type Props = {} & React.ComponentProps<'div'>;
 
 export const ChatInput = ({ className, ...props }: Props) => {
-  const [threadId, value, setValue] = useChatStore((store) => [
-    store.threadId,
-    store.value,
-    store.actions.setValue,
+  const { chatId } = useChatContext();
+  const [{ value }, updateChat] = useChatStore((store) => [
+    store.actions.getChat(chatId),
+    store.actions.updateChat,
   ]);
 
-  const chatMutation = useChatMutation();
+  const sendChatMessage = useSendChatMessage();
 
   const handleSubmit = () => {
-    chatMutation.mutate(value);
-    setValue('');
-    window.history.pushState({}, '', `/chat/${clearUuid(threadId)}`);
-    // Scroll to the bottom of the chat
-    document.getElementById('chat-messages-end')?.scrollIntoView({ behavior: 'instant' });
+    sendChatMessage.mutate(value);
+    window.history.pushState({}, '', `/chat/${clearUuid(chatId)}`);
   };
 
   return (
@@ -39,7 +37,7 @@ export const ChatInput = ({ className, ...props }: Props) => {
         rows={1}
         value={value}
         autoFocus
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => updateChat(chatId, { value: e.target.value })}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && value.trim()) {
             e.preventDefault();

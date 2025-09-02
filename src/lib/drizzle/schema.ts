@@ -11,8 +11,8 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
-import { Model } from '../models';
 import { MovieDetails } from '../tmdb/types';
+import { ModelResponseStructured } from './types';
 
 export const users = pgTable('users', {
   userId: uuid('user_id').primaryKey(),
@@ -24,14 +24,12 @@ export const users = pgTable('users', {
     .$onUpdate(() => new Date()),
 });
 
-export const threads = pgTable('threads', {
-  threadId: uuid('thread_id').primaryKey(),
+export const chats = pgTable('chats', {
+  chatId: uuid('chat_id').primaryKey(),
   userId: uuid('user_id')
     .notNull()
     .references(() => users.userId),
-  serial: serial('serial').unique().notNull(),
   title: text('title').notNull().default(''),
-  model: text('model').notNull().default(''),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at')
     .notNull()
@@ -41,15 +39,14 @@ export const threads = pgTable('threads', {
 
 export const messages = pgTable('messages', {
   messageId: uuid('message_id').primaryKey(),
-  threadId: uuid('thread_id')
+  chatId: uuid('chat_id')
     .notNull()
-    .references(() => threads.threadId),
+    .references(() => chats.chatId),
   parentId: uuid('parent_id'),
-  serial: serial('serial').unique().notNull(),
+  serial: serial('serial').notNull(),
   content: text('content').notNull(),
-  structured:
-    jsonb('structured').$type<{ tmdbId: number; title: string; releaseYear: string; why: string }[]>(),
-  model: text('model').notNull().$type<Model>(),
+  structured: jsonb('structured').$type<ModelResponseStructured[]>(),
+  model: text('model').notNull(),
   role: text({ enum: ['user', 'assistant'] }).notNull(),
   status: text({ enum: ['pending', 'done'] }).notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -111,25 +108,25 @@ export const messageMovies = pgTable(
 );
 
 export const userRelations = relations(users, ({ many, one }) => ({
-  threads: many(threads),
+  chats: many(chats),
   library: one(library, {
     fields: [users.userId],
     references: [library.userId],
   }),
 }));
 
-export const threadsRelations = relations(threads, ({ one, many }) => ({
+export const chatsRelations = relations(chats, ({ one, many }) => ({
   user: one(users, {
-    fields: [threads.userId],
+    fields: [chats.userId],
     references: [users.userId],
   }),
   messages: many(messages),
 }));
 
 export const messageRelations = relations(messages, ({ one, many }) => ({
-  thread: one(threads, {
-    fields: [messages.threadId],
-    references: [threads.threadId],
+  chat: one(chats, {
+    fields: [messages.chatId],
+    references: [chats.chatId],
   }),
   parent: one(messages, {
     fields: [messages.parentId],

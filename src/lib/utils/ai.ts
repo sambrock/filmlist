@@ -1,5 +1,7 @@
 import { type ModelMessage } from 'ai';
 
+import { ModelResponseStructured } from '../drizzle/types';
+
 export const SYSTEM_CONTEXT_MESSAGE: ModelMessage = {
   role: 'system',
   content: `
@@ -26,35 +28,13 @@ export const SYSTEM_CONTEXT_MESSAGE: ModelMessage = {
   `,
 } as const;
 
-export const readEventStream = async (response: Response, onData: (data: string) => void) => {
-  const decoder = new TextDecoder();
-  const reader = response.body!.getReader();
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    const chunk = decoder.decode(value, { stream: true });
-
-    const lines = chunk.split('\n');
-    for (const line of lines) {
-      if (line.trim() === '' || line.startsWith(':') || line.startsWith('event:')) {
-        continue;
-      }
-
-      const data = line.replace(/^data:\s*/, '').trim();
-      onData(data);
-    }
-  }
-};
-
 /**
  * @description Parses the arbitrary AI model response content into a structured format
  * @param content - The content returned from the AI model
  * @returns An array of movie objects with title, release year, and why
  */
-export const parseMoviesFromOutputStream = (content: string) => {
-  const parsed: { tmdbId: number; title: string; releaseYear: string; why: string }[] = [];
+export const modelResponseToStructured = (content: string) => {
+  const parsed: ModelResponseStructured[] = [];
 
   const titleRegex = /"title":\s*"([^"]+)"?/g;
   const releaseYearRegex1 = /"release_year":\s*"([^"]+)/g;
@@ -96,4 +76,26 @@ export const parseMoviesFromOutputStream = (content: string) => {
   });
 
   return parsed;
+};
+
+export const readEventStream = async (response: Response, onData: (data: string) => void) => {
+  const decoder = new TextDecoder();
+  const reader = response.body!.getReader();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value, { stream: true });
+
+    const lines = chunk.split('\n');
+    for (const line of lines) {
+      if (line.trim() === '' || line.startsWith(':') || line.startsWith('event:')) {
+        continue;
+      }
+
+      const data = line.replace(/^data:\s*/, '').trim();
+      onData(data);
+    }
+  }
 };

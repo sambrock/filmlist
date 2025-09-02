@@ -1,44 +1,44 @@
 import 'server-only';
 
+import { cache } from 'react';
 import { cookies } from 'next/headers';
 import * as jwt from 'jsonwebtoken';
 
+import { User } from './drizzle/types';
 import { env } from './env';
 
-export type User = {
-  userId: string;
-  anon: boolean;
-};
+const AUTH_TOKEN_COOKIE_NAME = 'auth-token';
 
 export const generateAuthToken = (user: User) => {
   return jwt.sign(user, env.JWT_SECRET);
 };
 
-export const verifyAuthToken = (token: string): User | null => {
+export const verifyAuthToken = cache((token: string): User | null => {
   const user = jwt.verify(token, env.JWT_SECRET);
-  if (!user || typeof user !== 'object' || !('userId' in user)) {
-    return null;
+  if (user) {
+    return user as User;
   }
-  return user as User;
-};
 
-export const readAuthTokenCookie = async () => {
+  return null;
+});
+
+export const getAuthTokenCookie = async () => {
   const cookieStore = await cookies();
-  const authTokenCookie = cookieStore.get('auth-token');
+  const authTokenCookie = cookieStore.get(AUTH_TOKEN_COOKIE_NAME);
   if (!authTokenCookie) {
     return null;
   }
-  const user = verifyAuthToken(authTokenCookie.value);
-  return user;
+
+  return authTokenCookie.value;
 };
 
 export const setAuthTokenCookie = async (user: User) => {
   const cookieStore = await cookies();
   const token = generateAuthToken(user);
-  cookieStore.set('auth-token', token, {
+  cookieStore.set(AUTH_TOKEN_COOKIE_NAME, token, {
     path: '/',
     httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
+    sameSite: 'lax',
+    // secure: true,
   });
 };

@@ -1,6 +1,7 @@
 'use client';
 
 import type { MessageAssistant } from '@/lib/drizzle/types';
+import { Model, models } from '@/lib/models';
 import { cn } from '@/lib/utils/cn';
 import { Spinner } from '../common/spinner';
 import { ChatMovie } from './chat-movie';
@@ -11,23 +12,31 @@ type Props = {
 
 export const ChatMessageAssistant = ({ message, className, ...props }: Props) => {
   return (
-    <div className={cn('mb-10', className)} {...props}>
+    <div className={cn('mb-10', className)} {...props} data-message-id={message.messageId}>
+      {message.status === 'pending' && !message.structured && <Spinner className="text-foreground-1 mt-4" />}
+
       {message.structured && (
-        <div className="bg-background-4 rounded-xl">
+        <div className="bg-background-5 rounded-xl">
           {message.structured.map((structured, index) => (
             <ChatMovie
               key={index}
               title={structured.title}
               releaseYear={structured.releaseYear}
               why={structured.why}
-              messageStatus={message.status}
               movie={message.movies?.find((m) => m.tmdbId === structured.tmdbId)}
             />
           ))}
         </div>
       )}
 
-      {message.status === 'pending' && !message.structured && <Spinner className="text-foreground-1 mt-4" />}
+      <div
+        className={cn(
+          'text-foreground-1 mt-4 flex px-2 text-xs',
+          message.status === 'done' ? 'visible' : 'invisible'
+        )}
+      >
+        <span className="font-medium">{models.get(message.model as Model)?.name}</span>
+      </div>
     </div>
   );
 };

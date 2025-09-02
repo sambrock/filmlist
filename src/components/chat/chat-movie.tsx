@@ -1,6 +1,6 @@
 'use client';
 
-import type { MessageStatus, Movie } from '@/lib/drizzle/types';
+import type { Movie } from '@/lib/drizzle/types';
 import { cn } from '@/lib/utils/cn';
 import { posterSrc, runtimeToHoursMins } from '@/lib/utils/movie';
 
@@ -8,7 +8,6 @@ type Props = {
   title: string;
   why: string;
   releaseYear: string;
-  messageStatus: MessageStatus;
   movie?: Movie;
 };
 

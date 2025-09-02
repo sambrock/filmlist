@@ -7,10 +7,11 @@ import { z } from 'zod';
 import { createContext } from '@/server/trpc';
 import { setAuthTokenCookie } from '@/lib/auth';
 import { db } from '@/lib/drizzle/db';
-import { messageMovies, messages, movies, threads, users } from '@/lib/drizzle/schema';
-import { Message, Movie } from '@/lib/drizzle/types';
+import { chats, messageMovies, messages, movies, users } from '@/lib/drizzle/schema';
+import { MessageAssistant, MessageUser, Movie } from '@/lib/drizzle/types';
+import { Model, models } from '@/lib/models';
 import { tmdbFindMovie, tmdbGetMovieById } from '@/lib/tmdb/client';
-import { parseMoviesFromOutputStream, SYSTEM_CONTEXT_MESSAGE } from '@/lib/utils/ai';
+import { modelResponseToStructured, SYSTEM_CONTEXT_MESSAGE } from '@/lib/utils/ai';
 import { clearUuid, isUnsavedUuid, uuid } from '@/lib/utils/uuid';
 
 export const maxDuration = 30;
@@ -18,11 +19,8 @@ export const maxDuration = 30;
 // export const dynamic = 'force-dynamic';
 
 export type ChatSSE =
-  | { type: 'user'; v: string }
-  | { type: 'thread'; v: string }
-  | { type: 'content'; v: string }
-  | { type: 'message'; v: Message }
-  | { type: 'movie'; v: Movie }
+  | { type: 'content'; v: string; id: string }
+  | { type: 'message'; v: MessageUser | MessageAssistant }
   | { type: 'end' };
 
 const encodeSSE = (data: ChatSSE | 'end') => {
@@ -33,16 +31,16 @@ const encodeSSE = (data: ChatSSE | 'end') => {
 };
 
 const BodySchema = z.object({
-  threadId: z.string(),
+  chatId: z.string(),
   userId: z.string(),
-  model: z.string(),
+  model: z.string().refine((model) => models.has(model as Model)),
   content: z.string(),
 });
 
 export const POST = async (request: Request) => {
   const ctx = await createContext();
 
-  if (!ctx.auth || !ctx.user) {
+  if (!ctx.user) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -53,11 +51,9 @@ export const POST = async (request: Request) => {
   }
 
   const { model, content } = parsed.data;
-  let { threadId, userId } = parsed.data;
+  let { chatId, userId } = parsed.data;
 
-  /**
-   * All database operations are batched and executed after streaming is complete.
-   */
+  // All database operations are batched and performed after streaming
   const batch: BatchItem<'pg'>[] = [];
 
   if (isUnsavedUuid(userId)) {
@@ -66,83 +62,79 @@ export const POST = async (request: Request) => {
     await setAuthTokenCookie({ userId, anon: true });
   }
 
-  if (isUnsavedUuid(threadId)) {
-    threadId = clearUuid(threadId);
-    batch.push(db.insert(threads).values({ threadId, userId, title: '', model }).onConflictDoNothing());
+  if (isUnsavedUuid(chatId)) {
+    chatId = clearUuid(chatId);
+    console.log('CREATE CHAT', { chatId, userId, title: '' });
+    batch.push(db.insert(chats).values({ chatId, userId, title: '' }).onConflictDoNothing());
   }
 
-  const messageUser: Message = {
+  const messageUser: MessageUser = {
     messageId: uuid(),
-    threadId,
-    parentId: null,
-    serial: undefined as unknown as number,
+    chatId,
     model,
     content,
-    structured: null,
     role: 'user',
     status: 'pending',
     createdAt: new Date(),
     updatedAt: new Date(),
   };
 
-  const messageAssistant: Message = {
+  const messageAssistant: MessageAssistant = {
     messageId: uuid(),
-    threadId,
+    chatId,
     parentId: messageUser.messageId,
-    serial: undefined as unknown as number,
     model,
     content: '',
     structured: null,
     role: 'assistant',
     status: 'pending',
+    movies: [],
     createdAt: new Date(),
     updatedAt: new Date(),
   };
 
   batch.push(db.insert(messages).values([messageUser, messageAssistant]));
 
-  const messageHistory = parsed.data.threadId.startsWith('draft:')
+  const messageHistory = isUnsavedUuid(parsed.data.chatId)
     ? []
     : await db.query.messages.findMany({
-        where: (messages, { eq }) => eq(messages.threadId, threadId),
+        where: (messages, { eq }) => eq(messages.chatId, chatId),
         orderBy: (messages, { asc }) => asc(messages.serial),
         columns: { role: true, content: true },
         limit: 20,
       });
 
-  const dataStream = streamText({
+  const modelStream = streamText({
     model: openai('gpt-4.1-nano'),
     messages: [SYSTEM_CONTEXT_MESSAGE, ...messageHistory, { role: 'user', content }],
   });
 
   const responseStream = new ReadableStream({
     async start(controller) {
-      const outputReader = dataStream.textStream.getReader();
-
-      controller.enqueue(encodeSSE({ type: 'user', v: userId }));
-      controller.enqueue(encodeSSE({ type: 'thread', v: threadId }));
+      const modelStreamReader = modelStream.textStream.getReader();
 
       controller.enqueue(encodeSSE({ type: 'message', v: messageUser }));
       controller.enqueue(encodeSSE({ type: 'message', v: messageAssistant }));
 
+      let modelResponseContent = '';
       while (true) {
-        const { done, value } = await outputReader.read();
+        const { done, value } = await modelStreamReader.read();
         if (done) break;
 
-        messageAssistant.content += value;
-
-        controller.enqueue(encodeSSE({ type: 'content', v: value }));
+        modelResponseContent += value;
+        controller.enqueue(encodeSSE({ type: 'content', v: value, id: messageAssistant.messageId }));
       }
 
-      messageAssistant.structured = parseMoviesFromOutputStream(messageAssistant.content);
+      messageAssistant.content = modelResponseContent;
+      messageAssistant.structured = modelResponseToStructured(modelResponseContent);
 
       await Promise.all(
         messageAssistant.structured.map(async (parsedOutput, index) => {
           const found = await tmdbFindMovie(parsedOutput.title, parsedOutput.releaseYear);
-          if (!found) return parsedOutput;
+          if (!found) return;
 
           const source = await tmdbGetMovieById(found.id);
-          if (!source) return parsedOutput;
+          if (!source) return;
 
           const movie: Movie = {
             movieId: source.id,
@@ -152,13 +144,15 @@ export const POST = async (request: Request) => {
           };
 
           messageAssistant.structured![index].tmdbId = movie.tmdbId;
+          messageAssistant.movies.push(movie);
 
-          batch.push(
-            db.insert(movies).values(movie).onConflictDoNothing(),
-            db.insert(messageMovies).values({ messageId: messageAssistant.messageId, movieId: movie.movieId })
-          );
+          // controller.enqueue(encodeSSE({ type: 'movie', v: movie }));
 
-          controller.enqueue(encodeSSE({ type: 'movie', v: movie }));
+          // batch.push(
+          //   db.insert(movies).values(movie).onConflictDoNothing(),
+          //   db.insert(messageMovies).values({ messageId: messageAssistant.messageId, movieId: movie.movieId })
+          // );
+          // return movie;
         })
       );
 
@@ -166,6 +160,13 @@ export const POST = async (request: Request) => {
       messageAssistant.status = 'done';
 
       batch.push(
+        db.insert(movies).values(messageAssistant.movies).onConflictDoNothing(),
+        db.insert(messageMovies).values(
+          messageAssistant.movies.map((movie) => ({
+            messageId: messageAssistant.messageId,
+            movieId: movie.movieId,
+          }))
+        ),
         db.update(messages).set(messageUser).where(eq(messages.messageId, messageUser.messageId)),
         db.update(messages).set(messageAssistant).where(eq(messages.messageId, messageAssistant.messageId))
       );

@@ -1,4 +1,4 @@
-import { v4 } from 'uuid';
+import { v4, validate } from 'uuid';
 
 export const uuid = () => {
   return v4();
@@ -14,4 +14,8 @@ export const isUnsavedUuid = (uuid: string) => {
 
 export const clearUuid = (uuid: string) => {
   return uuid.replace('unsaved:', '');
+};
+
+export const validUuid = (uuid: string) => {
+  return validate(uuid);
 };

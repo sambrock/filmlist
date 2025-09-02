@@ -1,56 +1,63 @@
-import { enableMapSet, produce } from 'immer';
+import { produce } from 'immer';
+import { persist } from 'zustand/middleware';
 import { createStore } from 'zustand/vanilla';
 
 import { Model } from '@/lib/models';
 
-enableMapSet();
-
-export type ChatState = {
-  threadId: string;
-  model: Model;
+export type Chat = {
+  chatId: string;
   value: string;
+  model: Model;
+  isPersisted: boolean;
+  isPending: boolean;
 };
 
-export type ChatStateActions = {
-  setModel: (model: Model) => void;
-  setValue: (value: string) => void;
-  setThreadId: (threadId: string) => void;
+export type ChatStore = {
+  chats: Chat[];
+  actions: {
+    initChat: (chatId: string, isPersisted: boolean) => void;
+    getChat: (chatId: string) => Chat;
+    updateChat: (chatId: string, updates: Partial<Chat>) => void;
+  };
 };
 
-export type ChatStore = ChatState & { actions: ChatStateActions };
-
-export type InitialChatState = {
-  threadId: string;
-};
-
-export const createChatStore = (initialData: InitialChatState) => {
-  return createStore<ChatStore>()((set) => ({
-    threadId: initialData.threadId,
-    model: 'openai/gpt-4.1-nano',
-    value: '',
-
-    actions: {
-      setModel: (model) => {
-        set(
-          produce((state: ChatState) => {
-            state.model = model;
-          })
-        );
-      },
-      setValue: (value) => {
-        set(
-          produce((state: ChatState) => {
-            state.value = value;
-          })
-        );
-      },
-      setThreadId: (threadId) => {
-        set(
-          produce((state: ChatState) => {
-            state.threadId = threadId;
-          })
-        );
-      },
-    },
-  }));
+export const createChatStore = () => {
+  return createStore<ChatStore>()(
+    persist(
+      (set, get) => ({
+        chats: [],
+        actions: {
+          initChat: (chatId, isPersisted) => {
+            set(
+              produce((state: ChatStore) => {
+                state.chats.push({
+                  chatId,
+                  value: '',
+                  model: 'openai/gpt-4.1-nano',
+                  isPersisted,
+                  isPending: false,
+                  // pendingMessages: [],
+                });
+              })
+            );
+          },
+          getChat: (chatId) => get().chats.find((c) => c.chatId === chatId)!,
+          updateChat: (chatId, updates) => {
+            set(
+              produce((state: ChatStore) => {
+                const chat = state.chats.find((c) => c.chatId === chatId);
+                if (chat) {
+                  Object.assign(chat, updates);
+                }
+              })
+            );
+          },
+        },
+      }),
+      {
+        name: 'chats',
+        partialize: (state) => ({ chats: state.chats }),
+      }
+    )
+  );
 };

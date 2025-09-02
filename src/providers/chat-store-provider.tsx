@@ -4,19 +4,18 @@ import { createContext, useContext, useRef } from 'react';
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/shallow';
 
-import { ChatStore, createChatStore, InitialChatState } from '@/stores/chat-store';
+import { ChatStore, createChatStore } from '@/stores/chat-store';
 
 export type ChatStoreApi = ReturnType<typeof createChatStore>;
 
 export const ChatStoreContext = createContext<ChatStoreApi | undefined>(undefined);
 
-export const ChatStoreProvider = ({
-  initialData,
-  ...props
-}: React.PropsWithChildren<{ initialData: InitialChatState }>) => {
+export const ChatStoreProvider = (props: React.PropsWithChildren) => {
   const storeRef = useRef<ChatStoreApi | null>(null);
+
   if (storeRef.current === null) {
-    storeRef.current = createChatStore(initialData);
+    storeRef.current = createChatStore();
+    storeRef.current.subscribe((state) => console.log('chat-store', state));
   }
 
   return <ChatStoreContext.Provider value={storeRef.current}>{props.children}</ChatStoreContext.Provider>;
