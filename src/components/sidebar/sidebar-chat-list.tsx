@@ -17,10 +17,10 @@ export const SidebarChatList = () => {
 
   return (
     <div>
-      {chatsQuery.data?.map((chat, index) => (
+      {chatsQuery.data?.map((chat) => (
         <Link href={`/chat/${chat.chatId}`} key={chat.chatId}>
           <div className="hover:bg-foreground-0/10 flex w-full items-center justify-between px-2 py-1 text-sm">
-            <span>Thread {index + 1}</span>
+            <span>{chat.title || 'Thread'}</span>
             {pendingChatIds.includes(chat.chatId) && <Spinner width={20} className="ml-auto" />}
           </div>
         </Link>

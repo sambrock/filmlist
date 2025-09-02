@@ -1,5 +1,5 @@
 import { openai } from '@ai-sdk/openai';
-import { streamText } from 'ai';
+import { generateText, streamText } from 'ai';
 import { eq } from 'drizzle-orm';
 import { BatchItem } from 'drizzle-orm/batch';
 import { z } from 'zod';
@@ -176,6 +176,17 @@ export const POST = async (request: Request) => {
 
       controller.enqueue(encodeSSE({ type: 'end' }));
       controller.enqueue(encodeSSE('end'));
+
+      const chatTitle = await generateText({
+        model: openai('gpt-4.1-nano'),
+        prompt: `Generate a short title for this prompt in 3 words or less: "${content}"`,
+      });
+
+      if (chatTitle.content[0].type === 'text') {
+        batch.push(
+          db.update(chats).set({ title: chatTitle.content[0].text }).where(eq(chats.chatId, chatId))
+        );
+      }
 
       await db.batch(batch as [BatchItem<'pg'>, ...BatchItem<'pg'>[]]);
 

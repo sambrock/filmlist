@@ -77,9 +77,8 @@ export const useSendChatMessage = () => {
         });
         if (parsed.type === 'end') {
           trpcUtils.getUser.invalidate();
-          if (!isPersisted) {
-            trpcUtils.getChats.invalidate({ userId });
-          }
+          trpcUtils.getChats.refetch({ userId });
+
           updateChat(chatId, { chatId: clearUuid(chatId), isPending: false });
         }
       });
