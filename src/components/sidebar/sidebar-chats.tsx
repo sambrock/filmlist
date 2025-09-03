@@ -7,7 +7,7 @@ import { useChatStore } from '@/providers/chat-store-provider';
 import { useUserContext } from '@/providers/user-context-provider';
 import { Spinner } from '../common/spinner';
 
-export const SidebarChatList = () => {
+export const SidebarChats = () => {
   const { userId } = useUserContext();
   const pendingChatIds = useChatStore((store) =>
     store.chats.filter((chat) => chat.isPending).map((c) => c.chatId)

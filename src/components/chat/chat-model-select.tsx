@@ -6,16 +6,15 @@ import { useIsClient } from 'usehooks-ts';
 import { models } from '@/lib/models';
 import { cn } from '@/lib/utils/cn';
 import { useChatContext } from '@/providers/chat-context-provider';
-import { useChatStore } from '@/providers/chat-store-provider';
+import { useClientStore } from '@/providers/client-store-provider';
 import { Button } from '../common/button';
 import { DropdownContent, DropdownItem, DropdownRoot, DropdownTrigger } from '../common/dropdown';
 
 export const ChatModelSelect = () => {
   const { chatId } = useChatContext();
-  const [selectedModel, updateChat] = useChatStore((store) => [
-    store.actions.getChat(chatId).model,
-    store.actions.updateChat,
-  ]);
+
+  const selectedModel = useClientStore((store) => store.actions.getChat(chatId).model);
+  const updateChat = useClientStore((store) => store.actions.updateChat);
 
   const isClient = useIsClient();
 

@@ -5,7 +5,7 @@ import { ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { clearUuid } from '@/lib/utils/uuid';
 import { useChatContext } from '@/providers/chat-context-provider';
-import { useChatStore } from '@/providers/chat-store-provider';
+import { useClientStore } from '@/providers/client-store-provider';
 import { useSendChatMessage } from '@/hooks/use-send-chat-message';
 import { Button } from '../common/button';
 import { ChatModelSelect } from './chat-model-select';
@@ -14,10 +14,9 @@ type Props = {} & React.ComponentProps<'div'>;
 
 export const ChatInput = ({ className, ...props }: Props) => {
   const { chatId } = useChatContext();
-  const [{ value }, updateChat] = useChatStore((store) => [
-    store.actions.getChat(chatId),
-    store.actions.updateChat,
-  ]);
+
+  const { value } = useClientStore((store) => store.actions.getChat(chatId));
+  const updateChat = useClientStore((store) => store.actions.updateChat);
 
   const sendChatMessage = useSendChatMessage();
 

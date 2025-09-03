@@ -4,18 +4,16 @@ import { produce } from 'immer';
 import type { ChatSSE } from '@/app/api/chat/route';
 import { trpc } from '@/lib/trpc/client';
 import { modelResponseToStructured, readEventStream } from '@/lib/utils/ai';
-import { clearUuid } from '@/lib/utils/uuid';
 import { useChatContext } from '@/providers/chat-context-provider';
-import { useChatStore } from '@/providers/chat-store-provider';
+import { useClientStore } from '@/providers/client-store-provider';
 import { useUserContext } from '@/providers/user-context-provider';
 
 export const useSendChatMessage = () => {
   const { userId } = useUserContext();
   const { chatId } = useChatContext();
-  const [{ model, isPersisted }, updateChat] = useChatStore((store) => [
-    store.actions.getChat(chatId),
-    store.actions.updateChat,
-  ]);
+
+  const { model } = useClientStore((store) => store.actions.getChat(chatId));
+  const { updateChat } = useClientStore((store) => store.actions);
 
   const trpcUtils = trpc.useUtils();
 
@@ -23,9 +21,8 @@ export const useSendChatMessage = () => {
     mutationFn: async (content: string) => {
       updateChat(chatId, { isPending: true });
 
-      trpcUtils.getChatMessages.setInfiniteData({ chatId: clearUuid(chatId) }, (state) => {
+      trpcUtils.getChatMessages.setInfiniteData({ chatId }, (state) => {
         return produce(state, (draft) => {
-          console.log('DRAFT', draft);
           if (!draft) return;
           draft.pages[0].messages.unshift({
             messageId: 'temp',
@@ -44,7 +41,7 @@ export const useSendChatMessage = () => {
         method: 'POST',
         body: JSON.stringify({
           userId,
-          chatId: isPersisted ? chatId : `unsaved:${chatId}`,
+          chatId,
           model,
           content,
         }),
@@ -53,7 +50,7 @@ export const useSendChatMessage = () => {
       await readEventStream(response, (data) => {
         const parsed = JSON.parse(data) as ChatSSE;
 
-        trpcUtils.getChatMessages.setInfiniteData({ chatId: clearUuid(chatId) }, (state) => {
+        trpcUtils.getChatMessages.setInfiniteData({ chatId }, (state) => {
           return produce(state, (draft) => {
             if (!draft) return;
             if (parsed.type === 'message' && parsed.v.status === 'pending') {
@@ -79,7 +76,7 @@ export const useSendChatMessage = () => {
           trpcUtils.getUser.invalidate();
           trpcUtils.getChats.refetch({ userId });
 
-          updateChat(chatId, { chatId: clearUuid(chatId), isPending: false });
+          updateChat(chatId, { chatId, isPending: false });
         }
       });
     },

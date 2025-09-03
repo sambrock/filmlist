@@ -5,16 +5,14 @@ import { useIsClient } from 'usehooks-ts';
 
 import { trpc } from '@/lib/trpc/client';
 import { useChatContext } from '@/providers/chat-context-provider';
-import { useChatStore } from '@/providers/chat-store-provider';
+import { useClientStore } from '@/providers/client-store-provider';
 import { ChatMessageAssistant } from './chat-message-assistant';
 import { ChatMessageUser } from './chat-message-user';
 
 export const ChatMessages = () => {
-  const isClient = useIsClient();
-  const divRef = useRef<HTMLDivElement>(null);
-
   const { chatId } = useChatContext();
-  const isPersisted = useChatStore((store) => store.actions.getChat(chatId).isPersisted);
+
+  const { isPersisted } = useClientStore((store) => store.actions.getChat(chatId));
 
   const { data } = trpc.getChatMessages.useInfiniteQuery(
     { chatId },
@@ -33,10 +31,16 @@ export const ChatMessages = () => {
 
   const messages = data?.pages.flatMap((page) => [...page.messages].reverse()) ?? [];
 
+  const divRef = useRef<HTMLDivElement>(null);
+  const isClient = useIsClient();
+
+  const messagesLength = messages.length;
+  const firstMessageContentLength = messages[0]?.content.length ?? 0;
+
   useLayoutEffect(() => {
     if (!divRef.current) return;
     divRef.current.scrollIntoView({ behavior: 'instant', block: 'end' }); // Scroll to the bottom of the chat
-  }, [messages]);
+  }, [messagesLength, firstMessageContentLength]);
 
   if (!isClient) {
     return null; // Avoid hydration mismatch

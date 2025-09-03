@@ -12,7 +12,7 @@ import { MessageAssistant, MessageUser, Movie } from '@/lib/drizzle/types';
 import { Model, models } from '@/lib/models';
 import { tmdbFindMovie, tmdbGetMovieById } from '@/lib/tmdb/client';
 import { modelResponseToStructured, SYSTEM_CONTEXT_MESSAGE } from '@/lib/utils/ai';
-import { clearUuid, isUnsavedUuid, uuid } from '@/lib/utils/uuid';
+import { uuid } from '@/lib/utils/uuid';
 
 export const maxDuration = 30;
 // export const runtime = 'edge';
@@ -32,14 +32,13 @@ const encodeSSE = (data: ChatSSE | 'end') => {
 
 const BodySchema = z.object({
   chatId: z.string(),
-  userId: z.string(),
+  // userId: z.string(),
   model: z.string().refine((model) => models.has(model as Model)),
   content: z.string(),
 });
 
 export const POST = async (request: Request) => {
   const ctx = await createContext();
-
   if (!ctx.user) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -50,22 +49,25 @@ export const POST = async (request: Request) => {
     return Response.json({ error: parsed.error.message }, { status: 400 });
   }
 
-  const { model, content } = parsed.data;
-  let { chatId, userId } = parsed.data;
+  const { chatId, model, content } = parsed.data;
 
   // All database operations are batched and performed after streaming
   const batch: BatchItem<'pg'>[] = [];
 
-  if (isUnsavedUuid(userId)) {
-    userId = clearUuid(userId);
-    batch.push(db.insert(users).values({ userId, anon: true }).onConflictDoNothing());
-    await setAuthTokenCookie({ userId, anon: true });
+  const [userExists, chatExists] = await Promise.all([
+    db.query.users.findFirst({ where: (users, { eq }) => eq(users.userId, ctx.user!.userId) }),
+    db.query.chats.findFirst({ where: (chats, { eq }) => eq(chats.chatId, chatId) }),
+  ]);
+
+  if (!userExists) {
+    batch.push(db.insert(users).values({ userId: ctx.user!.userId, anon: true }).onConflictDoNothing());
+    await setAuthTokenCookie({ userId: ctx.user!.userId, anon: true });
   }
 
-  if (isUnsavedUuid(chatId)) {
-    chatId = clearUuid(chatId);
-    console.log('CREATE CHAT', { chatId, userId, title: '' });
-    batch.push(db.insert(chats).values({ chatId, userId, title: '' }).onConflictDoNothing());
+  if (!chatExists) {
+    batch.push(
+      db.insert(chats).values({ chatId, userId: ctx.user!.userId, title: '' }).onConflictDoNothing()
+    );
   }
 
   const messageUser: MessageUser = {
@@ -95,14 +97,14 @@ export const POST = async (request: Request) => {
 
   batch.push(db.insert(messages).values([messageUser, messageAssistant]));
 
-  const messageHistory = isUnsavedUuid(parsed.data.chatId)
-    ? []
-    : await db.query.messages.findMany({
+  const messageHistory = chatExists
+    ? await db.query.messages.findMany({
         where: (messages, { eq }) => eq(messages.chatId, chatId),
         orderBy: (messages, { asc }) => asc(messages.serial),
         columns: { role: true, content: true },
         limit: 20,
-      });
+      })
+    : [];
 
   const modelStream = streamText({
     model: openai('gpt-4.1-nano'),
@@ -145,14 +147,6 @@ export const POST = async (request: Request) => {
 
           messageAssistant.structured![index].tmdbId = movie.tmdbId;
           messageAssistant.movies.push(movie);
-
-          // controller.enqueue(encodeSSE({ type: 'movie', v: movie }));
-
-          // batch.push(
-          //   db.insert(movies).values(movie).onConflictDoNothing(),
-          //   db.insert(messageMovies).values({ messageId: messageAssistant.messageId, movieId: movie.movieId })
-          // );
-          // return movie;
         })
       );
 

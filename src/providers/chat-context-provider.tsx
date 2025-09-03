@@ -2,20 +2,16 @@
 
 import { createContext, useContext, useRef } from 'react';
 
-import { useChatStore } from './chat-store-provider';
+import { useClientStore } from './client-store-provider';
 
 export const ChatContext = createContext<{ chatId: string } | undefined>(undefined);
 
-export const ChatContextProvider = ({
-  chatId,
-  isPersisted,
-  ...props
-}: React.PropsWithChildren<{ chatId: string; isPersisted: boolean }>) => {
-  const initChat = useChatStore((store) => store.actions.initChat);
+export const ChatContextProvider = ({ chatId, ...props }: React.PropsWithChildren<{ chatId: string }>) => {
+  const initChat = useClientStore((store) => store.actions.initChat);
   const initRef = useRef(false);
 
   if (!initRef.current) {
-    initChat(chatId, isPersisted);
+    initChat(chatId);
     initRef.current = true;
   }
 

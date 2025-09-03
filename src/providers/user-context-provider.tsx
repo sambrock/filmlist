@@ -9,14 +9,12 @@ export const UserContext = createContext<{ userId: string } | undefined>(undefin
 export const UserContextProvider = (props: React.PropsWithChildren) => {
   const { data } = trpc.getUser.useQuery(undefined, {
     retry: false,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    refetchOnMount: false,
   });
 
-  return (
-    <UserContext.Provider value={{ userId: data ? data.userId : '' }}>{props.children}</UserContext.Provider>
-  );
+  return <UserContext.Provider value={{ userId: data?.userId || '' }}>{props.children}</UserContext.Provider>;
 };
 
 export const useUserContext = () => {
