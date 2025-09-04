@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils';
 import { ClientStoreProvider } from '@/providers/client-store-provider';
 import { QueryClientProvider } from '@/providers/query-client-provider';
 import { UserContextProvider } from '@/providers/user-context-provider';

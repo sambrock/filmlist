@@ -2,7 +2,7 @@
 
 import type { MessageAssistant } from '@/lib/drizzle/types';
 import { Model, models } from '@/lib/models';
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils';
 import { Spinner } from '../common/spinner';
 import { ChatMovie } from './chat-movie';
 

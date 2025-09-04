@@ -1,6 +1,6 @@
 import { Slot } from 'radix-ui';
 
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils';
 
 type Props = React.ComponentProps<'button'> & { asChild?: boolean };
 

@@ -13,7 +13,7 @@ export default async function ChatPage(props: Props) {
 
   return (
     <HydrateClient>
-      <ChatContextProvider chatId={chatId}>
+      <ChatContextProvider chatId={chatId} isPersisted={true}>
         <ChatView />
       </ChatContextProvider>
     </HydrateClient>

@@ -3,13 +3,13 @@
 import Link from 'next/link';
 
 import { trpc } from '@/lib/trpc/client';
-import { useChatStore } from '@/providers/chat-store-provider';
+import { useClientStore } from '@/providers/client-store-provider';
 import { useUserContext } from '@/providers/user-context-provider';
 import { Spinner } from '../common/spinner';
 
 export const SidebarChats = () => {
   const { userId } = useUserContext();
-  const pendingChatIds = useChatStore((store) =>
+  const pendingChatIds = useClientStore((store) =>
     store.chats.filter((chat) => chat.isPending).map((c) => c.chatId)
   );
 

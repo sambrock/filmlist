@@ -3,7 +3,7 @@ import z from 'zod';
 import { setAuthTokenCookie } from '@/lib/auth';
 import { db } from '@/lib/drizzle/db';
 import { MessageAssistantSchema, MessageUserSchema, User } from '@/lib/drizzle/types';
-import { unsavedUuid } from '@/lib/utils/uuid';
+import { uuid } from '@/lib/utils';
 import { publicProcedure, router } from './trpc';
 
 export type AppRouter = typeof appRouter;
@@ -18,7 +18,7 @@ export const appRouter = router({
       return ctx.user;
     }
 
-    const unsavedAnonUser: User = { userId: unsavedUuid(), anon: true };
+    const unsavedAnonUser: User = { userId: uuid(), anon: true };
     await setAuthTokenCookie(unsavedAnonUser);
 
     return unsavedAnonUser;

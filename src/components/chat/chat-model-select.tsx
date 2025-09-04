@@ -4,7 +4,7 @@ import { ChevronDown } from 'lucide-react';
 import { useIsClient } from 'usehooks-ts';
 
 import { models } from '@/lib/models';
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils';
 import { useChatContext } from '@/providers/chat-context-provider';
 import { useClientStore } from '@/providers/client-store-provider';
 import { Button } from '../common/button';
@@ -13,8 +13,8 @@ import { DropdownContent, DropdownItem, DropdownRoot, DropdownTrigger } from '..
 export const ChatModelSelect = () => {
   const { chatId } = useChatContext();
 
-  const selectedModel = useClientStore((store) => store.actions.getChat(chatId).model);
-  const updateChat = useClientStore((store) => store.actions.updateChat);
+  const selectedModel = useClientStore((store) => store.chat(chatId)!.model);
+  const dispatch = useClientStore((store) => store.dispatch);
 
   const isClient = useIsClient();
 
@@ -36,7 +36,7 @@ export const ChatModelSelect = () => {
             <DropdownItem
               key={model.id}
               className={cn(model.id === selectedModel && 'bg-background-1/50')}
-              onClick={() => updateChat(chatId, { model: model.id })}
+              onClick={() => dispatch({ type: 'UPDATE_CHAT', payload: { model: model.id } })}
             >
               <div className="flex items-end gap-3">
                 <span className="font-medium">{model.name}</span>

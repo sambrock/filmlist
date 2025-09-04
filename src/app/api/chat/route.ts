@@ -12,7 +12,7 @@ import { MessageAssistant, MessageUser, Movie } from '@/lib/drizzle/types';
 import { Model, models } from '@/lib/models';
 import { tmdbFindMovie, tmdbGetMovieById } from '@/lib/tmdb/client';
 import { modelResponseToStructured, SYSTEM_CONTEXT_MESSAGE } from '@/lib/utils/ai';
-import { uuid } from '@/lib/utils/uuid';
+import { uuid } from '@/lib/utils';
 
 export const maxDuration = 30;
 // export const runtime = 'edge';

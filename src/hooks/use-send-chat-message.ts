@@ -12,14 +12,15 @@ export const useSendChatMessage = () => {
   const { userId } = useUserContext();
   const { chatId } = useChatContext();
 
-  const { model } = useClientStore((store) => store.actions.getChat(chatId));
-  const { updateChat } = useClientStore((store) => store.actions);
+  const { model } = useClientStore((store) => store.chat(chatId)!);
+  const dispatch = useClientStore((store) => store.dispatch);
 
   const trpcUtils = trpc.useUtils();
 
   return useMutation({
     mutationFn: async (content: string) => {
-      updateChat(chatId, { isPending: true });
+      dispatch({ type: 'CHAT_MESSAGE_PENDING', payload: { chatId } });
+      window.history.pushState({}, '', `/chat/${chatId}`);
 
       trpcUtils.getChatMessages.setInfiniteData({ chatId }, (state) => {
         return produce(state, (draft) => {
@@ -39,12 +40,7 @@ export const useSendChatMessage = () => {
 
       const response = await fetch('/api/chat', {
         method: 'POST',
-        body: JSON.stringify({
-          userId,
-          chatId,
-          model,
-          content,
-        }),
+        body: JSON.stringify({ userId, chatId, model, content }),
       });
 
       await readEventStream(response, (data) => {
@@ -73,10 +69,9 @@ export const useSendChatMessage = () => {
           });
         });
         if (parsed.type === 'end') {
+          dispatch({ type: 'CHAT_MESSAGE_DONE', payload: { chatId } });
           trpcUtils.getUser.invalidate();
           trpcUtils.getChats.refetch({ userId });
-
-          updateChat(chatId, { chatId, isPending: false });
         }
       });
     },

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { SquarePen } from 'lucide-react';
 
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils';
 import { SidebarButton } from './sidebar-button';
 // import { SidebarChats } from './sidebar-chats';
 

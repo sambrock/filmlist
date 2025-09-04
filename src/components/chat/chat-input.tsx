@@ -2,27 +2,24 @@
 
 import { ArrowUp } from 'lucide-react';
 
-import { cn } from '@/lib/utils/cn';
-import { clearUuid } from '@/lib/utils/uuid';
+import { cn } from '@/lib/utils';
 import { useChatContext } from '@/providers/chat-context-provider';
 import { useClientStore } from '@/providers/client-store-provider';
 import { useSendChatMessage } from '@/hooks/use-send-chat-message';
 import { Button } from '../common/button';
 import { ChatModelSelect } from './chat-model-select';
 
-type Props = {} & React.ComponentProps<'div'>;
+type Props = React.ComponentProps<'div'>;
 
 export const ChatInput = ({ className, ...props }: Props) => {
   const { chatId } = useChatContext();
-
-  const { value } = useClientStore((store) => store.actions.getChat(chatId));
-  const updateChat = useClientStore((store) => store.actions.updateChat);
+  const { inputValue } = useClientStore((store) => store.chat(chatId)!);
+  const dispatch = useClientStore((store) => store.dispatch);
 
   const sendChatMessage = useSendChatMessage();
 
   const handleSubmit = () => {
-    sendChatMessage.mutate(value);
-    window.history.pushState({}, '', `/chat/${clearUuid(chatId)}`);
+    sendChatMessage.mutate(inputValue);
   };
 
   return (
@@ -34,11 +31,16 @@ export const ChatInput = ({ className, ...props }: Props) => {
         className="text-foreground-0 placeholder:text-foreground-0/35 my-2 w-full resize-none px-2 py-2 text-base focus:outline-none"
         placeholder="Type your message..."
         rows={1}
-        value={value}
+        value={inputValue}
         autoFocus
-        onChange={(e) => updateChat(chatId, { value: e.target.value })}
+        onChange={(e) =>
+          dispatch({
+            type: 'CHAT_MESSAGE_INPUT',
+            payload: { chatId, value: e.target.value },
+          })
+        }
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && value.trim()) {
+          if (e.key === 'Enter' && inputValue.trim()) {
             e.preventDefault();
             handleSubmit();
           }

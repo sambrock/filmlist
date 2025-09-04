@@ -1,74 +1,46 @@
-import { produce } from 'immer';
+import { enableMapSet } from 'immer';
 import { persist } from 'zustand/middleware';
 import { createStore } from 'zustand/vanilla';
 
 import { Model } from '@/lib/models';
+import { ClientStateAction, reducer } from './client-store-reducer';
 
-export type ClientState = {
-  chats: ClientStateChat[];
-};
+enableMapSet();
 
-export type ClientStateChat = {
+export type ClientChatState = {
   chatId: string;
-  value: string;
   model: Model;
-  isNewPage: boolean;
+  inputValue: string;
+  isPersisted: boolean;
   isPending: boolean;
 };
 
-export type ClientStateActions = {
-  initChat: (chatId: string) => void;
-  getChat: (chatId: string) => ClientStateChat;
-  updateChat: (chatId: string, updates: Partial<ClientStateChat>) => void;
+export type ClientState = {
+  model: Model;
+  chats: ClientChatState[];
 };
 
-export type ClientStore = ClientState & { actions: ClientStateActions };
+export type ClientStore = ClientState & {
+  chat: (chatId: string) => ClientState['chats'][number] | undefined;
+  dispatch: (action: ClientStateAction) => void;
+};
 
 export const createClientStore = () => {
   return createStore<ClientStore>()(
     persist(
       (set, get) => ({
+        model: 'openai/gpt-4.1-nano',
         chats: [],
-        actions: {
-          initChat: (chatId) => {
-            set(
-              produce((state: ClientState) => {
-                state.chats.push({
-                  ...DEFAULT_CLIENT_CHAT_STATE,
-                  chatId,
-                });
-              })
-            );
-          },
-          getChat: (chatId) => {
-            const chat = get().chats.find((c) => c.chatId === chatId);
-            if (!chat) return { ...DEFAULT_CLIENT_CHAT_STATE, chatId };
-            return chat;
-          },
-          updateChat: (chatId, updates) => {
-            set(
-              produce((state: ClientState) => {
-                const chat = state.chats.find((c) => c.chatId === chatId);
-                if (chat) {
-                  Object.assign(chat, updates);
-                }
-              })
-            );
-          },
-        },
+
+        chat: (chatId) => get().chats.find((chat) => chat.chatId === chatId),
+        dispatch: (action) => set((state) => reducer(state, action)),
       }),
       {
-        name: 'client-store',
-        partialize: (state) => ({ chats: state.chats }),
+        name: 'filmlist/store',
+        // Don't include dispatch in the persisted state
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        partialize: ({ dispatch, ...state }) => state,
       }
     )
   );
-};
-
-export const DEFAULT_CLIENT_CHAT_STATE: ClientStateChat = {
-  chatId: '',
-  value: '',
-  model: 'openai/gpt-4.1-nano',
-  isNewPage: true,
-  isPending: false,
 };

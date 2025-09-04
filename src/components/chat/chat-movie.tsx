@@ -1,7 +1,7 @@
 'use client';
 
 import type { Movie } from '@/lib/drizzle/types';
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils';
 import { posterSrc, runtimeToHoursMins } from '@/lib/utils/movie';
 
 type Props = {

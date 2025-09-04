@@ -1,3 +1,14 @@
+import { cx, CxOptions } from 'class-variance-authority';
+import { v4 } from 'uuid';
+
+export const cn = (...inputs: CxOptions) => {
+  return cx(inputs);
+};
+
+export const uuid = () => {
+  return v4();
+};
+
 export const timeAgo = (date: Date) => {
   const now = new Date();
   const secondsPast = (now.getTime() - date.getTime()) / 1000;

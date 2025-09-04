@@ -6,15 +6,20 @@ import { useClientStore } from './client-store-provider';
 
 export const ChatContext = createContext<{ chatId: string } | undefined>(undefined);
 
-export const ChatContextProvider = ({ chatId, ...props }: React.PropsWithChildren<{ chatId: string }>) => {
-  const initChat = useClientStore((store) => store.actions.initChat);
-  const initRef = useRef(false);
+export const ChatContextProvider = ({
+  chatId,
+  isPersisted,
+  ...props
+}: React.PropsWithChildren<{ chatId: string; isPersisted: boolean }>) => {
+  const dispatch = useClientStore((store) => store.dispatch);
 
+  const initRef = useRef(false);
   if (!initRef.current) {
-    initChat(chatId);
+    dispatch({ type: 'INIT_CHAT', payload: { chatId, isPersisted } });
     initRef.current = true;
   }
 
+  // if (!initRef.current) return null;
   return <ChatContext.Provider value={{ chatId }}>{props.children}</ChatContext.Provider>;
 };
 

@@ -3,33 +3,12 @@
 import { Fragment, useLayoutEffect, useRef } from 'react';
 import { useIsClient } from 'usehooks-ts';
 
-import { trpc } from '@/lib/trpc/client';
-import { useChatContext } from '@/providers/chat-context-provider';
-import { useClientStore } from '@/providers/client-store-provider';
+import { useChatMessages } from '@/hooks/use-chat-messages';
 import { ChatMessageAssistant } from './chat-message-assistant';
 import { ChatMessageUser } from './chat-message-user';
 
 export const ChatMessages = () => {
-  const { chatId } = useChatContext();
-
-  const { isPersisted } = useClientStore((store) => store.actions.getChat(chatId));
-
-  const { data } = trpc.getChatMessages.useInfiniteQuery(
-    { chatId },
-    {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-      initialData: { pages: [{ messages: [], nextCursor: 0 }], pageParams: [] },
-      initialCursor: 0,
-      enabled: isPersisted,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retryOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
-    }
-  );
-
-  const messages = data?.pages.flatMap((page) => [...page.messages].reverse()) ?? [];
+  const messages = useChatMessages();
 
   const divRef = useRef<HTMLDivElement>(null);
   const isClient = useIsClient();

@@ -1,7 +1,7 @@
 'use client';
 
 import type { MessageUser } from '@/lib/drizzle/types';
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils';
 
 type Props = {
   message: MessageUser;
