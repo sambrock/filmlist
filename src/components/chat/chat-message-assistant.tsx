@@ -18,7 +18,7 @@ export const ChatMessageAssistant = ({ message, className, ...props }: Props) =>
       )}
 
       {message.structured && (
-        <div className="bg-background-0 rounded-xl">
+        <div className="bg-background-0 overflow-clip rounded-xl">
           {message.structured.map((structured, index) => (
             <ChatMovie
               key={index}

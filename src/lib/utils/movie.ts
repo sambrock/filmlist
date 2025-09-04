@@ -19,3 +19,10 @@ export const runtimeToHoursMins = (runtimeMins: number) => {
 
   return `${hours > 0 ? `${hours}h ` : ''}${minutes}m`;
 };
+
+export const genreName = (name: string) => {
+  if (name === 'Science Fiction') {
+    return 'Sci-Fi';
+  }
+  return name;
+};

@@ -16,6 +16,7 @@ export type ClientChatState = {
 };
 
 export type ClientState = {
+  currentChatId: string;
   model: Model;
   chats: ClientChatState[];
 };
@@ -29,6 +30,7 @@ export const createClientStore = () => {
   return createStore<ClientStore>()(
     persist(
       (set, get) => ({
+        currentChatId: '',
         model: 'openai/gpt-4.1-nano',
         chats: [],
 

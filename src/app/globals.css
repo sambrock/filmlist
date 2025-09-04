@@ -12,6 +12,7 @@
   --color-foreground-0: oklch(0.9491 0 0);
   --color-foreground-1: oklch(0.6931 0 0);
   --color-foreground-2: oklch(0.8431 0 0);
+  --color-foreground-3: oklch(0.4431 0 0);
 
   --color-primary: oklch(0.5246 0.2484 273.96);
   --color-primary-foreground: oklch(0.999 0.2484 273.96);

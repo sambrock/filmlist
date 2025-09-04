@@ -149,14 +149,19 @@ export const POST = async (request: Request) => {
       messageUser.status = 'done';
       messageAssistant.status = 'done';
 
+      if (messageAssistant.movies.length > 0) {
+        batch.push(
+          db.insert(movies).values(messageAssistant.movies).onConflictDoNothing(),
+          db.insert(messageMovies).values(
+            messageAssistant.movies.map((movie) => ({
+              messageId: messageAssistant.messageId,
+              movieId: movie.movieId,
+            }))
+          )
+        );
+      }
+
       batch.push(
-        db.insert(movies).values(messageAssistant.movies).onConflictDoNothing(),
-        db.insert(messageMovies).values(
-          messageAssistant.movies.map((movie) => ({
-            messageId: messageAssistant.messageId,
-            movieId: movie.movieId,
-          }))
-        ),
         db.update(messages).set(messageUser).where(eq(messages.messageId, messageUser.messageId)),
         db.update(messages).set(messageAssistant).where(eq(messages.messageId, messageAssistant.messageId))
       );
@@ -164,15 +169,17 @@ export const POST = async (request: Request) => {
       controller.enqueue(encodeSSE({ type: 'message', v: messageUser }));
       controller.enqueue(encodeSSE({ type: 'message', v: messageAssistant }));
 
-      const chatTitle = await generateText({
-        model: getModel('openai/gpt-4.1-nano'),
-        prompt: `Generate a short title for this prompt in 3 words or less (don't use the word "movie"): "Movie picks for prompt: ${content}"`,
-      });
+      if (!chatExists) {
+        const chatTitle = await generateText({
+          model: getModel('openai/gpt-4.1-nano'),
+          prompt: `Generate a short title for this prompt in 3 words or less (don't use the word "movie"): "Movie picks for prompt: ${content}"`,
+        });
 
-      if (chatTitle.content[0].type === 'text') {
-        batch.push(
-          db.update(chats).set({ title: chatTitle.content[0].text }).where(eq(chats.chatId, chatId))
-        );
+        if (chatTitle.content[0].type === 'text') {
+          batch.push(
+            db.update(chats).set({ title: chatTitle.content[0].text }).where(eq(chats.chatId, chatId))
+          );
+        }
       }
 
       await db.batch(batch as [BatchItem<'pg'>, ...BatchItem<'pg'>[]]);
