@@ -2,7 +2,7 @@ import { trpc } from '@/lib/trpc/client';
 import { useChatContext } from '@/providers/chat-context-provider';
 import { useClientStore } from '@/providers/client-store-provider';
 
-export const useChatMessages = () => {
+export const useApiChatMessages = () => {
   const { chatId } = useChatContext();
   const { isPersisted } = useClientStore((store) => store.chat(chatId)!);
 
@@ -21,7 +21,7 @@ export const useChatMessages = () => {
     }
   );
 
-  const messages = data?.pages.flatMap((page) => [...page.messages].reverse()) ?? [];
+  const messages = data?.pages.flatMap((page) => [...page.messages].reverse()) || [];
 
   return messages;
 };

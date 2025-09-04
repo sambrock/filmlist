@@ -4,7 +4,7 @@ import { ClientChatState, ClientState } from './client-store';
 
 export type ClientStateAction =
   | { type: 'INIT_CHAT'; payload: { chatId: string; isPersisted: boolean } }
-  | { type: 'UPDATE_CHAT'; payload: Partial<ClientChatState> }
+  | { type: 'UPDATE_CHAT'; payload: { chatId: string } & Partial<ClientChatState> }
   | { type: 'CHAT_MESSAGE_INPUT'; payload: { chatId: string; value: string } }
   | { type: 'CHAT_MESSAGE_PENDING'; payload: { chatId: string } }
   | { type: 'CHAT_MESSAGE_DONE'; payload: { chatId: string } };
@@ -28,6 +28,9 @@ export const reducer = (state: ClientState, { type, payload }: ClientStateAction
         const chat = draft.chats.find((c) => c.chatId === chatId);
         if (!chat) return;
         Object.assign(chat, updates);
+        if (updates.model) {
+          state.model = updates.model;
+        }
       });
     }
     case 'CHAT_MESSAGE_INPUT': {
@@ -49,7 +52,7 @@ export const reducer = (state: ClientState, { type, payload }: ClientStateAction
       return produce(state, (draft) => {
         const chat = draft.chats.find((c) => c.chatId === payload.chatId);
         if (!chat) return;
-        chat.isPending = true;
+        chat.isPending = false;
         chat.isPersisted = true;
       });
     }

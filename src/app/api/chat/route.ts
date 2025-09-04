@@ -1,4 +1,3 @@
-import { openai } from '@ai-sdk/openai';
 import { generateText, streamText } from 'ai';
 import { eq } from 'drizzle-orm';
 import { BatchItem } from 'drizzle-orm/batch';
@@ -9,14 +8,12 @@ import { setAuthTokenCookie } from '@/lib/auth';
 import { db } from '@/lib/drizzle/db';
 import { chats, messageMovies, messages, movies, users } from '@/lib/drizzle/schema';
 import { MessageAssistant, MessageUser, Movie } from '@/lib/drizzle/types';
-import { Model, models } from '@/lib/models';
+import { getModel, Model, models } from '@/lib/models';
 import { tmdbFindMovie, tmdbGetMovieById } from '@/lib/tmdb/client';
-import { modelResponseToStructured, SYSTEM_CONTEXT_MESSAGE } from '@/lib/utils/ai';
 import { uuid } from '@/lib/utils';
+import { modelResponseToStructured, SYSTEM_CONTEXT_MESSAGE } from '@/lib/utils/ai';
 
 export const maxDuration = 30;
-// export const runtime = 'edge';
-// export const dynamic = 'force-dynamic';
 
 export type ChatSSE =
   | { type: 'content'; v: string; id: string }
@@ -32,7 +29,6 @@ const encodeSSE = (data: ChatSSE | 'end') => {
 
 const BodySchema = z.object({
   chatId: z.string(),
-  // userId: z.string(),
   model: z.string().refine((model) => models.has(model as Model)),
   content: z.string(),
 });
@@ -107,7 +103,7 @@ export const POST = async (request: Request) => {
     : [];
 
   const modelStream = streamText({
-    model: openai('gpt-4.1-nano'),
+    model: getModel(model as Model),
     messages: [SYSTEM_CONTEXT_MESSAGE, ...messageHistory, { role: 'user', content }],
   });
 
@@ -168,12 +164,9 @@ export const POST = async (request: Request) => {
       controller.enqueue(encodeSSE({ type: 'message', v: messageUser }));
       controller.enqueue(encodeSSE({ type: 'message', v: messageAssistant }));
 
-      controller.enqueue(encodeSSE({ type: 'end' }));
-      controller.enqueue(encodeSSE('end'));
-
       const chatTitle = await generateText({
-        model: openai('gpt-4.1-nano'),
-        prompt: `Generate a short title for this prompt in 3 words or less: "${content}"`,
+        model: getModel('openai/gpt-4.1-nano'),
+        prompt: `Generate a short title for this prompt in 3 words or less (don't use the word "movie"): "Movie picks for prompt: ${content}"`,
       });
 
       if (chatTitle.content[0].type === 'text') {
@@ -183,6 +176,9 @@ export const POST = async (request: Request) => {
       }
 
       await db.batch(batch as [BatchItem<'pg'>, ...BatchItem<'pg'>[]]);
+
+      controller.enqueue(encodeSSE({ type: 'end' }));
+      controller.enqueue(encodeSSE('end'));
 
       controller.close();
     },

@@ -3,7 +3,7 @@
 import type { MessageAssistant } from '@/lib/drizzle/types';
 import { Model, models } from '@/lib/models';
 import { cn } from '@/lib/utils';
-import { Spinner } from '../common/spinner';
+import { SpinnerEllipsis } from '../common/spinner';
 import { ChatMovie } from './chat-movie';
 
 type Props = {
@@ -13,10 +13,12 @@ type Props = {
 export const ChatMessageAssistant = ({ message, className, ...props }: Props) => {
   return (
     <div className={cn('mb-10', className)} {...props} data-message-id={message.messageId}>
-      {message.status === 'pending' && !message.structured && <Spinner className="text-foreground-1 mt-4" />}
+      {message.status === 'pending' && !message.structured && (
+        <SpinnerEllipsis className="text-foreground-1 mt-4" />
+      )}
 
       {message.structured && (
-        <div className="bg-background-5 rounded-xl">
+        <div className="bg-background-0 rounded-xl">
           {message.structured.map((structured, index) => (
             <ChatMovie
               key={index}

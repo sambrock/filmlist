@@ -21,7 +21,7 @@ export type ClientState = {
 };
 
 export type ClientStore = ClientState & {
-  chat: (chatId: string) => ClientState['chats'][number] | undefined;
+  chat: (chatId: string) => ClientState['chats'][number];
   dispatch: (action: ClientStateAction) => void;
 };
 
@@ -32,7 +32,14 @@ export const createClientStore = () => {
         model: 'openai/gpt-4.1-nano',
         chats: [],
 
-        chat: (chatId) => get().chats.find((chat) => chat.chatId === chatId),
+        chat: (chatId) =>
+          get().chats.find((chat) => chat.chatId === chatId) || {
+            chatId: '',
+            inputValue: '',
+            isPending: false,
+            isPersisted: false,
+            model: get().model,
+          },
         dispatch: (action) => set((state) => reducer(state, action)),
       }),
       {

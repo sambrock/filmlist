@@ -3,12 +3,12 @@
 import { Fragment, useLayoutEffect, useRef } from 'react';
 import { useIsClient } from 'usehooks-ts';
 
-import { useChatMessages } from '@/hooks/use-chat-messages';
+import { useApiChatMessages } from '@/hooks/use-api-chat-messages';
 import { ChatMessageAssistant } from './chat-message-assistant';
 import { ChatMessageUser } from './chat-message-user';
 
 export const ChatMessages = () => {
-  const messages = useChatMessages();
+  const messages = useApiChatMessages();
 
   const divRef = useRef<HTMLDivElement>(null);
   const isClient = useIsClient();

@@ -36,7 +36,7 @@ export const ChatModelSelect = () => {
             <DropdownItem
               key={model.id}
               className={cn(model.id === selectedModel && 'bg-background-1/50')}
-              onClick={() => dispatch({ type: 'UPDATE_CHAT', payload: { model: model.id } })}
+              onClick={() => dispatch({ type: 'UPDATE_CHAT', payload: { chatId, model: model.id } })}
             >
               <div className="flex items-end gap-3">
                 <span className="font-medium">{model.name}</span>

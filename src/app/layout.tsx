@@ -28,7 +28,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
             <ClientStoreProvider>
               <div className="flex h-screen overflow-hidden">
                 <Sidebar className="h-screen w-[260px] shrink-0" />
-                <div className="w-full">{props.children}</div>
+                <div className="w-full bg-background-1">{props.children}</div>
               </div>
             </ClientStoreProvider>
           </UserContextProvider>

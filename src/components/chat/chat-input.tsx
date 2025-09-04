@@ -5,7 +5,7 @@ import { ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useChatContext } from '@/providers/chat-context-provider';
 import { useClientStore } from '@/providers/client-store-provider';
-import { useSendChatMessage } from '@/hooks/use-send-chat-message';
+import { useApiSendChatMessage } from '@/hooks/use-api-send-chat-message';
 import { Button } from '../common/button';
 import { ChatModelSelect } from './chat-model-select';
 
@@ -13,14 +13,11 @@ type Props = React.ComponentProps<'div'>;
 
 export const ChatInput = ({ className, ...props }: Props) => {
   const { chatId } = useChatContext();
+
   const { inputValue } = useClientStore((store) => store.chat(chatId)!);
   const dispatch = useClientStore((store) => store.dispatch);
 
-  const sendChatMessage = useSendChatMessage();
-
-  const handleSubmit = () => {
-    sendChatMessage.mutate(inputValue);
-  };
+  const sendChatMessage = useApiSendChatMessage();
 
   return (
     <div
@@ -42,7 +39,7 @@ export const ChatInput = ({ className, ...props }: Props) => {
         onKeyDown={(e) => {
           if (e.key === 'Enter' && inputValue.trim()) {
             e.preventDefault();
-            handleSubmit();
+            sendChatMessage.mutate(inputValue);
           }
         }}
       />

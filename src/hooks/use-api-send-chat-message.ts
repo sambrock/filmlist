@@ -8,11 +8,11 @@ import { useChatContext } from '@/providers/chat-context-provider';
 import { useClientStore } from '@/providers/client-store-provider';
 import { useUserContext } from '@/providers/user-context-provider';
 
-export const useSendChatMessage = () => {
+export const useApiSendChatMessage = () => {
   const { userId } = useUserContext();
   const { chatId } = useChatContext();
 
-  const { model } = useClientStore((store) => store.chat(chatId)!);
+  const { model, isPersisted } = useClientStore((store) => store.chat(chatId)!);
   const dispatch = useClientStore((store) => store.dispatch);
 
   const trpcUtils = trpc.useUtils();
@@ -37,6 +37,21 @@ export const useSendChatMessage = () => {
           });
         });
       });
+
+      if (!isPersisted) {
+        trpcUtils.getChats.setData({ userId }, (state) => {
+          return produce(state, (draft) => {
+            if (!draft) return;
+            draft.unshift({
+              chatId,
+              userId,
+              title: 'New chat',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            });
+          });
+        });
+      }
 
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -68,9 +83,11 @@ export const useSendChatMessage = () => {
             }
           });
         });
+
         if (parsed.type === 'end') {
           dispatch({ type: 'CHAT_MESSAGE_DONE', payload: { chatId } });
-          trpcUtils.getUser.invalidate();
+
+          trpcUtils.getUser.refetch();
           trpcUtils.getChats.refetch({ userId });
         }
       });

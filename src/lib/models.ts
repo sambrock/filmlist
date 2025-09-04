@@ -1,3 +1,5 @@
+import { openai } from '@ai-sdk/openai';
+
 export type Model = 'openai/gpt-4.1-nano' | 'openai/gpt-4.1' | 'openai/gpt-4' | 'xai/grok-3-beta';
 
 export const models = new Map([
@@ -51,3 +53,16 @@ export const models = new Map([
     active: boolean;
   }
 >;
+
+export const getModel = (model: Model) => {
+  const [provider, modelId] = model.split('/');
+
+  switch (provider) {
+    case 'openai': {
+      return openai(modelId);
+    }
+    default: {
+      return openai('gpt-4.1-nano');
+    }
+  }
+};

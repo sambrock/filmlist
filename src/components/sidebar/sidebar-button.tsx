@@ -10,7 +10,7 @@ export const SidebarButton = ({ asChild, className, ...props }: Props) => {
   return (
     <Comp
       className={cn(
-        'hover:bg-foreground-0/5 flex h-10 cursor-pointer font-medium items-center rounded-md px-6 text-sm',
+        'hover:bg-foreground-0/5 text-foreground-2 hover:text-foreground-0 flex h-9 cursor-pointer items-center rounded-lg px-3 py-2 text-sm font-medium whitespace-nowrap',
         className
       )}
       {...props}
