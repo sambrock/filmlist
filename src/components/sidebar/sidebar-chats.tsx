@@ -2,7 +2,6 @@
 
 import { Fragment } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
 import { useClientStore } from '@/providers/client-store-provider';
@@ -11,8 +10,7 @@ import { SpinnerEllipsis } from '../common/spinner';
 import { SidebarButton } from './sidebar-button';
 
 export const SidebarChats = () => {
-  const params = useParams<{ chatId?: string }>();
-
+  const currentChatId = useClientStore((store) => store.currentChatId);
   const pendingChatIds = useClientStore((store) =>
     store.chats.filter((chat) => chat.isPending).map((c) => c.chatId)
   );
@@ -24,7 +22,7 @@ export const SidebarChats = () => {
       {chats.map((chat) => (
         <SidebarButton
           key={chat.chatId}
-          className={cn(params.chatId === chat.chatId && 'bg-foreground-0/5')}
+          className={cn(currentChatId === chat.chatId && 'text-foreground-0! bg-foreground-0/5')}
           asChild
         >
           <Link href={`/chat/${chat.chatId}`}>

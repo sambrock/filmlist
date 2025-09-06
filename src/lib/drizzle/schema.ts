@@ -73,7 +73,7 @@ export const library = pgTable(
       .notNull()
       .references(() => movies.movieId),
     watched: boolean('watched').default(false),
-    liked: boolean('liked').default(false),
+    liked: boolean('liked').default(false), 
     watchlist: boolean('watchlist').default(false),
     ignore: boolean('ignore').default(false),
     createdAt: timestamp('created_at').notNull().defaultNow(),

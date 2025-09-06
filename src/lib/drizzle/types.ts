@@ -25,7 +25,11 @@ export const MessageUserSchema = MessageSchema.extend({ role: z.literal('user') 
 export type MessageAssistant = z.infer<typeof MessageAssistantSchema>;
 export const MessageAssistantSchema = MessageSchema.extend({
   role: z.literal('assistant'),
-  movies: MovieSchema.array(),
+  movies: MovieSchema.extend({
+    watched: z.boolean().default(false),
+    liked: z.boolean().default(false),
+    watchlist: z.boolean().default(false),
+  }).array(),
 }).omit({ serial: true });
 
 export type ModelResponseStructured = z.infer<typeof ModelResponseStructuredSchema>;

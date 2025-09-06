@@ -1,4 +1,4 @@
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { produce } from 'immer';
 
@@ -16,7 +16,7 @@ export const useApiSendChatMessage = () => {
   const { model, isPersisted } = useClientStore((store) => store.chat(chatId)!);
   const dispatch = useClientStore((store) => store.dispatch);
 
-  const router = useRouter();
+  // const router = useRouter();
   const params = useParams<{ chatId?: string }>();
 
   const trpcUtils = trpc.useUtils();
@@ -25,12 +25,11 @@ export const useApiSendChatMessage = () => {
     mutationFn: async (content: string) => {
       dispatch({ type: 'CHAT_MESSAGE_PENDING', payload: { chatId } });
       if (params.chatId !== chatId) {
-        // window.history.pushState({}, '', `/chat/${chatId}`);
-        router.push(`/chat/${chatId}`, { scroll: false });
+        window.history.pushState({}, '', `/chat/${chatId}`);
       }
 
-      trpcUtils.getChatMessages.setInfiniteData({ chatId }, (state) => {
-        return produce(state, (draft) => {
+      trpcUtils.getChatMessages.setInfiniteData({ chatId }, (data) => {
+        return produce(data, (draft) => {
           if (!draft) return;
           draft.pages[0].messages.unshift({
             messageId: 'temp',

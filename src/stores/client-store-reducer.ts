@@ -13,6 +13,7 @@ export const reducer = (state: ClientState, { type, payload }: ClientStateAction
   switch (type) {
     case 'INIT_CHAT': {
       return produce(state, (draft) => {
+        draft.currentChatId = payload.chatId;
         draft.chats.push({
           chatId: payload.chatId,
           model: state.model,
@@ -20,9 +21,6 @@ export const reducer = (state: ClientState, { type, payload }: ClientStateAction
           isPersisted: payload.isPersisted,
           isPending: false,
         });
-        if (draft.currentChatId !== payload.chatId) {
-          draft.currentChatId = payload.chatId;
-        }
       });
     }
     case 'UPDATE_CHAT': {

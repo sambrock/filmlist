@@ -4,9 +4,9 @@ import { useClientStore } from '@/providers/client-store-provider';
 
 export const useApiChatMessages = () => {
   const { chatId } = useChatContext();
-  const { isPersisted } = useClientStore((store) => store.chat(chatId)!);
+  const { isPersisted } = useClientStore((store) => store.chat(chatId));
 
-  const { data } = trpc.getChatMessages.useInfiniteQuery(
+  const { data, ...rest } = trpc.getChatMessages.useInfiniteQuery(
     { chatId },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -21,7 +21,8 @@ export const useApiChatMessages = () => {
     }
   );
 
-  const messages = data?.pages.flatMap((page) => [...page.messages].reverse()) || [];
+  const messages = [...data?.pages.flatMap((page) => page.messages)].reverse() || [];
+  const hasPending = messages.some((message) => message.status === 'pending');
 
-  return messages;
+  return { messages, hasPending, ...rest };
 };

@@ -2,21 +2,23 @@
 
 import { Eye, Heart, Plus } from 'lucide-react';
 
-import type { Movie } from '@/lib/drizzle/types';
+import type { MessageAssistant } from '@/lib/drizzle/types';
 import { cn } from '@/lib/utils';
 import { genreName, posterSrc, runtimeToHoursMins } from '@/lib/utils/movie';
+import { useApiUpdateLibrary } from '@/hooks/use-api-update-library';
 import { Button } from '../common/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../common/tooltip';
 
 type Props = {
   title: string;
   why: string;
   releaseYear: string;
-  movie?: Movie;
+  movie?: MessageAssistant['movies'][number];
 };
 
 export const ChatMovie = ({ title, why, releaseYear, movie }: Props) => {
   return (
-    <div className="group border-foreground-0/5 mx-2 flex cursor-pointer border-b-1 py-2 last:border-0">
+    <div className="group border-foreground-0/5 flex cursor-pointer border-b-1 px-2 py-2 last:border-0">
       <ChatMoviePoster movie={movie} />
 
       <div className="ml-4 flex w-full flex-col py-2">
@@ -33,11 +35,13 @@ export const ChatMovie = ({ title, why, releaseYear, movie }: Props) => {
             </div>
           )}
           {movie && (
-            <div className="-mb-2 ml-auto flex items-center">
-              <ChatMovieWatchlistButton />
-              <ChatMovieSeenButton />
-              <ChatMovieLikeButton />
-            </div>
+            <TooltipProvider>
+              <div className="-mb-2 ml-auto flex items-center gap-1">
+                <ChatMovieWatchlistButton movie={movie} />
+                <ChatMovieWatchButton movie={movie} />
+                <ChatMovieLikeButton movie={movie} />
+              </div>
+            </TooltipProvider>
           )}
         </div>
       </div>
@@ -45,7 +49,7 @@ export const ChatMovie = ({ title, why, releaseYear, movie }: Props) => {
   );
 };
 
-const ChatMoviePoster = ({ movie }: { movie?: Movie }) => {
+const ChatMoviePoster = ({ movie }: { movie?: MessageAssistant['movies'][number] }) => {
   return (
     <div className={cn('bg-background-4 aspect-[1/1.5] w-26 overflow-clip rounded-sm')}>
       {movie && (
@@ -60,26 +64,68 @@ const ChatMoviePoster = ({ movie }: { movie?: Movie }) => {
   );
 };
 
-const ChatMovieWatchlistButton = () => {
+const ChatMovieWatchlistButton = ({ movie }: { movie: MessageAssistant['movies'][number] }) => {
+  const { mutate } = useApiUpdateLibrary();
+
   return (
-    <Button variant="ghost" size="icon" className="text-foreground-3 hover:text-foreground-0 rounded-full!">
-      <Plus className="size-5" />
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant={movie.watchlist ? 'primary' : 'ghost-2'}
+          size="icon"
+          className="rounded-full!"
+          onClick={() => {
+            mutate({ movieId: movie.movieId, watchlist: !movie.watchlist });
+          }}
+        >
+          <Plus className="size-5" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{movie.watchlist ? 'Remove from watchlist' : 'Add to watchlist'}</TooltipContent>
+    </Tooltip>
   );
 };
 
-const ChatMovieSeenButton = () => {
+const ChatMovieWatchButton = ({ movie }: { movie: MessageAssistant['movies'][number] }) => {
+  const { mutate } = useApiUpdateLibrary();
+
   return (
-    <Button variant="ghost" size="icon" className="text-foreground-3 hover:text-foreground-0 rounded-full!">
-      <Eye className="size-5" />
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant={movie.watched ? 'primary' : 'ghost-2'}
+          size="icon"
+          className="rounded-full!"
+          onClick={() => {
+            mutate({ movieId: movie.movieId, watched: !movie.watched });
+          }}
+        >
+          <Eye className="size-5" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{movie.watched ? 'Remove from watched' : 'Add to watched'}</TooltipContent>
+    </Tooltip>
   );
 };
 
-const ChatMovieLikeButton = () => {
+const ChatMovieLikeButton = ({ movie }: { movie: MessageAssistant['movies'][number] }) => {
+  const { mutate } = useApiUpdateLibrary();
+
   return (
-    <Button variant="ghost" size="icon" className="text-foreground-3 hover:text-foreground-0 rounded-full!">
-      <Heart className="size-5" />
-    </Button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant={movie.liked ? 'primary' : 'ghost-2'}
+          size="icon"
+          className="rounded-full!"
+          onClick={() => {
+            mutate({ movieId: movie.movieId, liked: !movie.liked });
+          }}
+        >
+          <Heart className="size-5" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{movie.liked ? 'Remove from liked' : 'Add to liked'}</TooltipContent>
+    </Tooltip>
   );
 };

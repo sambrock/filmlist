@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useRef } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 
 import { useClientStore } from './client-store-provider';
 
@@ -13,13 +13,10 @@ export const ChatContextProvider = ({
 }: React.PropsWithChildren<{ chatId: string; isPersisted: boolean }>) => {
   const dispatch = useClientStore((store) => store.dispatch);
 
-  const initRef = useRef(false);
-  if (!initRef.current) {
+  useEffect(() => {
     dispatch({ type: 'INIT_CHAT', payload: { chatId, isPersisted } });
-    initRef.current = true;
-  }
+  }, []);
 
-  // if (!initRef.current) return null;
   return <ChatContext.Provider value={{ chatId }}>{props.children}</ChatContext.Provider>;
 };
 
