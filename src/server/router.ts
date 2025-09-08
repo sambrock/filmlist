@@ -1,9 +1,12 @@
+import { TRPCError } from '@trpc/server';
 import z from 'zod';
 
 import { setAuthTokenCookie } from '@/lib/auth';
 import { db } from '@/lib/drizzle/db';
 import { library } from '@/lib/drizzle/schema';
 import { MessageAssistantSchema, MessageUserSchema, User } from '@/lib/drizzle/types';
+import { tmdbGetMovieById } from '@/lib/tmdb/client';
+import { MovieDetails } from '@/lib/tmdb/types';
 import { uuid } from '@/lib/utils';
 import { publicProcedure, router } from './trpc';
 
@@ -139,4 +142,17 @@ export const appRouter = router({
 
       return;
     }),
+
+  getMovie: publicProcedure.input(z.object({ movieId: z.number() })).query(async ({ ctx, input }) => {
+    if (!ctx.user) {
+      return { movie: null };
+    }
+
+    const movie = await tmdbGetMovieById(input.movieId);
+    if (!movie) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Movie not found' });
+    }
+
+    return { movie: movie as MovieDetails };
+  }),
 });

@@ -6,26 +6,26 @@ import { XIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-function Modal({ ...props }: React.ComponentProps<typeof ModalPrimitive.Root>) {
-  return <ModalPrimitive.Root data-slot="Modal" {...props} />;
-}
+const Modal = ({ ...props }: React.ComponentProps<typeof ModalPrimitive.Root>) => {
+  return <ModalPrimitive.Root data-slot="modal" {...props} />;
+};
 
-function ModalTrigger({ ...props }: React.ComponentProps<typeof ModalPrimitive.Trigger>) {
-  return <ModalPrimitive.Trigger data-slot="Modal-trigger" {...props} />;
-}
+const ModalTrigger = ({ ...props }: React.ComponentProps<typeof ModalPrimitive.Trigger>) => {
+  return <ModalPrimitive.Trigger data-slot="modal-trigger" {...props} />;
+};
 
-function ModalPortal({ ...props }: React.ComponentProps<typeof ModalPrimitive.Portal>) {
-  return <ModalPrimitive.Portal data-slot="Modal-portal" {...props} />;
-}
+const ModalPortal = ({ ...props }: React.ComponentProps<typeof ModalPrimitive.Portal>) => {
+  return <ModalPrimitive.Portal data-slot="modal-portal" {...props} />;
+};
 
-function ModalClose({ ...props }: React.ComponentProps<typeof ModalPrimitive.Close>) {
-  return <ModalPrimitive.Close data-slot="Modal-close" {...props} />;
-}
+const ModalClose = ({ ...props }: React.ComponentProps<typeof ModalPrimitive.Close>) => {
+  return <ModalPrimitive.Close data-slot="modal-close" {...props} />;
+};
 
-function ModalOverlay({ className, ...props }: React.ComponentProps<typeof ModalPrimitive.Overlay>) {
+const ModalOverlay = ({ className, ...props }: React.ComponentProps<typeof ModalPrimitive.Overlay>) => {
   return (
     <ModalPrimitive.Overlay
-      data-slot="Modal-overlay"
+      data-slot="modal-overlay"
       className={cn(
         'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50',
         className
@@ -33,18 +33,18 @@ function ModalOverlay({ className, ...props }: React.ComponentProps<typeof Modal
       {...props}
     />
   );
-}
+};
 
-function ModalContent({
+const ModalContent = ({
   className,
   children,
   showCloseButton = true,
   ...props
 }: React.ComponentProps<typeof ModalPrimitive.Content> & {
   showCloseButton?: boolean;
-}) {
+}) => {
   return (
-    <ModalPortal data-slot="Modal-portal">
+    <ModalPortal data-slot="modal-portal">
       <ModalOverlay />
       <ModalPrimitive.Content
         data-slot="Modal-content"
@@ -57,7 +57,7 @@ function ModalContent({
         {children}
         {showCloseButton && (
           <ModalPrimitive.Close
-            data-slot="Modal-close"
+            data-slot="modal-close"
             className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
           >
             <XIcon />
@@ -67,47 +67,50 @@ function ModalContent({
       </ModalPrimitive.Content>
     </ModalPortal>
   );
-}
+};
 
-function ModalHeader({ className, ...props }: React.ComponentProps<'div'>) {
+const ModalHeader = ({ className, ...props }: React.ComponentProps<'div'>) => {
   return (
     <div
-      data-slot="Modal-header"
+      data-slot="modal-header"
       className={cn('flex flex-col gap-2 text-center sm:text-left', className)}
       {...props}
     />
   );
-}
+};
 
-function ModalFooter({ className, ...props }: React.ComponentProps<'div'>) {
+const ModalFooter = ({ className, ...props }: React.ComponentProps<'div'>) => {
   return (
     <div
-      data-slot="Modal-footer"
+      data-slot="modal-footer"
       className={cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', className)}
       {...props}
     />
   );
-}
+};
 
-function ModalTitle({ className, ...props }: React.ComponentProps<typeof ModalPrimitive.Title>) {
+const ModalTitle = ({ className, ...props }: React.ComponentProps<typeof ModalPrimitive.Title>) => {
   return (
     <ModalPrimitive.Title
-      data-slot="Modal-title"
+      data-slot="modal-title"
       className={cn('text-lg leading-none font-semibold', className)}
       {...props}
     />
   );
-}
+};
 
-function ModalDescription({ className, ...props }: React.ComponentProps<typeof ModalPrimitive.Description>) {
+const ModalDescription = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof ModalPrimitive.Description>) => {
   return (
     <ModalPrimitive.Description
-      data-slot="Modal-description"
+      data-slot="modal-description"
       className={cn('text-muted-foreground text-sm', className)}
       {...props}
     />
   );
-}
+};
 
 export {
   Modal,
