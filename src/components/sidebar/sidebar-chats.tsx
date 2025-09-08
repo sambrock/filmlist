@@ -14,6 +14,9 @@ export const SidebarChats = () => {
   const pendingChatIds = useClientStore((store) =>
     store.chats.filter((chat) => chat.isPending).map((c) => c.chatId)
   );
+  const unseenChangesChatIds = useClientStore((store) =>
+    store.chats.filter((chat) => chat.unseenChanges).map((c) => c.chatId)
+  );
 
   const chats = useApiChats();
 
@@ -28,7 +31,9 @@ export const SidebarChats = () => {
           <Link href={`/chat/${chat.chatId}`}>
             <span>{chat.title || 'Thread'}</span>
             {pendingChatIds.includes(chat.chatId) && <SpinnerEllipsis className="ml-auto" size={18} />}
-            {/* {pendingChatIds.includes(chat.chatId) && <SpinnerEllipsis className="ml-auto" />} */}
+            {unseenChangesChatIds.includes(chat.chatId) && (
+              <span className="bg-primary ml-auto size-1 rounded-full"></span>
+            )}
           </Link>
         </SidebarButton>
       ))}

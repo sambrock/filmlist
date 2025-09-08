@@ -13,6 +13,7 @@ export type ClientChatState = {
   inputValue: string;
   isPersisted: boolean;
   isPending: boolean;
+  unseenChanges: boolean;
 };
 
 export type ClientState = {
@@ -41,6 +42,7 @@ export const createClientStore = () => {
             isPending: false,
             isPersisted: false,
             model: get().model,
+            unseenChanges: false,
           },
         dispatch: (action) => set((state) => reducer(state, action)),
       }),

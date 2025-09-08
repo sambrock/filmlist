@@ -6,12 +6,11 @@ export const useApiChatMessages = () => {
   const { chatId } = useChatContext();
   const { isPersisted } = useClientStore((store) => store.chat(chatId));
 
-  const { data, ...rest } = trpc.getChatMessages.useInfiniteQuery(
+  const query = trpc.getChatMessages.useQuery(
     { chatId },
     {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-      initialData: { pages: [{ messages: [], nextCursor: 0 }], pageParams: [] },
-      initialCursor: 0,
+      initialData: { messages: [], nextCursor: null },
+      // initialDataUpdatedAt: Date.now(),
       enabled: isPersisted,
       staleTime: 1000 * 60 * 5, // 5 minutes
       retryOnMount: false,
@@ -21,8 +20,9 @@ export const useApiChatMessages = () => {
     }
   );
 
-  const messages = [...data?.pages.flatMap((page) => page.messages)].reverse() || [];
+  const messages = [...(query.data?.messages || [])].reverse();
   const hasPending = messages.some((message) => message.status === 'pending');
+  const latestMessage = messages[0];
 
-  return { messages, hasPending, ...rest };
+  return { ...query, messages, hasPending, latestMessage };
 };

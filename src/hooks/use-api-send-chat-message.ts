@@ -16,7 +16,6 @@ export const useApiSendChatMessage = () => {
   const { model, isPersisted } = useClientStore((store) => store.chat(chatId)!);
   const dispatch = useClientStore((store) => store.dispatch);
 
-  // const router = useRouter();
   const params = useParams<{ chatId?: string }>();
 
   const trpcUtils = trpc.useUtils();
@@ -28,10 +27,10 @@ export const useApiSendChatMessage = () => {
         window.history.pushState({}, '', `/chat/${chatId}`);
       }
 
-      trpcUtils.getChatMessages.setInfiniteData({ chatId }, (data) => {
+      trpcUtils.getChatMessages.setData({ chatId }, (data) => {
         return produce(data, (draft) => {
-          if (!draft) return;
-          draft.pages[0].messages.unshift({
+          if (!draft) draft = { messages: [] };
+          draft.messages.unshift({
             messageId: 'temp',
             chatId,
             content,
@@ -41,6 +40,7 @@ export const useApiSendChatMessage = () => {
             createdAt: new Date(),
             updatedAt: new Date(),
           });
+          console.log('DONE DRAFT', draft);
         });
       });
 
@@ -67,26 +67,31 @@ export const useApiSendChatMessage = () => {
       await readEventStream(response, (data) => {
         const parsed = JSON.parse(data) as ChatSSE;
 
-        trpcUtils.getChatMessages.setInfiniteData({ chatId }, (state) => {
+        trpcUtils.getChatMessages.setData({ chatId }, (state) => {
           return produce(state, (draft) => {
+            console.log('setting query data', chatId, state);
+
             if (!draft) return;
+
             if (parsed.type === 'message' && parsed.v.status === 'pending') {
               if (parsed.v.role === 'user') {
-                draft.pages[0].messages = draft.pages[0].messages.filter((m) => m.messageId !== 'temp');
+                draft.messages = draft.messages.filter((m) => m.messageId !== 'temp');
+                console.log('USER', draft.messages);
               }
-              draft.pages[0].messages.unshift(parsed.v);
+              draft.messages.unshift(parsed.v);
             }
             if (parsed.type === 'message' && parsed.v.status === 'done') {
-              const message = draft.pages[0].messages.find((m) => m.messageId === parsed.v.messageId);
+              const message = draft.messages.find((m) => m.messageId === parsed.v.messageId);
               if (message) Object.assign(message, parsed.v);
             }
             if (parsed.type === 'content') {
-              const message = draft.pages[0].messages.find((m) => m.messageId === parsed.id);
+              const message = draft.messages.find((m) => m.messageId === parsed.id);
               if (message && message.role === 'assistant') {
                 message.content += parsed.v;
                 message.structured = modelResponseToStructured(message.content);
               }
             }
+            console.log('DONE draft', draft);
           });
         });
 

@@ -45,7 +45,6 @@ export const appRouter = router({
       z.object({
         chatId: z.string(),
         cursor: z.number().nullish().default(0),
-        direction: z.enum(['forward', 'backward']).optional(),
       })
     )
     .output(
@@ -80,13 +79,8 @@ export const appRouter = router({
           },
         },
         orderBy: (messages, { desc }) => [desc(messages.serial)],
-        limit: 8,
+        limit: 24,
       });
-
-      console.log(
-        messages.length,
-        messages.map((m) => m.serial)
-      );
 
       return {
         messages: messages.map((message) => {

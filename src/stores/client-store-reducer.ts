@@ -14,12 +14,20 @@ export const reducer = (state: ClientState, { type, payload }: ClientStateAction
     case 'INIT_CHAT': {
       return produce(state, (draft) => {
         draft.currentChatId = payload.chatId;
+        const chat = state.chats.find((chat) => chat.chatId === payload.chatId);
+        if (chat) {
+          draft.chats = [
+            ...draft.chats.filter((chat) => chat.chatId !== payload.chatId),
+            { ...chat, unseenChanges: false },
+          ];
+        }
         draft.chats.push({
           chatId: payload.chatId,
           model: state.model,
           inputValue: '',
           isPersisted: payload.isPersisted,
           isPending: false,
+          unseenChanges: false,
         });
       });
     }
@@ -55,6 +63,7 @@ export const reducer = (state: ClientState, { type, payload }: ClientStateAction
         if (!chat) return;
         chat.isPending = false;
         chat.isPersisted = true;
+        chat.unseenChanges = state.currentChatId !== payload.chatId ? true : false;
       });
     }
     default: {

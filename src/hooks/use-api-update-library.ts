@@ -12,13 +12,15 @@ export const useApiUpdateLibrary = () => {
 
   return trpc.updateLibrary.useMutation({
     onMutate: (input) => {
-      trpcUtils.getChatMessages.setInfiniteData({ chatId }, (data) => {
+      trpcUtils.getChatMessages.setData({ chatId }, (data) => {
         return produce(data, (draft) => {
           if (!draft) return;
-          const message = draft.pages.flatMap((p) => p.messages).find((m) => m.messageId === messageId);
+          const message = draft.messages.find((m) => m.messageId === messageId);
           if (!message || message.role === 'user') return;
+
           const movie = message.movies.find((m) => m.movieId === input.movieId);
           if (!movie) return;
+
           movie.liked = input.liked ?? movie.liked;
           movie.watched = input.watched ?? movie.watched;
           movie.watchlist = input.watchlist ?? movie.watchlist;
