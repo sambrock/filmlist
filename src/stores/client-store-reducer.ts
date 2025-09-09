@@ -7,7 +7,9 @@ export type ClientStateAction =
   | { type: 'UPDATE_CHAT'; payload: { chatId: string } & Partial<ClientChatState> }
   | { type: 'CHAT_MESSAGE_INPUT'; payload: { chatId: string; value: string } }
   | { type: 'CHAT_MESSAGE_PENDING'; payload: { chatId: string } }
-  | { type: 'CHAT_MESSAGE_DONE'; payload: { chatId: string } };
+  | { type: 'CHAT_MESSAGE_DONE'; payload: { chatId: string } }
+  | { type: 'MOVIE_MODAL_OPEN'; payload: { movieId: number } }
+  | { type: 'MOVIE_MODAL_CLOSE'; payload: undefined };
 
 export const reducer = (state: ClientState, { type, payload }: ClientStateAction) => {
   switch (type) {
@@ -64,6 +66,18 @@ export const reducer = (state: ClientState, { type, payload }: ClientStateAction
         chat.isPending = false;
         chat.isPersisted = true;
         chat.unseenChanges = state.currentChatId !== payload.chatId ? true : false;
+      });
+    }
+    case 'MOVIE_MODAL_OPEN': {
+      return produce(state, (draft) => {
+        draft.movieModal.isActive = true;
+        draft.movieModal.movieId = payload.movieId;
+      });
+    }
+    case 'MOVIE_MODAL_CLOSE': {
+      return produce(state, (draft) => {
+        draft.movieModal.isActive = false;
+        draft.movieModal.movieId = null;
       });
     }
     default: {

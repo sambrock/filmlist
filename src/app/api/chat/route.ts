@@ -142,7 +142,7 @@ export const POST = async (request: Request) => {
           };
 
           messageAssistant.structured![index].tmdbId = movie.tmdbId;
-          messageAssistant.movies.push(movie);
+          messageAssistant.movies.push({ ...movie, liked: false, watched: false, watchlist: false });
         })
       );
 
