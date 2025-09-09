@@ -7,11 +7,6 @@ import { ClientStateAction, reducer } from './client-store-reducer';
 
 enableMapSet();
 
-export type MovieModalState = {
-  isActive: boolean;
-  movieId: number | null;
-};
-
 export type ClientChatState = {
   chatId: string;
   model: Model;
@@ -25,7 +20,6 @@ export type ClientState = {
   currentChatId: string;
   model: Model;
   chats: ClientChatState[];
-  movieModal: MovieModalState;
 };
 
 export type ClientStore = ClientState & {
@@ -41,11 +35,6 @@ export const createClientStore = () => {
         model: 'openai/gpt-4.1-nano',
         chats: [],
 
-        movieModal: {
-          isActive: false,
-          movieId: 0,
-        },
-
         chat: (chatId) =>
           get().chats.find((chat) => chat.chatId === chatId) || {
             chatId: '',
@@ -59,8 +48,9 @@ export const createClientStore = () => {
       }),
       {
         name: 'filmlist/store',
+        // Don't include dispatch in the persisted state
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        partialize: ({ dispatch, movieModal, ...state }) => state,
+        partialize: ({ dispatch, ...state }) => state,
       }
     )
   );

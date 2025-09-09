@@ -1,6 +1,5 @@
 import { ChatInput } from '../chat/chat-input';
 import { ChatMessages } from '../chat/chat-messages';
-import { ChatMovieDetailsModal } from '../chat/chat-movie-details-modal';
 
 export const ChatView = () => {
   return (
@@ -9,8 +8,6 @@ export const ChatView = () => {
         <ChatMessages />
         <ChatInput className="fixed bottom-4 z-10 w-3xl shadow-xl shadow-black/10" />
       </div>
-
-      <ChatMovieDetailsModal />
 
       <div className="bg-background-1 fixed bottom-0 h-10 w-full"></div>
     </main>

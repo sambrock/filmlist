@@ -13,7 +13,7 @@ export const Sidebar = async ({ className, ...props }: Props) => {
     <div className={cn('border-foreground-0/10 bg-background-0 h-screen border-r p-2', className)} {...props}>
       <div className="p-3">
         <Link href="/">
-          <Image className="w-7 relative z-[99999]" src="/logo.svg" alt="Logo" width={28} height={38} />
+          <Image className="w-7" src="/logo.svg" alt="Logo" width={28} height={38} />
         </Link>
       </div>
 
