@@ -5,22 +5,17 @@ import { useIsClient } from 'usehooks-ts';
 
 import { models } from '@/lib/models';
 import { cn } from '@/lib/utils';
-import { useChatContext } from '@/providers/thread-context-provider';
-import { useClientStore } from '@/providers/global-store-provider';
+import { useGlobalStore } from '@/providers/global-store-provider';
+import { useThreadContext } from '@/providers/thread-context-provider';
 import { Button } from '../common/button';
 import { DropdownContent, DropdownItem, DropdownRoot, DropdownTrigger } from '../common/dropdown';
 
 export const ChatModelSelect = () => {
-  const { chatId } = useChatContext();
+  const { threadId } = useThreadContext();
 
-  const selectedModel = useClientStore((store) => store.chat(chatId)!.model);
-  const dispatch = useClientStore((store) => store.dispatch);
+  const selectedModel = useGlobalStore((s) => s.chatModel.get(threadId) || s.model);
+  const dispatch = useGlobalStore((s) => s.dispatch);
 
-  const isClient = useIsClient();
-
-  if (!isClient) {
-    return null; // Avoid hydration mismatch
-  }
   return (
     <DropdownRoot>
       <DropdownTrigger asChild>
@@ -29,14 +24,14 @@ export const ChatModelSelect = () => {
           <ChevronDown className="size-5" />
         </Button>
       </DropdownTrigger>
-      <DropdownContent className="min-w-80" align="start" sideOffset={2}>
+      <DropdownContent className="min-w-80 origin-bottom-left" align="start" sideOffset={2}>
         {[...models.values()]
           .filter((model) => model.active)
           .map((model) => (
             <DropdownItem
               key={model.id}
               className={cn(model.id === selectedModel && 'bg-background-1/50')}
-              onClick={() => dispatch({ type: 'UPDATE_CHAT', payload: { chatId, model: model.id } })}
+              onClick={() => dispatch({ type: 'SET_MODEL', payload: { threadId, model: model.id } })}
             >
               <div className="flex items-end gap-3">
                 <span className="font-medium">{model.name}</span>

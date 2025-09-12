@@ -17,7 +17,7 @@ const movieFoundSchema = {
   tmdbId: v.number(),
   title: v.string(),
   why: v.string(),
-  releaseDate: v.string(),
+  releaseDate: v.number(),
   runtime: v.number(),
   genres: v.array(v.string()),
   overview: v.string(),

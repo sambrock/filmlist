@@ -7,6 +7,7 @@ import { useGlobalStore } from '@/providers/global-store-provider';
 import { useThreadContext } from '@/providers/thread-context-provider';
 import { useApiSendMessage } from '@/hooks/use-api-send-message';
 import { Button } from '../common/button';
+import { ChatModelSelect } from './chat-model-select';
 
 type Props = React.ComponentProps<'div'>;
 
@@ -46,6 +47,8 @@ export const ChatInput = ({ className, ...props }: Props) => {
       />
 
       <div className="flex items-center gap-1 py-1 pb-1">
+        <ChatModelSelect />
+
         <Button className="ml-auto" size="icon" variant="ghost">
           <ArrowUp className="size-5" />
         </Button>

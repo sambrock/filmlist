@@ -5,6 +5,7 @@ import { useCallback, useLayoutEffect } from 'react';
 import { cn, modelResponseTextToMoviesArr } from '@/lib/utils';
 import { useGlobalStore } from '@/providers/global-store-provider';
 import { useMessageContext } from '@/providers/message-context-provider';
+import { SpinnerEllipsis } from '../common/spinner';
 import { MessageAssistantActions } from './message-assistant-actions';
 import { MessageMovie } from './message-movie';
 
@@ -24,7 +25,7 @@ export const MessageAssistant = ({ className, ...props }: Props) => {
       return modelResponseTextToMoviesArr(pendingContent);
     }
     return [];
-  }, [message.movies, pendingContent]);
+  }, [message.movies, message.status, pendingContent]);
 
   useLayoutEffect(() => {
     if (document.getElementById('chatMessages') && pendingContent) {
@@ -34,6 +35,10 @@ export const MessageAssistant = ({ className, ...props }: Props) => {
 
   return (
     <div className={cn('mb-10', className)} {...props} data-message-id={message.messageId}>
+      {message.status === 'pending' && getMovies().length === 0 && (
+        <SpinnerEllipsis className="text-foreground-1 size-10" />
+      )}
+
       {getMovies().length > 0 && (
         <div className="bg-background-0 overflow-clip rounded-xl">
           {getMovies().map((movie, index) => (

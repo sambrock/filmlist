@@ -13,8 +13,8 @@ export const DropdownContent = ({ className, ...props }: DropdownMenu.DropdownMe
     <DropdownMenu.Content
       className={cn(
         'bg-background-4 border-foreground-0/5 min-w-52 rounded-lg border p-1 shadow-md shadow-black/20',
-        'data-[state=open]:motion-scale-in-[.9] data-[state=open]:motion-duration-150 data-[state=open]:motion-opacity-in-100',
-        'data-[state=closed]:motion-scale-out-[.9] data-[state=closed]:motion-duration-150 data-[state=closed]:motion-opacity-out-0',
+        'data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom-2 data-[state=closed]:fade-in data-[state=closed]:zoom-in-100 zoom-in-95',
+        'data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom-2 data-[state=closed]:fade-out data-[state=closed]:zoom-out-95',
         className
       )}
       onCloseAutoFocus={(e) => {

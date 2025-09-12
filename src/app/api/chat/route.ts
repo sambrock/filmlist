@@ -5,6 +5,7 @@ import z from 'zod';
 
 import { api } from '@/infra/convex/_generated/api';
 import { Doc } from '@/infra/convex/_generated/dataModel';
+import { getModel, Model } from '@/lib/models';
 import { tmdbFindMovie, tmdbGetMovieById } from '@/lib/tmdb/client';
 import { modelResponseTextToMoviesArr } from '@/lib/utils';
 
@@ -12,7 +13,7 @@ const BodySchema = z.object({
   threadId: z.string(),
   messageId: z.string(),
   content: z.string(),
-  model: z.string(),
+  model: z.string().refine((val) => getModel(val as Model)),
 });
 
 export type ChatBodySchema = z.infer<typeof BodySchema>;
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
     return new Response('Invalid request body', { status: 400 });
   }
 
-  const { threadId, messageId, content, model } = parsed.data;
+  const { threadId, messageId, content } = parsed.data;
 
   const [thread, messages] = await Promise.all([
     fetchQuery(api.threads.getByThreadId, { threadId }),
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
   ]);
 
   const response = streamText({
-    model: openai('gpt-4o-mini'),
+    model: getModel(parsed.data.model as Model),
     messages: [
       { role: 'system', content: SYSTEM_CONTEXT_MESSAGE },
       ...messages.map((m) => ({ role: m.role, content: m.content })),
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
               found: false,
               title: movie.title,
               why: movie.why,
-              releaseDate: new Date(movie.releaseDate).toISOString(),
+              releaseDate: new Date(movie.releaseDate).getTime(),
             };
           }
 
@@ -66,7 +67,7 @@ export async function POST(req: Request) {
               found: false,
               why: movie.why,
               title: movie.title,
-              releaseDate: new Date(movie.releaseDate).toISOString(),
+              releaseDate: new Date(movie.releaseDate).getTime(),
             };
           }
 
@@ -78,7 +79,7 @@ export async function POST(req: Request) {
             runtime: source.runtime!,
             genres: source.genres!.map((g) => g.name as string),
             overview: source.overview!,
-            releaseDate: new Date(source.release_date!).toISOString(),
+            releaseDate: new Date(source.release_date!).getTime(),
             backdropPath: source.backdrop_path!,
             posterPath: source.poster_path!,
           };
