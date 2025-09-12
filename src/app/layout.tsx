@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { cn } from '@/lib/utils';
-import { ClientStoreProvider } from '@/providers/client-store-provider';
+import { ConvexClientProvider } from '@/providers/convex-client-provider';
+import { GlobalStoreProvider } from '@/providers/global-store-provider';
 import { QueryClientProvider } from '@/providers/query-client-provider';
-import { UserContextProvider } from '@/providers/user-context-provider';
 import { Sidebar } from '@/components/sidebar/sidebar';
 
 import './globals.css';
@@ -16,7 +15,7 @@ const fontSans = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Filmlist',
+  title: 'Film Chat',
 };
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
@@ -24,16 +23,14 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en">
       <body className={cn('text-foreground-0 bg-background-0', fontSans.className)}>
         <QueryClientProvider>
-          <UserContextProvider>
-            <ClientStoreProvider>
+          <ConvexClientProvider>
+            <GlobalStoreProvider>
               <div className="flex h-screen overflow-hidden">
                 <Sidebar className="h-screen w-[260px] shrink-0" />
-                <div className="w-full bg-background-1">{props.children}</div>
+                <div className="bg-background-1 w-full">{props.children}</div>
               </div>
-            </ClientStoreProvider>
-          </UserContextProvider>
-
-          <ReactQueryDevtools />
+            </GlobalStoreProvider>
+          </ConvexClientProvider>
         </QueryClientProvider>
       </body>
     </html>

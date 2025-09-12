@@ -2,13 +2,15 @@
 
 import { createContext, useContext } from 'react';
 
-export const MessageContext = createContext<{ messageId: string } | undefined>(undefined);
+import { Doc } from '@/infra/convex/_generated/dataModel';
+
+export const MessageContext = createContext<{ message: Doc<'messages'> } | undefined>(undefined);
 
 export const MessageContextProvider = ({
-  messageId,
+  message,
   ...props
-}: React.PropsWithChildren<{ messageId: string }>) => {
-  return <MessageContext.Provider value={{ messageId }}>{props.children}</MessageContext.Provider>;
+}: React.PropsWithChildren<{ message: Doc<'messages'> }>) => {
+  return <MessageContext.Provider value={{ message }}>{props.children}</MessageContext.Provider>;
 };
 
 export const useMessageContext = () => {

@@ -1,11 +1,8 @@
-import { uuid } from '@/lib/utils';
-import { ChatContextProvider } from '@/providers/chat-context-provider';
+import { generateUuid } from '@/lib/utils';
 import { ChatView } from '@/components/views/chat-view';
 
-export default async function NewChatPage() {
-  return (
-    <ChatContextProvider chatId={uuid()} isPersisted={false}>
-      <ChatView />
-    </ChatContextProvider>
-  );
+export default function NewChatPage() {
+  const threadId = generateUuid();
+
+  return <ChatView threadId={threadId} isPersisted={false} />;
 }

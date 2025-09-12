@@ -1,202 +1,141 @@
+import { openai } from '@ai-sdk/openai';
 import { generateText, streamText } from 'ai';
-import { eq } from 'drizzle-orm';
-import { BatchItem } from 'drizzle-orm/batch';
-import { z } from 'zod';
+import { fetchMutation, fetchQuery } from 'convex/nextjs';
+import z from 'zod';
 
-import { createContext } from '@/server/trpc';
-import { setAuthTokenCookie } from '@/lib/auth';
-import { db } from '@/lib/drizzle/db';
-import { chats, messageMovies, messages, movies, users } from '@/lib/drizzle/schema';
-import { MessageAssistant, MessageUser, Movie } from '@/lib/drizzle/types';
-import { getModel, Model, models } from '@/lib/models';
+import { api } from '@/infra/convex/_generated/api';
+import { Doc } from '@/infra/convex/_generated/dataModel';
 import { tmdbFindMovie, tmdbGetMovieById } from '@/lib/tmdb/client';
-import { uuid } from '@/lib/utils';
-import { modelResponseToStructured, SYSTEM_CONTEXT_MESSAGE } from '@/lib/utils/ai';
-
-export const maxDuration = 30;
-
-export type ChatSSE =
-  | { type: 'content'; v: string; id: string }
-  | { type: 'message'; v: MessageUser | MessageAssistant }
-  | { type: 'end' };
-
-const encodeSSE = (data: ChatSSE | 'end') => {
-  if (data === 'end') {
-    return new TextEncoder().encode(`event: end\ndata: \n\n`);
-  }
-  return new TextEncoder().encode(`event: delta\ndata: ${JSON.stringify(data)}\n\n`);
-};
+import { modelResponseTextToMoviesArr } from '@/lib/utils';
 
 const BodySchema = z.object({
-  chatId: z.string(),
-  model: z.string().refine((model) => models.has(model as Model)),
+  threadId: z.string(),
+  messageId: z.string(),
   content: z.string(),
+  model: z.string(),
 });
 
-export const POST = async (request: Request) => {
-  const ctx = await createContext();
-  if (!ctx.user) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+export type ChatBodySchema = z.infer<typeof BodySchema>;
 
-  const body = await request.json();
+export async function POST(req: Request) {
+  const body = await req.json();
+
   const parsed = BodySchema.safeParse(body);
   if (parsed.success === false) {
-    return Response.json({ error: parsed.error.message }, { status: 400 });
+    return new Response('Invalid request body', { status: 400 });
   }
 
-  const { chatId, model, content } = parsed.data;
+  const { threadId, messageId, content, model } = parsed.data;
 
-  // All database operations are batched and performed after streaming
-  const batch: BatchItem<'pg'>[] = [];
-
-  const [userExists, chatExists] = await Promise.all([
-    db.query.users.findFirst({ where: (users, { eq }) => eq(users.userId, ctx.user!.userId) }),
-    db.query.chats.findFirst({ where: (chats, { eq }) => eq(chats.chatId, chatId) }),
+  const [thread, messages] = await Promise.all([
+    fetchQuery(api.threads.getByThreadId, { threadId }),
+    fetchQuery(api.messages.getByThreadId, { threadId }),
   ]);
 
-  if (!userExists) {
-    batch.push(db.insert(users).values({ userId: ctx.user!.userId, anon: true }).onConflictDoNothing());
-    await setAuthTokenCookie({ userId: ctx.user!.userId, anon: true });
-  }
+  const response = streamText({
+    model: openai('gpt-4o-mini'),
+    messages: [
+      { role: 'system', content: SYSTEM_CONTEXT_MESSAGE },
+      ...messages.map((m) => ({ role: m.role, content: m.content })),
+      { role: 'user', content: content },
+    ],
+    onFinish: async (message) => {
+      if (message.content[0].type !== 'text') return;
 
-  if (!chatExists) {
-    batch.push(
-      db.insert(chats).values({ chatId, userId: ctx.user!.userId, title: '' }).onConflictDoNothing()
-    );
-  }
+      const finalContent = message.content[0].text;
 
-  const messageUser: MessageUser = {
-    messageId: uuid(),
-    chatId,
-    model,
-    content,
-    role: 'user',
-    status: 'pending',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  const messageAssistant: MessageAssistant = {
-    messageId: uuid(),
-    chatId,
-    parentId: messageUser.messageId,
-    model,
-    content: '',
-    structured: null,
-    role: 'assistant',
-    status: 'pending',
-    movies: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  batch.push(db.insert(messages).values([messageUser, messageAssistant]));
-
-  const messageHistory = chatExists
-    ? await db.query.messages.findMany({
-        where: (messages, { eq }) => eq(messages.chatId, chatId),
-        orderBy: (messages, { asc }) => asc(messages.serial),
-        columns: { role: true, content: true },
-        limit: 20,
-      })
-    : [];
-
-  const modelStream = streamText({
-    model: getModel(model as Model),
-    messages: [SYSTEM_CONTEXT_MESSAGE, ...messageHistory, { role: 'user', content }],
-  });
-
-  const responseStream = new ReadableStream({
-    async start(controller) {
-      const modelStreamReader = modelStream.textStream.getReader();
-
-      controller.enqueue(encodeSSE({ type: 'message', v: messageUser }));
-      controller.enqueue(encodeSSE({ type: 'message', v: messageAssistant }));
-
-      let modelResponseContent = '';
-      while (true) {
-        const { done, value } = await modelStreamReader.read();
-        if (done) break;
-
-        modelResponseContent += value;
-        controller.enqueue(encodeSSE({ type: 'content', v: value, id: messageAssistant.messageId }));
-      }
-
-      messageAssistant.content = modelResponseContent;
-      messageAssistant.structured = modelResponseToStructured(modelResponseContent);
-
-      await Promise.all(
-        messageAssistant.structured.map(async (parsedOutput, index) => {
-          const found = await tmdbFindMovie(parsedOutput.title, parsedOutput.releaseYear);
-          if (!found) return;
+      // Find movies from the model response
+      const movies = await Promise.all(
+        modelResponseTextToMoviesArr(finalContent).map(async (movie) => {
+          const found = await tmdbFindMovie(
+            movie.title,
+            new Date(movie.releaseDate).getFullYear().toString()
+          );
+          if (!found) {
+            return {
+              found: false,
+              title: movie.title,
+              why: movie.why,
+              releaseDate: new Date(movie.releaseDate).toISOString(),
+            };
+          }
 
           const source = await tmdbGetMovieById(found.id);
-          if (!source) return;
+          if (!source) {
+            return {
+              found: false,
+              why: movie.why,
+              title: movie.title,
+              releaseDate: new Date(movie.releaseDate).toISOString(),
+            };
+          }
 
-          const movie: Movie = {
-            movieId: source.id,
+          return {
+            found: true,
+            why: movie.why,
             tmdbId: source.id,
-            source,
-            createdAt: new Date(),
+            title: source.title,
+            runtime: source.runtime!,
+            genres: source.genres!.map((g) => g.name as string),
+            overview: source.overview!,
+            releaseDate: new Date(source.release_date!).toISOString(),
+            backdropPath: source.backdrop_path!,
+            posterPath: source.poster_path!,
           };
-
-          messageAssistant.structured![index].tmdbId = movie.tmdbId;
-          messageAssistant.movies.push(movie);
         })
       );
 
-      messageUser.status = 'done';
-      messageAssistant.status = 'done';
+      // Save final message content and movies
+      await fetchMutation(api.messages.update, {
+        messageId,
+        data: {
+          content: finalContent,
+          status: 'done',
+          movies: movies as Doc<'messages'>['movies'], // TODO: fix this type
+        },
+      });
 
-      if (messageAssistant.movies.length > 0) {
-        batch.push(
-          db.insert(movies).values(messageAssistant.movies).onConflictDoNothing(),
-          db.insert(messageMovies).values(
-            messageAssistant.movies.map((movie) => ({
-              messageId: messageAssistant.messageId,
-              movieId: movie.movieId,
-            }))
-          )
-        );
-      }
-
-      batch.push(
-        db.update(messages).set(messageUser).where(eq(messages.messageId, messageUser.messageId)),
-        db.update(messages).set(messageAssistant).where(eq(messages.messageId, messageAssistant.messageId))
-      );
-
-      controller.enqueue(encodeSSE({ type: 'message', v: messageUser }));
-      controller.enqueue(encodeSSE({ type: 'message', v: messageAssistant }));
-
-      if (!chatExists) {
-        const chatTitle = await generateText({
-          model: getModel('openai/gpt-4.1-nano'),
+      if (thread && !thread.title) {
+        const generateThreadTitle = await generateText({
+          model: openai('gpt-4o-mini'),
           prompt: `Generate a short title for this prompt in 3 words or less (don't use the word "movie"): "Movie picks for prompt: ${content}"`,
         });
 
-        if (chatTitle.content[0].type === 'text') {
-          batch.push(
-            db.update(chats).set({ title: chatTitle.content[0].text }).where(eq(chats.chatId, chatId))
-          );
-        }
+        await fetchMutation(api.threads.update, {
+          threadId,
+          data: {
+            title:
+              generateThreadTitle.content[0].type === 'text'
+                ? generateThreadTitle.content[0].text
+                : 'New chat',
+          },
+        });
       }
-
-      await db.batch(batch as [BatchItem<'pg'>, ...BatchItem<'pg'>[]]);
-
-      controller.enqueue(encodeSSE({ type: 'end' }));
-      controller.enqueue(encodeSSE('end'));
-
-      controller.close();
     },
   });
 
-  return new Response(responseStream, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache, no-transform',
-      Connection: 'keep-alive',
-    },
-  });
-};
+  return response.toTextStreamResponse();
+}
+
+const SYSTEM_CONTEXT_MESSAGE = `
+  You are a movie recommendation AI.
+
+  Suggest exactly **4 existing movies** based on conversations.
+  Do not suggest TV series. Just existing movies.
+
+  Return the result as a **JSON array of 4 objects**.  
+  Each object must have the following keys:
+
+  - **title**: string  
+  - **release_year**: number (e.g., 2010)  
+  - **why**: string (explain briefly why you recommend it)  
+
+  Example output:
+  [
+    {
+      "title": "Inception",
+      "release_year": 2010,
+      "why": "A mind-bending thriller with emotional depth."
+    }
+  ]
+`;

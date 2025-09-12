@@ -1,13 +1,13 @@
 'use client';
 
-import type { MessageUser } from '@/lib/drizzle/types';
 import { cn } from '@/lib/utils';
+import { useMessageContext } from '@/providers/message-context-provider';
 
-type Props = {
-  message: MessageUser;
-} & React.ComponentProps<'div'>;
+type Props = React.ComponentProps<'div'>;
 
-export const ChatMessageUser = ({ message, className, ...props }: Props) => {
+export const MessageUser = ({ className, ...props }: Props) => {
+  const { message } = useMessageContext();
+
   return (
     <div
       className={cn(

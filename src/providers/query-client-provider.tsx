@@ -2,10 +2,6 @@
 
 import { useState } from 'react';
 import { QueryClientProvider as _QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
-import superjson from 'superjson';
-
-import { trpc } from '@/lib/trpc/client';
 
 const makeQueryClient = () => {
   return new QueryClient({
@@ -18,7 +14,9 @@ const makeQueryClient = () => {
     },
   });
 };
+
 let browserQueryClient: QueryClient | undefined = undefined;
+
 function getQueryClient() {
   if (typeof window === 'undefined') {
     // Server: always make a new query client
@@ -35,22 +33,7 @@ function getQueryClient() {
 }
 
 export const QueryClientProvider = ({ children }: { children: React.ReactNode }) => {
-  const queryClient = getQueryClient();
+  const [queryClient] = useState(() => getQueryClient());
 
-  const [trpcClient] = useState(() =>
-    trpc.createClient({
-      links: [
-        httpBatchLink({
-          url: 'http://localhost:3000/api/trpc',
-          transformer: superjson,
-        }),
-      ],
-    })
-  );
-
-  return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <_QueryClientProvider client={queryClient}>{children}</_QueryClientProvider>
-    </trpc.Provider>
-  );
+  return <_QueryClientProvider client={queryClient}>{children}</_QueryClientProvider>;
 };

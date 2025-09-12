@@ -39,7 +39,7 @@ export const tmdbGetMovieById = cache(async (movieId: number) => {
     },
   });
 
-  if (!data || !data.id) {
+  if (!data || !data.id || !data.title || !data.release_date || !data.backdrop_path || !data.poster_path) {
     return null;
   }
 

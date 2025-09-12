@@ -1,53 +1,40 @@
 'use client';
 
 import { useLayoutEffect, useRef } from 'react';
-import { useIsClient } from 'usehooks-ts';
+import { useQuery } from 'convex/react';
 
+import { api } from '@/infra/convex/_generated/api';
+import { Doc } from '@/infra/convex/_generated/dataModel';
 import { MessageContextProvider } from '@/providers/message-context-provider';
-import { useApiChatMessages } from '@/hooks/use-api-chat-messages';
-import { SpinnerEllipsis } from '../common/spinner';
-import { ChatMessageAssistant } from './chat-message-assistant';
-import { ChatMessageUser } from './chat-message-user';
+import { useThreadContext } from '@/providers/thread-context-provider';
+import { MessageAssistant } from './message-assistant';
+import { MessageUser } from './message-user';
 
-export const ChatMessages = () => {
-  const { messages, hasPending } = useApiChatMessages();
+type Props = {
+  initialData: Doc<'messages'>[];
+};
 
-  const isFirstRender = useRef(true);
+export const ChatMessages = ({ initialData }: Props) => {
+  const { threadId } = useThreadContext();
+
+  const messages = useQuery(api.messages.getByThreadId, { threadId }) || initialData;
+
   const divRef = useRef<HTMLDivElement>(null);
 
-  const isClient = useIsClient();
-
-  const lastMessage = messages[messages.length - 1];
-
-  // Scroll to bottom on first render
   useLayoutEffect(() => {
-    if (!divRef.current || !isFirstRender) return;
-    divRef.current.scrollIntoView({ behavior: 'instant', block: 'end' });
-    isFirstRender.current = false;
-  });
+    if (divRef.current) {
+      divRef.current.scrollIntoView({ behavior: 'instant', block: 'end' });
+    }
+  }, [messages.length]);
 
-  // Scroll to bottom when message content is streamed
-  useLayoutEffect(() => {
-    if (!divRef.current || !hasPending || !lastMessage) return;
-    divRef.current.scrollIntoView({ behavior: 'instant', block: 'end' });
-  }, [lastMessage?.content.length]);
-
-  if (!isClient) {
-    return null; // Avoid hydration mismatch
-  }
   return (
-    <div ref={divRef} className="mt-8 space-y-4 pb-36">
+    <div id="chatMessages" ref={divRef} className="mt-8 space-y-4 pb-36">
       {messages.map((message) => (
-        <MessageContextProvider key={message.messageId} messageId={message.messageId}>
-          {message.role === 'user' && <ChatMessageUser message={message} />}
-          {message.role === 'assistant' && <ChatMessageAssistant message={message} />}
+        <MessageContextProvider key={message.messageId} message={message}>
+          {message.role === 'user' && <MessageUser />}
+          {message.role === 'assistant' && <MessageAssistant />}
         </MessageContextProvider>
       ))}
-
-      {hasPending &&
-        (lastMessage.role === 'user' || (lastMessage.role === 'assistant' && !lastMessage.content)) && (
-          <SpinnerEllipsis className="text-foreground-1 mt-4" />
-        )}
     </div>
   );
 };

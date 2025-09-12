@@ -5,8 +5,8 @@ import { useIsClient } from 'usehooks-ts';
 
 import { models } from '@/lib/models';
 import { cn } from '@/lib/utils';
-import { useChatContext } from '@/providers/chat-context-provider';
-import { useClientStore } from '@/providers/client-store-provider';
+import { useChatContext } from '@/providers/thread-context-provider';
+import { useClientStore } from '@/providers/global-store-provider';
 import { Button } from '../common/button';
 import { DropdownContent, DropdownItem, DropdownRoot, DropdownTrigger } from '../common/dropdown';
 
