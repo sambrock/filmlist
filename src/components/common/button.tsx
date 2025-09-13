@@ -43,7 +43,7 @@ export const Button = ({ asChild, variant, size, className, disabled, ...props }
   const Comp = asChild ? Slot.Root : 'button';
 
   return (
-    <Comp className={variants({ className, variant, size, disabled })} {...props}>
+    <Comp className={variants({ className, variant, size, disabled })} disabled={disabled} {...props}>
       {props.children}
     </Comp>
   );

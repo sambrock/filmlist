@@ -1,7 +1,6 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
-import { useIsClient } from 'usehooks-ts';
 
 import { models } from '@/lib/models';
 import { cn } from '@/lib/utils';

@@ -17,13 +17,20 @@ export const ChatInput = ({ className, ...props }: Props) => {
   const value = useGlobalStore((s) =>
     getThreadIsPersisted() ? (s.chatInputValue.get(threadId) ?? '') : (s.chatInputValue.get('new') ?? '')
   );
+  const isPending = useGlobalStore((s) => s.chatPending.has(threadId));
   const dispatch = useGlobalStore((s) => s.dispatch);
+
+  const isDisabled = isPending || !value.trim();
 
   const sendMessage = useApiSendMessage();
 
   return (
     <div
-      className={cn('border-foreground-0/5 bg-background-2 flex flex-col rounded-xl border px-2', className)}
+      className={cn(
+        'border-foreground-0/5 bg-background-2 flex flex-col rounded-xl border px-2',
+
+        className
+      )}
       {...props}
     >
       <textarea
@@ -49,7 +56,12 @@ export const ChatInput = ({ className, ...props }: Props) => {
       <div className="flex items-center gap-1 py-1 pb-1">
         <ChatModelSelect />
 
-        <Button className="ml-auto" size="icon" variant="ghost">
+        <Button
+          className={cn('ml-auto', isDisabled && 'pointer-events-none')}
+          size="icon"
+          variant="ghost"
+          disabled={isDisabled}
+        >
           <ArrowUp className="size-5" />
         </Button>
       </div>

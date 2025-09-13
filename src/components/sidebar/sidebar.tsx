@@ -26,13 +26,14 @@ export const Sidebar = async ({ className, ...props }: Props) => {
       <div className="mt-4 flex flex-col">
         <SidebarButton asChild>
           <Link href="/" className="">
-            <SquarePen className="mr-2 size-5" />
+            <SquarePen className="mr-2 size-4.5" />
             New chat
           </Link>
         </SidebarButton>
+
         <SidebarButton asChild>
           <Link href="/" className="">
-            <ListVideo className="mr-2 size-5" />
+            <ListVideo className="mr-2 size-4.5" />
             Library
           </Link>
         </SidebarButton>

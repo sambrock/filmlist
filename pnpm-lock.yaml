@@ -11,21 +11,9 @@ importers:
       '@ai-sdk/openai':
         specifier: ^2.0.30
         version: 2.0.30(zod@4.1.8)
-      '@ai-sdk/react':
-        specifier: ^2.0.43
-        version: 2.0.43(react@19.1.1)(zod@4.1.8)
-      '@tanstack/query-async-storage-persister':
-        specifier: ^5.87.4
-        version: 5.87.4
-      '@tanstack/query-sync-storage-persister':
-        specifier: ^5.87.4
-        version: 5.87.4
       '@tanstack/react-query':
         specifier: ^5.87.4
         version: 5.87.4(react@19.1.1)
-      '@tanstack/react-query-persist-client':
-        specifier: ^5.87.4
-        version: 5.87.4(@tanstack/react-query@5.87.4(react@19.1.1))(react@19.1.1)
       ai:
         specifier: ^5.0.43
         version: 5.0.43(zod@4.1.8)
@@ -156,16 +144,6 @@ packages:
   '@ai-sdk/provider@2.0.0':
     resolution: {integrity: sha512-6o7Y2SeO9vFKB8lArHXehNuusnpddKPk7xqL7T2/b+OvXMRIXUO1rR4wcv1hAFUAT9avGZshty3Wlua/XA7TvA==}
     engines: {node: '>=18'}
-
-  '@ai-sdk/react@2.0.43':
-    resolution: {integrity: sha512-M4znKeiahAAl5AP7tHZeDQLOdglXqkLPBsv6WG7HCLEpQUmWNw4jCmI/kNmnFBsZLkvgliIJzcV/3dRtZ0Rq/Q==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      react: ^18 || ^19 || ^19.0.0-rc
-      zod: ^3.25.76 || ^4
-    peerDependenciesMeta:
-      zod:
-        optional: true
 
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
@@ -1772,29 +1750,14 @@ packages:
   '@tailwindcss/postcss@4.1.13':
     resolution: {integrity: sha512-HLgx6YSFKJT7rJqh9oJs/TkBFhxuMOfUKSBEPYwV+t78POOBsdQ7crhZLzwcH3T0UyUuOzU/GK5pk5eKr3wCiQ==}
 
-  '@tanstack/query-async-storage-persister@5.87.4':
-    resolution: {integrity: sha512-O12m5zSpNsMj6RT+Oy5T3JkUZSGhMcd6l6NUOlP6OWVrTvz5rro2f5PQKFo9zjXRnu/lK5lOfr3YY+MApF6png==}
-
   '@tanstack/query-core@5.87.4':
     resolution: {integrity: sha512-uNsg6zMxraEPDVO2Bn+F3/ctHi+Zsk+MMpcN8h6P7ozqD088F6mFY5TfGM7zuyIrL7HKpDyu6QHfLWiDxh3cuw==}
 
   '@tanstack/query-devtools@5.87.3':
     resolution: {integrity: sha512-LkzxzSr2HS1ALHTgDmJH5eGAVsSQiuwz//VhFW5OqNk0OQ+Fsqba0Tsf+NzWRtXYvpgUqwQr4b2zdFZwxHcGvg==}
 
-  '@tanstack/query-persist-client-core@5.87.4':
-    resolution: {integrity: sha512-71jHVxFvRBjPfiLQ4cJ71sRICCf989s+wCdynmwvAJqW6NgWx7GkdhQC1F7tXb56ZlcK19kQPPa5X2EPqP94wA==}
-
-  '@tanstack/query-sync-storage-persister@5.87.4':
-    resolution: {integrity: sha512-c09tsMaNugl/dSXvYZvWvW/rqRXluiSkDOD1+aXUmsNPmOHsM51grrFy5r8X80xJFuBwfd5ouir7Nm5eSxKxLA==}
-
   '@tanstack/react-query-devtools@5.87.4':
     resolution: {integrity: sha512-JYcnVJBBW1DCPyNGM0S2CyrLpe6KFiL2gpYd/k9tAp62Du7+Y27zkzd+dKFyxpFadYaTxsx4kUA7YvnkMLVUoQ==}
-    peerDependencies:
-      '@tanstack/react-query': ^5.87.4
-      react: ^18 || ^19
-
-  '@tanstack/react-query-persist-client@5.87.4':
-    resolution: {integrity: sha512-RFnkAfYJcQ8nEQUWx0rhcPVPdRmvHAYG+mJwcykiJKVHaFeCuiHaEoW3KseGTBZcliV//UjI07bplAaT2ElR8g==}
     peerDependencies:
       '@tanstack/react-query': ^5.87.4
       react: ^18 || ^19
@@ -2228,10 +2191,6 @@ packages:
   define-properties@1.2.1:
     resolution: {integrity: sha512-8QmQKqEASLd5nx0U1B1okLElbUuuttJ/AnYmRXbbbGDWh6uS208EjD4Xqq/I9wK7u0v6O08XhTWnt5XtEbR6Dg==}
     engines: {node: '>= 0.4'}
-
-  dequal@2.0.3:
-    resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
-    engines: {node: '>=6'}
 
   detect-libc@2.0.4:
     resolution: {integrity: sha512-3UDv+G9CsCKO1WKMGw9fwq/SWJYbI0c5Y7LU1AXYoDdbhE2AHQ6N6Nb34sG8Fj7T5APy8qXDCKuuIHd1BR0tVA==}
@@ -3408,11 +3367,6 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  swr@2.3.6:
-    resolution: {integrity: sha512-wfHRmHWk/isGNMwlLGlZX5Gzz/uTgo0o2IRuTMcf4CPuPFJZlq0rDaKUx+ozB5nBOReNV1kiOyzMfj+MBMikLw==}
-    peerDependencies:
-      react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
   tailwindcss@4.1.13:
     resolution: {integrity: sha512-i+zidfmTqtwquj4hMEwdjshYYgMbOrPzb9a0M3ZgNa0JMoZeFC6bxZvO8yr8ozS6ix2SDz0+mvryPeBs2TFE+w==}
 
@@ -3422,10 +3376,6 @@ packages:
 
   tar@7.4.3:
     resolution: {integrity: sha512-5S7Va8hKfV7W5U6g3aYxXmlPoZVAwUMy9AOKyF2fVuZa2UD3qZjg578OrLRt8PcNN1PleVaL/5/yYATNL0ICUw==}
-    engines: {node: '>=18'}
-
-  throttleit@2.1.0:
-    resolution: {integrity: sha512-nt6AMGKW1p/70DF/hGBdJB57B8Tspmbp5gfJ8ilhLnt7kkr2ye7hzD6NVG8GGErk2HWF34igrL2CXmNIkzKqKw==}
     engines: {node: '>=18'}
 
   tinyglobby@0.2.15:
@@ -3616,16 +3566,6 @@ snapshots:
   '@ai-sdk/provider@2.0.0':
     dependencies:
       json-schema: 0.4.0
-
-  '@ai-sdk/react@2.0.43(react@19.1.1)(zod@4.1.8)':
-    dependencies:
-      '@ai-sdk/provider-utils': 3.0.9(zod@4.1.8)
-      ai: 5.0.43(zod@4.1.8)
-      react: 19.1.1
-      swr: 2.3.6(react@19.1.1)
-      throttleit: 2.1.0
-    optionalDependencies:
-      zod: 4.1.8
 
   '@alloc/quick-lru@5.2.0': {}
 
@@ -5020,33 +4960,13 @@ snapshots:
       postcss: 8.5.6
       tailwindcss: 4.1.13
 
-  '@tanstack/query-async-storage-persister@5.87.4':
-    dependencies:
-      '@tanstack/query-core': 5.87.4
-      '@tanstack/query-persist-client-core': 5.87.4
-
   '@tanstack/query-core@5.87.4': {}
 
   '@tanstack/query-devtools@5.87.3': {}
 
-  '@tanstack/query-persist-client-core@5.87.4':
-    dependencies:
-      '@tanstack/query-core': 5.87.4
-
-  '@tanstack/query-sync-storage-persister@5.87.4':
-    dependencies:
-      '@tanstack/query-core': 5.87.4
-      '@tanstack/query-persist-client-core': 5.87.4
-
   '@tanstack/react-query-devtools@5.87.4(@tanstack/react-query@5.87.4(react@19.1.1))(react@19.1.1)':
     dependencies:
       '@tanstack/query-devtools': 5.87.3
-      '@tanstack/react-query': 5.87.4(react@19.1.1)
-      react: 19.1.1
-
-  '@tanstack/react-query-persist-client@5.87.4(@tanstack/react-query@5.87.4(react@19.1.1))(react@19.1.1)':
-    dependencies:
-      '@tanstack/query-persist-client-core': 5.87.4
       '@tanstack/react-query': 5.87.4(react@19.1.1)
       react: 19.1.1
 
@@ -5495,8 +5415,6 @@ snapshots:
       define-data-property: 1.1.4
       has-property-descriptors: 1.0.2
       object-keys: 1.1.1
-
-  dequal@2.0.3: {}
 
   detect-libc@2.0.4: {}
 
@@ -6927,12 +6845,6 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  swr@2.3.6(react@19.1.1):
-    dependencies:
-      dequal: 2.0.3
-      react: 19.1.1
-      use-sync-external-store: 1.5.0(react@19.1.1)
-
   tailwindcss@4.1.13: {}
 
   tapable@2.2.3: {}
@@ -6945,8 +6857,6 @@ snapshots:
       minizlib: 3.0.2
       mkdirp: 3.0.1
       yallist: 5.0.0
-
-  throttleit@2.1.0: {}
 
   tinyglobby@0.2.15:
     dependencies:
