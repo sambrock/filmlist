@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { useMutation as useMutationReactQuery } from '@tanstack/react-query';
 import { useMutation } from 'convex/react';
 
@@ -13,6 +14,8 @@ export const useApiSendMessage = () => {
 
   const model = useGlobalStore((s) => s.model);
   const dispatch = useGlobalStore((s) => s.dispatch);
+
+  const router = useRouter();
 
   const newChatMessage = useMutation(api.chat.newChatMessage).withOptimisticUpdate((localStore, args) => {
     const localStateThreads = localStore.getQuery(api.threads.getByUserId, { userId: args.userId });
@@ -67,7 +70,8 @@ export const useApiSendMessage = () => {
       });
 
       if (!document.URL.includes(threadId)) {
-        window.history.pushState(null, '', `/chat/${threadId}`);
+        router.push(`/chat/${threadId}`);
+        // window.history.pushState(null, '', `/chat/${threadId}`);
       }
 
       setThreadIsPersisted();

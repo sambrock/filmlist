@@ -3,7 +3,7 @@ import createClient from 'openapi-fetch';
 
 import { env } from '../env';
 import { paths } from './schema-v3';
-import { MovieDetails } from './types';
+import { MovieCredits, MovieDetails } from './types';
 
 export const tmdb = createClient<paths>({
   baseUrl: 'https://api.themoviedb.org',
@@ -36,6 +36,7 @@ export const tmdbGetMovieById = cache(async (movieId: number) => {
   const { data } = await tmdb.GET(`/3/movie/{movie_id}`, {
     params: {
       path: { movie_id: movieId },
+      query: { append_to_response: 'credits' },
     },
   });
 
@@ -43,5 +44,5 @@ export const tmdbGetMovieById = cache(async (movieId: number) => {
     return null;
   }
 
-  return data as MovieDetails;
+  return data as MovieDetails & { credits: MovieCredits };
 });

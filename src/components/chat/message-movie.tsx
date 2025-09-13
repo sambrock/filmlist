@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { Doc } from '@/infra/convex/_generated/dataModel';
 import { cn, genreName, posterSrc, runtimeToHoursMins } from '@/lib/utils';
 import { TooltipProvider } from '../common/tooltip';
@@ -11,13 +13,15 @@ type Props = {
 export const MessageMovie = ({ movie }: Props) => {
   return (
     <div className="group border-foreground-0/5 flex cursor-pointer border-b-1 px-2 py-2 last:border-0">
-      <ChatMoviePoster posterPath={movie.found ? movie.posterPath : ''} alt={movie.title} />
+      <Link href={`/movie/${movie.found ? movie.tmdbId : ''}`}>
+        <ChatMoviePoster posterPath={movie.found ? movie.posterPath : ''} alt={movie.title} />
+      </Link>
 
       <div className="ml-4 flex w-full flex-col py-2">
-        <div className="mb-1 font-medium">
+        <div className="mb-1 font-semibold">
           {movie.title}{' '}
-          <span className="text-foreground-1 ml-1 text-xs">
-            {movie.releaseDate  ? new Date(movie.releaseDate).getFullYear() : ''}
+          <span className="text-foreground-1 ml-1 text-xs font-medium">
+            {movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : ''}
           </span>
         </div>
         <div className="text-foreground-1 max-w-3/4 text-sm">{movie.why}</div>
