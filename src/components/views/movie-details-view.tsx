@@ -19,12 +19,12 @@ export const MovieDetailsView = async ({ movieId }: Props) => {
   return (
     <div className="fixed top-0 left-0 z-50 flex h-screen w-screen items-start justify-center overflow-y-auto bg-black/50">
       <div className="bg-background-1 my-12 w-7xl overflow-clip rounded-lg shadow shadow-black/30">
-        <div className="relative flex h-[660px] items-center overflow-clip">
+        <div className="relative flex h-[620px] items-center overflow-clip">
           <img src={backdropSrc(movie.backdrop_path!, 'w1280')} />
-          <div className="to-background-1 absolute bottom-0 h-3/5 w-full bg-gradient-to-b from-transparent" />
+          <div className="to-background-1 absolute bottom-0 h-full w-full bg-gradient-to-b from-transparent" />
         </div>
 
-        <div className="relative z-10 -bottom-2 mx-auto grid w-full max-w-6xl grid-cols-[200px_1fr] gap-x-6 gap-y-4 p-8 -mt-[360px]">
+        <div className="relative -bottom-2 z-10 mx-auto -mt-[360px] grid w-full max-w-6xl grid-cols-[200px_1fr] gap-x-6 gap-y-4 p-8">
           <img className="rounded-md shadow-lg shadow-black/40" src={posterSrc(movie.poster_path!, 'w500')} />
           <div className="mb-2 flex flex-col justify-end">
             <div className="mb-2 flex items-end text-5xl font-black">
@@ -46,6 +46,10 @@ export const MovieDetailsView = async ({ movieId }: Props) => {
 
           <div></div>
           <div className="text-foreground-0 text-sm leading-6">{movie.overview!}</div>
+
+          {/* <div className="cols-">
+            <h2>Cast</h2>
+          </div> */}
         </div>
       </div>
     </div>
