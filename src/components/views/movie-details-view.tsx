@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation';
+import { Eye, Heart, Plus } from 'lucide-react';
 
 import { tmdbGetMovieById } from '@/lib/tmdb/client';
 import { backdropSrc, genreName, posterSrc, runtimeToHoursMins } from '@/lib/utils';
+import { Button } from '../common/button';
 
 type Props = {
   movieId: number;
@@ -20,7 +22,7 @@ export const MovieDetailsView = async ({ movieId }: Props) => {
     <div className="fixed top-0 left-0 z-50 flex h-screen w-screen items-start justify-center overflow-y-auto bg-black/50">
       <div className="bg-background-1 my-12 w-7xl overflow-clip rounded-lg shadow shadow-black/30">
         <div className="relative flex h-[620px] items-center overflow-clip">
-          <img src={backdropSrc(movie.backdrop_path!, 'w1280')} />
+          <img src={backdropSrc(movie.backdrop_path!, 'w1280')} className="object-cover w-full" />
           <div className="to-background-1 absolute bottom-0 h-full w-full bg-gradient-to-b from-transparent" />
         </div>
 
@@ -41,6 +43,17 @@ export const MovieDetailsView = async ({ movieId }: Props) => {
               <span>
                 Directed by <span className="">{directors.map((director) => director.name).join(', ')}</span>
               </span>
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button variant="primary" size="icon" className="!rounded-full">
+                <Plus />
+              </Button>
+              <Button variant="ghost" size="icon" className="!rounded-full">
+                <Eye />
+              </Button>
+              <Button variant="ghost" size="icon" className="!rounded-full">
+                <Heart />
+              </Button>
             </div>
           </div>
 

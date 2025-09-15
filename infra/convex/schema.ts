@@ -44,7 +44,6 @@ export const messageSchema = {
 };
 
 export const librarySchema = {
-  libraryId: v.string(),
   userId: v.string(),
   tmdbId: v.number(),
   watched: v.optional(v.boolean()),
@@ -59,9 +58,7 @@ export default defineSchema({
   messages: defineTable(messageSchema)
     .index('by_message_id', ['messageId'])
     .index('by_thread_id', ['threadId']),
-
   library: defineTable(librarySchema)
-    .index('by_library_id', ['libraryId'])
     .index('by_user_id', ['userId'])
     .index('by_tmdb_id', ['tmdbId'])
     .index('by_user_tmdb_id', ['userId', 'tmdbId']),
