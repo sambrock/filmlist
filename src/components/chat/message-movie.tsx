@@ -1,10 +1,9 @@
 'use client';
 
-import Link from 'next/link';
-
 import { Doc } from '@/infra/convex/_generated/dataModel';
 import { cn, genreName, posterSrc, runtimeToHoursMins } from '@/lib/utils';
 import { TooltipProvider } from '../common/tooltip';
+import { MovieWatchlistButton } from './movie-watchlist-button';
 
 type Props = {
   movie: NonNullable<Doc<'messages'>['movies']>[number];
@@ -13,9 +12,7 @@ type Props = {
 export const MessageMovie = ({ movie }: Props) => {
   return (
     <div className="group border-foreground-0/5 flex cursor-pointer border-b-1 px-2 py-2 last:border-0">
-      <Link href={`/movie/${movie.found ? movie.tmdbId : ''}`}>
-        <ChatMoviePoster posterPath={movie.found ? movie.posterPath : ''} alt={movie.title} />
-      </Link>
+      <ChatMoviePoster posterPath={movie.found ? movie.posterPath : ''} alt={movie.title} />
 
       <div className="ml-4 flex w-full flex-col py-2">
         <div className="mb-1 font-semibold">
@@ -33,12 +30,10 @@ export const MessageMovie = ({ movie }: Props) => {
               {movie.genres.map((genre) => genreName(genre)).join(', ')}
             </div>
           )}
-          {movie && (
+          {movie.found && (
             <TooltipProvider>
               <div className="-mb-2 ml-auto flex items-center gap-1">
-                {/* <ChatMovieWatchlistButton movie={movie} />
-                <ChatMovieWatchButton movie={movie} />
-                <ChatMovieLikeButton movie={movie} /> */}
+                <MovieWatchlistButton tmdbId={movie.tmdbId} />
               </div>
             </TooltipProvider>
           )}

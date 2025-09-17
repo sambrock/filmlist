@@ -2,7 +2,7 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { Slot } from 'radix-ui';
 
 const variants = cva(
-  'focus-visible:ring-ring flex items-center font-medium whitespace-nowrap transition select-none focus:outline-none focus-visible:ring-2',
+  'focus-visible:ring-ring flex items-center font-medium whitespace-nowrap select-none focus:outline-none focus-visible:ring-2',
   {
     variants: {
       variant: {

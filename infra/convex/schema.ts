@@ -43,13 +43,9 @@ export const messageSchema = {
   movies: v.optional(v.array(v.union(v.object(movieFoundSchema), v.object(movieNotFoundSchema)))),
 };
 
-export const librarySchema = {
+export const watchlistSchema = {
   userId: v.string(),
   tmdbId: v.number(),
-  watched: v.optional(v.boolean()),
-  liked: v.optional(v.boolean()),
-  watchlist: v.optional(v.boolean()),
-  ignore: v.optional(v.boolean()),
 };
 
 export default defineSchema({
@@ -58,7 +54,7 @@ export default defineSchema({
   messages: defineTable(messageSchema)
     .index('by_message_id', ['messageId'])
     .index('by_thread_id', ['threadId']),
-  library: defineTable(librarySchema)
+  watchlist: defineTable(watchlistSchema)
     .index('by_user_id', ['userId'])
     .index('by_tmdb_id', ['tmdbId'])
     .index('by_user_tmdb_id', ['userId', 'tmdbId']),

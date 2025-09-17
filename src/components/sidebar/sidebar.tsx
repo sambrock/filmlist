@@ -1,25 +1,31 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { preloadedQueryResult, preloadQuery } from 'convex/nextjs';
-import { ListVideo, SquarePen } from 'lucide-react';
+import { SquarePen } from 'lucide-react';
 
 import { api } from '@/infra/convex/_generated/api';
 import { cn } from '@/lib/utils';
 import { SidebarButton } from './sidebar-button';
 import { SidebarChats } from './sidebar-chats';
+import { SidebarWatchlistButton } from './sidebar-watchlist-button';
 
 type Props = React.ComponentProps<'div'>;
 
 export const Sidebar = async ({ className, ...props }: Props) => {
-  const preloadedThreadsQuery = await preloadQuery(api.threads.getByUserId, {
-    userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06',
-  });
+  const [preloadedThreadsQuery, preloadedWatchlistQuery] = await Promise.all([
+    preloadQuery(api.threads.getByUserId, {
+      userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06',
+    }),
+    preloadQuery(api.watchlist.getWatchlist, {
+      userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06',
+    }),
+  ]);
 
   return (
     <div className={cn('border-foreground-0/10 bg-background-0 h-screen border-r p-2', className)} {...props}>
       <div className="p-3">
         <Link href="/">
-          <Image className="w-7 z-[999] relative" src="/logo.svg" alt="Logo" width={28} height={38} />
+          <Image className="relative z-[999] w-7" src="/logo.svg" alt="Logo" width={28} height={38} />
         </Link>
       </div>
 
@@ -31,12 +37,9 @@ export const Sidebar = async ({ className, ...props }: Props) => {
           </Link>
         </SidebarButton>
 
-        <SidebarButton asChild>
-          <Link href="/" className="">
-            <ListVideo className="mr-2 size-4.5" />
-            Library
-          </Link>
-        </SidebarButton>
+        <SidebarWatchlistButton
+          initialWatchlistCount={preloadedQueryResult(preloadedWatchlistQuery).length}
+        />
       </div>
 
       <div className="mt-4">
