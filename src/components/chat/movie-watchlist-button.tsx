@@ -10,6 +10,7 @@ import { api } from '@/infra/convex/_generated/api';
 import { Id } from '@/infra/convex/_generated/dataModel';
 import { cn } from '@/lib/utils';
 import { Button } from '../common/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../common/tooltip';
 
 type Props = {
   tmdbId: number;
@@ -54,30 +55,40 @@ export const MovieWatchlistButton = ({ tmdbId, className, ...props }: Props) => 
 
   const getIcon = () => {
     if (isInWatchlist && isHover) {
-      return <Minus className="size-5 transition" />;
+      return <Minus className="size-5" />;
     }
     if (isInWatchlist) {
-      return <Check className="size-5 transition" />;
+      return <Check className="size-5" />;
     }
-    return <Plus className="size-5 transition" />;
+    return <Plus className="size-5" />;
   };
 
   return (
-    <Button
-      ref={buttonRef}
-      variant={'ghost-2'}
-      size="icon"
-      className={cn('!rounded-full', className)}
-      onClick={() => {
-        updateWatchlist({
-          tmdbId,
-          userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06',
-          data: { watchlist: !isInWatchlist },
-        });
-      }}
-      {...props}
-    >
-      {getIcon()}
-    </Button>
+    <TooltipProvider>
+      <Tooltip disableHoverableContent>
+        <TooltipContent>
+          {isInWatchlist && 'Remove from watchlist'}
+          {!isInWatchlist && 'Add to watchlist'}
+        </TooltipContent>
+        <TooltipTrigger asChild>
+          <Button
+            ref={buttonRef}
+            variant={'ghost-2'}
+            size="icon"
+            className={cn('', className)}
+            onClick={() => {
+              updateWatchlist({
+                tmdbId,
+                userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06',
+                data: { watchlist: !isInWatchlist },
+              });
+            }}
+            {...props}
+          >
+            {isInWatchlist ? <Check className="size-5" /> : <Plus className="size-5" />}
+          </Button>
+        </TooltipTrigger>
+      </Tooltip>
+    </TooltipProvider>
   );
 };

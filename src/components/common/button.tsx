@@ -2,17 +2,17 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { Slot } from 'radix-ui';
 
 const variants = cva(
-  'focus-visible:ring-ring flex items-center font-medium whitespace-nowrap select-none focus:outline-none focus-visible:ring-2',
+  'focus-visible:ring-ring flex items-center font-medium whitespace-nowrap transition select-none focus:outline-none focus-visible:ring-2',
   {
     variants: {
       variant: {
         default: 'bg-surface-2 hover:bg-surface-3 text-text-primary',
         transparent:
-          'hover:bg-surface-3 focus:text-foreground-0 hover:text-foreground-0 text-foreground-1 bg-transparent',
+          'hover:bg-surface-3 focus-visible:text-foreground-0 hover:text-foreground-0 text-foreground-3 bg-transparent',
         ghost:
-          'text-foreground-1 hover:text-foreground-0 hover:bg-foreground-1/20 focus:bg-foreground-1/20 focus:text-foreground-0',
+          'text-foreground-1 hover:text-foreground-0 hover:bg-foreground-1/20 focus-visible:bg-foreground-1/20 focus-visible:text-foreground-0',
         'ghost-2':
-          'text-foreground-3 hover:text-foreground-0 hover:bg-foreground-1/20 focus:bg-foreground-1/20 focus:text-foreground-0',
+          'text-foreground-3 hover:text-foreground-0 hover:bg-foreground-1/20 focus-visible:bg-foreground-1/20 focus-visible:text-foreground-0',
         outline:
           'text-foreground-1 hover:text-foreground-0 hover:bg-foreground-1/20 border-foreground-0/5 border',
         primary: 'text-primary bg-primary/10',
