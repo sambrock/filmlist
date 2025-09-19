@@ -7,5 +7,5 @@ type Props = {
 export default async function MoviePageModal({ params }: Props) {
   const { movie_id } = await params;
 
-  return <MovieDetailsView movieId={Number(movie_id)} />;
+  return <MovieDetailsView movieId={Number(movie_id)} isIntercepted={true} />;
 }

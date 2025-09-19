@@ -1,5 +1,8 @@
 'use client';
 
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import { Doc } from '@/infra/convex/_generated/dataModel';
 import { cn, genreName, posterSrc, runtimeToHoursMins } from '@/lib/utils';
 import { TooltipProvider } from '../common/tooltip';
@@ -10,35 +13,54 @@ type Props = {
 };
 
 export const MessageMovie = ({ movie }: Props) => {
+  const router = useRouter();
+
+  // const handleClick = () => {
+  //   if (!movie.found) return;
+  //   router.push(`/movie/${movie.tmdbId}`);
+  // };
+
   return (
     <div className="group border-foreground-0/5 flex cursor-pointer border-b-1 px-2 py-2 last:border-0">
-      <ChatMoviePoster posterPath={movie.found ? movie.posterPath : ''} alt={movie.title} />
-
-      <div className="ml-4 flex w-full flex-col py-2">
-        <div className="mb-1 font-semibold">
-          {movie.title}{' '}
-          <span className="text-foreground-1 ml-1 text-xs font-medium">
-            {movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : ''}
-          </span>
-        </div>
-        <div className="text-foreground-1 max-w-3/4 text-sm">{movie.why}</div>
-        <div className="mt-auto flex items-baseline">
-          {movie.found && (
-            <div className="text-foreground-1 mt-auto flex gap-1 text-xs font-medium">
-              <span>{runtimeToHoursMins(movie.runtime!)}</span>
-              <span>•</span>
-              {movie.genres.map((genre) => genreName(genre)).join(', ')}
-            </div>
-          )}
-          {movie.found && (
-            <TooltipProvider>
-              <div className="-mb-2 ml-auto flex items-center gap-1">
-                <MovieWatchlistButton tmdbId={movie.tmdbId} />
+      <Link
+        href={movie.found ? `/movie/${movie.tmdbId}` : '#'}
+        className="focus-visible:ring-ring flex w-full rounded-md focus:outline-none focus-visible:ring focus-visible:ring-2"
+        onClick={(e) => {
+          if (!movie.found) {
+            e.preventDefault();
+          }
+        }}
+      >
+        <ChatMoviePoster posterPath={movie.found ? movie.posterPath : ''} alt={movie.title} />
+        <div className="ml-4 flex w-full flex-col py-2">
+          <div className="mb-1 font-semibold">
+            {movie.title}{' '}
+            <span className="text-foreground-1 ml-1 text-xs font-medium">
+              {movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : ''}
+            </span>
+          </div>
+          <div className="text-foreground-1 max-w-3/4 text-sm">{movie.why}</div>
+          <div className="mt-auto flex items-baseline">
+            {movie.found && (
+              <div className="text-foreground-1 mt-auto flex gap-1 text-xs font-medium">
+                <span>{runtimeToHoursMins(movie.runtime!)}</span>
+                <span>•</span>
+                {movie.genres.map((genre) => genreName(genre)).join(', ')}
+                <span>•</span>
+                {movie.directors && <span>Dir. {movie.directors}</span>}
               </div>
-            </TooltipProvider>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      </Link>
+
+      {movie.found && (
+        <TooltipProvider>
+          <div className="ml-auto flex items-end gap-1">
+            <MovieWatchlistButton tmdbId={movie.tmdbId} />
+          </div>
+        </TooltipProvider>
+      )}
     </div>
   );
 };

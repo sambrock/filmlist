@@ -23,6 +23,7 @@ const movieFoundSchema = {
   overview: v.string(),
   backdropPath: v.string(),
   posterPath: v.string(),
+  directors: v.optional(v.string()),
 };
 
 const movieNotFoundSchema = {

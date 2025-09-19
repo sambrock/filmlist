@@ -62,7 +62,7 @@ export const ChatInput = ({ className, ...props }: Props) => {
           variant="ghost"
           disabled={isDisabled}
         >
-          <ArrowUp className="size-5" />
+          <ArrowUp className="size-5" strokeWidth={2.5} />
         </Button>
       </div>
     </div>

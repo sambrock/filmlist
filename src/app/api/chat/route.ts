@@ -82,6 +82,10 @@ export async function POST(req: Request) {
             releaseDate: new Date(source.release_date!).getTime(),
             backdropPath: source.backdrop_path!,
             posterPath: source.poster_path!,
+            directors: source.credits?.crew
+              ?.filter((member) => member.job === 'Director')
+              .map((d) => d.name)
+              .join(', '),
           };
         })
       );

@@ -32,17 +32,19 @@ export const tmdbFindMovie = cache(async (query: string, year: string) => {
   return result;
 });
 
-export const tmdbGetMovieById = cache(async (movieId: number) => {
-  const { data } = await tmdb.GET(`/3/movie/{movie_id}`, {
-    params: {
-      path: { movie_id: movieId },
-      query: { append_to_response: 'credits' },
-    },
-  });
+export const tmdbGetMovieById = cache(
+  async (movieId: number): Promise<(MovieDetails & { credits: MovieCredits }) | null> => {
+    const { data } = await tmdb.GET(`/3/movie/{movie_id}`, {
+      params: {
+        path: { movie_id: movieId },
+        query: { append_to_response: 'credits' },
+      },
+    });
 
-  if (!data || !data.id || !data.title || !data.release_date || !data.backdrop_path || !data.poster_path) {
-    return null;
+    if (!data || !data.id || !data.title || !data.release_date || !data.backdrop_path || !data.poster_path) {
+      return null;
+    }
+
+    return data as MovieDetails & { credits: MovieCredits };
   }
-
-  return data as MovieDetails & { credits: MovieCredits };
-});
+);

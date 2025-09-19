@@ -15,7 +15,7 @@ export const ChatView = async ({ threadId, isPersisted }: Props) => {
 
   return (
     <ThreadContextProvider threadId={threadId} isPersisted={isPersisted}>
-      <main className="h-screen overflow-y-auto">
+      <main className="h-screen overflow-y-auto outline-none">
         <div className="relative mx-auto w-3xl">
           <ChatMessages initialData={preloadedQueryResult(preloadedMessagesQuery)} />
           <ChatInput className="fixed bottom-4 z-10 w-3xl shadow-xl shadow-black/10" />
