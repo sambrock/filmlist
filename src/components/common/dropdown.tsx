@@ -8,13 +8,19 @@ export const DropdownRoot = DropdownMenu.Root;
 export const DropdownTrigger = DropdownMenu.Trigger;
 export const DropdownPortal = DropdownMenu.Portal;
 
-export const DropdownContent = ({ className, ...props }: DropdownMenu.DropdownMenuContentProps) => {
+export const DropdownContent = ({ className, side, ...props }: DropdownMenu.DropdownMenuContentProps) => {
   return (
     <DropdownMenu.Content
       className={cn(
-        'bg-background-4 border-foreground-0/5 min-w-52 rounded-lg border p-1 shadow-md shadow-black/20',
-        'data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom-2 data-[state=closed]:fade-in data-[state=closed]:zoom-in-100 zoom-in-95',
-        'data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom-2 data-[state=closed]:fade-out data-[state=closed]:zoom-out-95',
+        'bg-background-4 border-foreground-0/5 z-50 rounded-lg border p-1 shadow-md shadow-black/20',
+        side === 'top' &&
+          'data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom-2 data-[state=closed]:fade-in data-[state=closed]:zoom-in-100 zoom-in-95',
+        side === 'top' &&
+          'data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom-2 data-[state=closed]:fade-out data-[state=closed]:zoom-out-95',
+        side === 'bottom' &&
+          'data-[state=open]:animate-in data-[state=open]:slide-in-from-top-2 data-[state=closed]:fade-in data-[state=closed]:zoom-in-100 zoom-in-95',
+        side === 'bottom' &&
+          'data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top-2 data-[state=closed]:fade-out data-[state=closed]:zoom-out-95',
         className
       )}
       onCloseAutoFocus={(e) => {

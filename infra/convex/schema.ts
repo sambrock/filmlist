@@ -10,6 +10,7 @@ export const threadSchema = {
   threadId: v.string(),
   userId: v.string(),
   title: v.string(),
+  isDeleted: v.optional(v.boolean()),
 };
 
 const movieFoundSchema = {

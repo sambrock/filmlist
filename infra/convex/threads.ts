@@ -8,11 +8,13 @@ export const getByUserId = query({
     userId: v.string(),
   },
   handler: async (ctx, args) => {
-    return ctx.db
+    const data = await ctx.db
       .query('threads')
       .withIndex('by_user_id', (q) => q.eq('userId', args.userId))
       .order('desc')
       .collect();
+
+    return data.filter((thread) => !thread.isDeleted);
   },
 });
 
@@ -24,7 +26,6 @@ export const getByThreadId = query({
     return ctx.db
       .query('threads')
       .withIndex('by_thread_id', (q) => q.eq('threadId', args.threadId))
-
       .first();
   },
 });
@@ -54,5 +55,21 @@ export const update = mutation({
     if (!thread) return;
     await ctx.db.patch(thread._id, args.data);
     return ctx.db.get(thread._id);
+  },
+});
+
+export const remove = mutation({
+  args: {
+    threadId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const thread = await ctx.db
+      .query('threads')
+      .withIndex('by_thread_id', (q) => q.eq('threadId', args.threadId))
+      .first();
+    console.log('THREAD', thread);
+    if (!thread) return;
+
+    await ctx.db.patch(thread._id, { isDeleted: true });
   },
 });

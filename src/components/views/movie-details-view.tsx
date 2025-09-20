@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { Image, PersonStanding } from 'lucide-react';
+import { Image } from 'lucide-react';
 
 import { tmdbGetMovieById } from '@/lib/tmdb/client';
 import { backdropSrc, posterSrc } from '@/lib/utils';
@@ -77,11 +77,11 @@ export const MovieDetailsView = async ({ movieId, isIntercepted }: Props) => {
               <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto">
                 {movie.credits?.cast?.slice(0, 16).map((cast) => (
                   <div key={cast.id} className="mt-4 w-32 snap-start">
-                    <div className="bg-background-2 h-44 w-32 overflow-clip rounded-md">
+                    <div className="bg-background-2 relative h-44 w-32 overflow-clip rounded-md">
                       {cast.profile_path ? (
                         <img
                           src={posterSrc(cast.profile_path, 'w185')}
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-cover brightness-75"
                           alt={cast.name || ''}
                         />
                       ) : (
