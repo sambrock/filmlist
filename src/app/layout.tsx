@@ -9,6 +9,7 @@ import { Sidebar } from '@/components/sidebar/sidebar';
 
 import './globals.css';
 
+import { UserContextProvider } from '@/providers/use-context-provider';
 import { SidebarMobile } from '@/components/sidebar/sidebar-mobile';
 
 const fontSans = Schibsted_Grotesk({
@@ -26,14 +27,16 @@ export default async function RootLayout(props: { children: React.ReactNode; mod
       <body className={cn('text-foreground-0 bg-background-0', fontSans.className)}>
         <QueryClientProvider>
           <ConvexClientProvider>
-            <GlobalStoreProvider>
-              <div className="flex h-screen overflow-hidden">
-                <Sidebar className="hidden h-screen shrink-0 lg:block lg:w-[260px]" />
-                <SidebarMobile className="lg:hidden" sidebarComponent={<Sidebar />} />
-                <div className="bg-background-1 w-full">{props.children}</div>
-                {props?.modal}
-              </div>
-            </GlobalStoreProvider>
+            <UserContextProvider>
+              <GlobalStoreProvider>
+                <div className="flex h-screen overflow-hidden">
+                  <Sidebar className="hidden h-screen shrink-0 lg:block lg:w-[260px]" />
+                  <SidebarMobile className="lg:hidden" sidebarComponent={<Sidebar />} />
+                  <div className="bg-background-1 w-full">{props.children}</div>
+                  {props?.modal}
+                </div>
+              </GlobalStoreProvider>
+            </UserContextProvider>
           </ConvexClientProvider>
         </QueryClientProvider>
       </body>

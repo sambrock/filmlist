@@ -8,8 +8,10 @@ import { ChatBodySchema } from '@/app/api/chat/route';
 import { generateUuid } from '@/lib/utils';
 import { useGlobalStore } from '@/providers/global-store-provider';
 import { useThreadContext } from '@/providers/thread-context-provider';
+import { useUserContext } from '@/providers/use-context-provider';
 
 export const useApiSendMessage = () => {
+  const { userId } = useUserContext();
   const { threadId, getThreadIsPersisted, setThreadIsPersisted } = useThreadContext();
 
   const model = useGlobalStore((s) => s.model);
@@ -50,7 +52,7 @@ export const useApiSendMessage = () => {
       await newChatMessage({
         threadId,
         threadIsPersisted: getThreadIsPersisted(),
-        userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06',
+        userId,
         userMessage: {
           messageId: messageUserId,
           threadId,

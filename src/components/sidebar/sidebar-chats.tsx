@@ -10,6 +10,7 @@ import { api } from '@/infra/convex/_generated/api';
 import { Doc } from '@/infra/convex/_generated/dataModel';
 import { cn } from '@/lib/utils';
 import { useGlobalStore } from '@/providers/global-store-provider';
+import { useUserContext } from '@/providers/use-context-provider';
 import { Button } from '../common/button';
 import { DropdownContent, DropdownItem, DropdownRoot, DropdownTrigger } from '../common/dropdown';
 import { SpinnerEllipsis } from '../common/spinner';
@@ -19,8 +20,9 @@ type Props = {
 };
 
 export const SidebarChats = ({ initialData }: Props) => {
-  const threads =
-    useQuery(api.threads.getByUserId, { userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06' }) || initialData;
+  const { userId } = useUserContext();
+
+  const threads = useQuery(api.threads.getByUserId, { userId }) || initialData;
 
   return (
     <Fragment>
@@ -126,7 +128,7 @@ const SidebarChatButton = ({ thread }: { thread: Doc<'threads'> }) => {
           />
         )}
         {hasUnseenUpdates && (
-          <div className="bg-primary top-1/2 right-3 absolute size-1 -translate-y-1/2 self-center rounded-full group-hover:hidden"></div>
+          <div className="bg-primary absolute top-1/2 right-3 size-1 -translate-y-1/2 self-center rounded-full group-hover:hidden"></div>
         )}
       </Link>
       {!editing && <SidebarThreadMenu threadId={thread.threadId} enableRename={enableRename} />}

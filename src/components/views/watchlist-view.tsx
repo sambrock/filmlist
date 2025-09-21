@@ -2,11 +2,14 @@ import Link from 'next/link';
 import { fetchQuery } from 'convex/nextjs';
 
 import { api } from '@/infra/convex/_generated/api';
+import { getUserFromAuthTokenCookie } from '@/lib/auth';
 import { posterSrc } from '@/lib/utils';
 
 export const WatchlistView = async () => {
+  const user = await getUserFromAuthTokenCookie();
+
   const watchlistData = await fetchQuery(api.watchlist.getWatchlist, {
-    userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06',
+    userId: user?.userId || '',
   });
 
   return (

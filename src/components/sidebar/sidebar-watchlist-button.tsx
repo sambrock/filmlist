@@ -9,6 +9,7 @@ import { ListVideo } from 'lucide-react';
 import { api } from '@/infra/convex/_generated/api';
 import { cn } from '@/lib/utils';
 import { useGlobalStore } from '@/providers/global-store-provider';
+import { useUserContext } from '@/providers/use-context-provider';
 import { SidebarButton } from './sidebar-button';
 
 type Props = {
@@ -16,11 +17,10 @@ type Props = {
 };
 
 export const SidebarWatchlistButton = ({ initialWatchlistCount }: Props) => {
-  const dispatch = useGlobalStore((s) => s.dispatch);
-  const watchlist = useQuery(api.watchlist.getWatchlist, {
-    userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06',
-  });
+  const { userId } = useUserContext();
 
+  const dispatch = useGlobalStore((s) => s.dispatch);
+  const watchlist = useQuery(api.watchlist.getWatchlist, { userId });
   const pathname = usePathname();
 
   const watchlistCount = watchlist ? watchlist.length : initialWatchlistCount;
@@ -35,9 +35,7 @@ export const SidebarWatchlistButton = ({ initialWatchlistCount }: Props) => {
         <ListVideo className="mr-2 size-4.5" />
         Watchlist
         {watchlistCount > 0 && (
-          <span className="text-primary ml-auto text-xs font-medium">
-            {watchlistCount}
-          </span>
+          <span className="text-primary ml-auto text-xs font-medium">{watchlistCount}</span>
         )}
       </Link>
     </SidebarButton>

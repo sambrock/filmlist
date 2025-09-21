@@ -15,7 +15,7 @@ export const newChatMessage = mutation({
     if (!args.threadIsPersisted) {
       await ctx.db.insert('threads', {
         threadId: args.threadId,
-        userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06',
+        userId: args.userId,
         title: '',
       });
     }

@@ -14,7 +14,7 @@ const EXAMPLE_MESSAGES = [
   "Recommend me a hidden gem I probably haven't seen",
   'I want a mind-bending thriller with a twist ending',
   'Suggest a cozy movie for a rainy day',
-  'Pick a random underrated indie film for me',
+  'New York City in the 80s',
 ];
 
 export const ChatWelcome = ({ initialActive, className, ...props }: Props) => {

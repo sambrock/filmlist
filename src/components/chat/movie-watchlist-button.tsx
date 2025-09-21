@@ -9,6 +9,7 @@ import { useHover } from 'usehooks-ts';
 import { api } from '@/infra/convex/_generated/api';
 import { Id } from '@/infra/convex/_generated/dataModel';
 import { cn } from '@/lib/utils';
+import { useUserContext } from '@/providers/use-context-provider';
 import { Button } from '../common/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../common/tooltip';
 
@@ -27,13 +28,14 @@ export const MovieWatchlistButton = ({
   className,
   ...props
 }: Props) => {
-  const watchlist = useQuery(api.watchlist.getWatchlist, { userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06' });
+  const { userId } = useUserContext();
+
+  const watchlist = useQuery(api.watchlist.getWatchlist, { userId });
   const updateWatchlist = useUpdateWatchlistMutation();
 
   const isInWatchlist = Boolean(watchlist?.find((item) => item.tmdbId === tmdbId));
 
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const isHover = useHover(buttonRef as React.RefObject<HTMLElement>);
 
   return (
     <TooltipProvider>
@@ -52,7 +54,7 @@ export const MovieWatchlistButton = ({
               e.stopPropagation();
               updateWatchlist({
                 tmdbId,
-                userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06',
+                userId,
                 data: { watchlist: !isInWatchlist, title, releaseDate, posterPath },
               });
             }}
