@@ -2,7 +2,7 @@
 
 import { ConvexProvider, ConvexReactClient } from 'convex/react';
 
-const convex = new ConvexReactClient('https://posh-sandpiper-414.convex.cloud');
+const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export const ConvexClientProvider = (props: React.PropsWithChildren) => {
   return <ConvexProvider client={convex}>{props.children}</ConvexProvider>;
