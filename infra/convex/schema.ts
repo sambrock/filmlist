@@ -48,6 +48,9 @@ export const messageSchema = {
 export const watchlistSchema = {
   userId: v.string(),
   tmdbId: v.number(),
+  title: v.string(),
+  releaseDate: v.number(),
+  posterPath: v.string(),
 };
 
 export default defineSchema({

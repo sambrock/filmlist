@@ -1,3 +1,4 @@
+import { title } from 'process';
 import { v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
@@ -20,6 +21,9 @@ export const updateWatchlist = mutation({
     tmdbId: v.number(),
     data: v.object({
       watchlist: v.boolean(),
+      title: v.string(),
+      releaseDate: v.number(),
+      posterPath: v.string(),
     }),
   },
   handler: async (ctx, args) => {
@@ -31,7 +35,13 @@ export const updateWatchlist = mutation({
     if (exists) {
       await ctx.db.delete(exists._id);
     } else {
-      await ctx.db.insert('watchlist', { userId: args.userId, tmdbId: args.tmdbId });
+      await ctx.db.insert('watchlist', {
+        userId: args.userId,
+        tmdbId: args.tmdbId,
+        title: args.data.title,
+        releaseDate: args.data.releaseDate,
+        posterPath: args.data.posterPath,
+      });
     }
   },
 });

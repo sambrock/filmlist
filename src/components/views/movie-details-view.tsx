@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation';
-import { Image } from 'lucide-react';
 
 import { tmdbGetMovieById } from '@/lib/tmdb/client';
-import { backdropSrc, posterSrc } from '@/lib/utils';
+import { backdropSrc, genreName, posterSrc } from '@/lib/utils';
 import { MovieDetailsContextProvider } from '@/providers/movie-details-context-provider';
 import { MovieWatchlistButton } from '../chat/movie-watchlist-button';
 import { MovieDetailsOverlay } from '../movie/movie-details-overlay';
@@ -26,48 +25,59 @@ export const MovieDetailsView = async ({ movieId, isIntercepted }: Props) => {
       <div className="fixed top-0 left-0 z-50 flex h-screen w-screen items-start justify-center overflow-y-auto p-2">
         <MovieDetailsOverlay />
 
-        <div className="bg-background-1 relative z-50 mx-6 mt-6 mb-20 w-7xl rounded-lg pb-6 shadow-lg shadow-black/30">
-          <div className="relative flex h-[520px] items-center overflow-clip rounded-t-lg">
+        <div className="bg-background-1 relative z-50 mx-6 mt-6 mb-20 w-full rounded-lg pb-6 shadow-lg shadow-black/30 xl:w-7xl">
+          <div className="relative flex h-[39vw] items-center overflow-clip rounded-t-lg xl:h-[520px]">
             <img src={backdropSrc(movie.backdrop_path!, 'w1280')} className="w-full object-cover" />
             <div className="to-background-1 absolute bottom-0 h-full w-full bg-gradient-to-b from-transparent" />
           </div>
 
-          <div className="relative z-50 mx-auto max-w-6xl">
-            <div className="-mt-52 flex items-end gap-6">
-              <div className="w-[220px] overflow-clip rounded-md">
+          <div className="relative z-50 mx-auto max-w-6xl px-3 md:px-6">
+            <div className="-mt-10 flex items-end gap-6 lg:-mt-52">
+              <div className="hidden w-[120px] overflow-clip rounded-md lg:block lg:w-[220px]">
                 <img src={posterSrc(movie.poster_path!, 'w500')} />
               </div>
 
               <div className="mb-2 flex w-full items-end justify-between">
                 <div className="flex w-full flex-col gap-1">
-                  <h1 className="text-5xl font-black">
+                  <h1 className="text-3xl font-black md:text-4xl xl:text-5xl">
                     <span className="antialiased">{movie.title} </span>
                     <span className="text-foreground-1 ml-2 text-sm font-medium">
                       {new Date(movie.release_date!).getFullYear()}
                     </span>
                   </h1>
 
-                  <div className="text-foreground-1 mt-1 flex items-center gap-2 text-sm font-medium">
+                  <div className="text-foreground-1 mt-1 flex flex-col gap-3 text-sm font-medium md:flex-row md:items-center">
                     <span>
                       {movie.runtime ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m` : 'N/A'}
                     </span>
-                    <span>•</span>
-                    <span>{movie.genres?.map((genre) => genre.name).join(', ')}</span>
-                    <span>•</span>
+                    <span>{movie.genres?.map((genre) => genreName(genre.name || '')).join(', ')}</span>
                     <span>Dir. {directors.map((director) => director.name).join(', ')}</span>
                   </div>
                 </div>
 
-                <div className="ml-auto">
-                  <MovieWatchlistButton tmdbId={movie.id} />
+                <div className="ml-auto hidden md:block">
+                  <MovieWatchlistButton
+                    tmdbId={movie.id}
+                    title={movie.title!}
+                    releaseDate={new Date(movie.release_date!).getTime()}
+                    posterPath={movie.poster_path!}
+                  />
                 </div>
               </div>
             </div>
 
             <div className="mt-3 flex gap-6">
-              <div className="w-[220px]"></div>
+              <div className="hidden w-[220px] lg:block"></div>
               <div className="w-full">
-                <p className="text-foreground-0/90 w-3/4 text-[15px] leading-6">{movie.overview}</p>
+                <div className="mb-2 ml-auto md:hidden">
+                  <MovieWatchlistButton
+                    tmdbId={movie.id}
+                    title={movie.title!}
+                    releaseDate={new Date(movie.release_date!).getTime()}
+                    posterPath={movie.poster_path!}
+                  />
+                </div>
+                <p className="text-foreground-0/90 w-full text-[15px] leading-6 md:w-3/4">{movie.overview}</p>
               </div>
             </div>
 
@@ -75,25 +85,22 @@ export const MovieDetailsView = async ({ movieId, isIntercepted }: Props) => {
               <h2 className="text-foreground-0/90 font-bold">Cast</h2>
 
               <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto">
-                {movie.credits?.cast?.slice(0, 16).map((cast) => (
-                  <div key={cast.id} className="mt-4 w-32 snap-start">
-                    <div className="bg-background-2 relative h-44 w-32 overflow-clip rounded-md">
-                      {cast.profile_path ? (
+                {movie.credits?.cast
+                  ?.slice(0, 16)
+                  .filter((cast) => cast.profile_path)
+                  .map((cast) => (
+                    <div key={cast.id} className="mt-4 snap-start">
+                      <div className="bg-background-2 relative w-26 overflow-clip rounded-md md:w-32">
                         <img
-                          src={posterSrc(cast.profile_path, 'w185')}
+                          src={posterSrc(cast.profile_path!, 'w185')}
                           className="h-full w-full object-cover brightness-75"
                           alt={cast.name || ''}
                         />
-                      ) : (
-                        <div className="bg-background-3 text-foreground-3 flex h-full w-full items-center justify-center">
-                          <Image />
-                        </div>
-                      )}
+                      </div>
+                      <div className="text-foreground-0 mt-2 text-sm font-medium">{cast.name}</div>
+                      <div className="text-foreground-1 text-xs">{cast.character}</div>
                     </div>
-                    <div className="text-foreground-0 mt-2 text-sm font-medium">{cast.name}</div>
-                    <div className="text-foreground-1 text-xs">{cast.character}</div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
           </div>

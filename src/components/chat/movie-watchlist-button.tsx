@@ -14,9 +14,19 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../com
 
 type Props = {
   tmdbId: number;
+  title: string;
+  releaseDate: number;
+  posterPath: string;
 } & React.ComponentProps<'button'>;
 
-export const MovieWatchlistButton = ({ tmdbId, className, ...props }: Props) => {
+export const MovieWatchlistButton = ({
+  tmdbId,
+  title,
+  releaseDate,
+  posterPath,
+  className,
+  ...props
+}: Props) => {
   const watchlist = useQuery(api.watchlist.getWatchlist, { userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06' });
   const updateWatchlist = useUpdateWatchlistMutation();
 
@@ -43,13 +53,13 @@ export const MovieWatchlistButton = ({ tmdbId, className, ...props }: Props) => 
               updateWatchlist({
                 tmdbId,
                 userId: 'db4ff88c-23e4-4d72-a49b-c29e7e5f5d06',
-                data: { watchlist: !isInWatchlist },
+                data: { watchlist: !isInWatchlist, title, releaseDate, posterPath },
               });
             }}
             {...props}
           >
             {isInWatchlist ? (
-              <Check className="size-6 text-primary" strokeWidth={2.5} />
+              <Check className="text-primary size-6" strokeWidth={2.5} />
             ) : (
               <Plus className="size-6" strokeWidth={2.5} />
             )}
@@ -82,6 +92,9 @@ const useUpdateWatchlistMutation = () => {
               _creationTime: Date.now(),
               userId: args.userId,
               tmdbId: args.tmdbId,
+              title: args.data.title,
+              releaseDate: args.data.releaseDate,
+              posterPath: args.data.posterPath,
             });
           }
         })

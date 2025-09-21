@@ -9,6 +9,8 @@ import { Sidebar } from '@/components/sidebar/sidebar';
 
 import './globals.css';
 
+import { SidebarMobile } from '@/components/sidebar/sidebar-mobile';
+
 const fontSans = Schibsted_Grotesk({
   subsets: ['latin'],
   variable: '--font-sans',
@@ -26,7 +28,8 @@ export default async function RootLayout(props: { children: React.ReactNode; mod
           <ConvexClientProvider>
             <GlobalStoreProvider>
               <div className="flex h-screen overflow-hidden">
-                <Sidebar className="h-screen w-[260px] shrink-0" />
+                <Sidebar className="hidden h-screen shrink-0 lg:block lg:w-[260px]" />
+                <SidebarMobile className="lg:hidden" sidebarComponent={<Sidebar />} />
                 <div className="bg-background-1 w-full">{props.children}</div>
                 {props?.modal}
               </div>
