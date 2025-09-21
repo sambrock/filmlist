@@ -15,6 +15,7 @@ export const GlobalStoreProvider = (props: React.PropsWithChildren) => {
 
   if (storeRef.current === null) {
     storeRef.current = createGlobalStore();
+    storeRef.current.subscribe((state) => console.log(state));
   }
 
   return <GlobalStoreContext.Provider value={storeRef.current}>{props.children}</GlobalStoreContext.Provider>;

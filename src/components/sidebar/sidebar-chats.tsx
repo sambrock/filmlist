@@ -126,7 +126,7 @@ const SidebarChatButton = ({ thread }: { thread: Doc<'threads'> }) => {
           />
         )}
         {hasUnseenUpdates && (
-          <span className="bg-primary ml-auto size-1 rounded-full group-hover:hidden"></span>
+          <div className="bg-primary top-1/2 right-3 absolute size-1 -translate-y-1/2 self-center rounded-full group-hover:hidden"></div>
         )}
       </Link>
       {!editing && <SidebarThreadMenu threadId={thread.threadId} enableRename={enableRename} />}

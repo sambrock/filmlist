@@ -11,7 +11,10 @@ export const WatchlistView = async () => {
 
   return (
     <main className="mx-auto my-6 max-w-6xl px-3">
-      <h1 className="mt-20 text-2xl font-bold lg:mt-0">Watchlist</h1>
+      <h1 className="mt-20 text-2xl font-bold lg:mt-10">
+        Watchlist
+        <span className="text-foreground-1 ml-3 text-xs font-medium">{watchlistData.length} films</span>
+      </h1>
 
       {watchlistData.length > 0 && (
         <div className="mt-6 grid grid-cols-3 gap-3 gap-y-6 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7">

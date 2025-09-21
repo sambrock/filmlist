@@ -4,6 +4,7 @@ import { api } from '@/infra/convex/_generated/api';
 import { ThreadContextProvider } from '@/providers/thread-context-provider';
 import { ChatInput } from '../chat/chat-input';
 import { ChatMessages } from '../chat/chat-messages';
+import { ChatWelcome } from '../chat/chat-welcome';
 
 type Props = {
   threadId: string;
@@ -18,6 +19,11 @@ export const ChatView = async ({ threadId, isPersisted }: Props) => {
       <main>
         <div className="relative mx-auto grid w-full grid-rows-[calc(100vh-20px)_20px]">
           <div className="mx-auto w-full overflow-y-scroll p-3">
+            <ChatWelcome
+              initialActive={preloadedQueryResult(preloadedMessagesQuery).length === 0}
+              className="mx-auto mt-[20vh] justify-self-center lg:w-3xl"
+            />
+
             <ChatMessages
               className="mx-auto lg:w-3xl"
               initialData={preloadedQueryResult(preloadedMessagesQuery)}

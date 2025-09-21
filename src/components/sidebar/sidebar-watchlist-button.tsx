@@ -35,7 +35,7 @@ export const SidebarWatchlistButton = ({ initialWatchlistCount }: Props) => {
         <ListVideo className="mr-2 size-4.5" />
         Watchlist
         {watchlistCount > 0 && (
-          <span className="text-primary ml-auto inline-flex h-4 items-center rounded px-1.5 text-xs font-medium">
+          <span className="text-primary ml-auto text-xs font-medium">
             {watchlistCount}
           </span>
         )}
