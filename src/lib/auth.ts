@@ -4,7 +4,7 @@ import { cache } from 'react';
 import { cookies } from 'next/headers';
 import * as jwt from 'jsonwebtoken';
 
-
+import { env } from './env';
 
 const AUTH_TOKEN_COOKIE_NAME = 'auth-token';
 
@@ -14,11 +14,11 @@ export type User = {
 };
 
 export const generateAuthToken = (user: User) => {
-  return jwt.sign(user, process.env.JWT_SECRET!);
+  return jwt.sign(user, env.JWT_SECRET);
 };
 
 export const verifyAuthToken = cache((token: string): User | null => {
-  const user = jwt.verify(token, process.env.JWT_SECRET!);
+  const user = jwt.verify(token, env.JWT_SECRET);
   if (user) {
     return user as User;
   }

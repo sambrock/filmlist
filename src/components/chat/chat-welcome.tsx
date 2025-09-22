@@ -32,7 +32,7 @@ export const ChatWelcome = ({ initialActive, className, ...props }: Props) => {
   }
   return (
     <div className={cn('flex flex-col justify-center px-6', className)} {...props}>
-      <h1 className="text-foreground-0/70 mb-6 text-2xl font-bold antialiased">
+      <h1 className="text-foreground-0/90 mb-6 text-2xl font-bold antialiased">
         What do you feel like watching today?
       </h1>
 

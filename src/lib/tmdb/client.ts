@@ -1,13 +1,14 @@
 import { cache } from 'react';
 import createClient from 'openapi-fetch';
 
+import { env } from '../env';
 import { paths } from './schema-v3';
 import { MovieCredits, MovieDetails } from './types';
 
 export const tmdb = createClient<paths>({
   baseUrl: 'https://api.themoviedb.org',
   headers: {
-    Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+    Authorization: `Bearer ${env.TMDB_API_KEY}`,
   },
 });
 
